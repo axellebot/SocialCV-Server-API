@@ -2,6 +2,7 @@ var mongoose = require('../mongoose');
 var Schema = mongoose.Schema;
 
 var linkCategorySchema = new Schema({
+    _id:String,
     label:String,
     icon:String
 });
