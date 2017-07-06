@@ -20,7 +20,7 @@ router
             .skip(pagination.skip)
             .exec(function (err, entities) {
                 if (err) return res.status(404).send(err);
-                res.json(entities);
+                res.json({data:entities});
             });
     })
     .post(PATH_ENTITIES, function (req, res, next) {
@@ -44,7 +44,7 @@ router
             .findById(req.params.id)
             .exec(function (err, entity) {
                 if (err) return res.status(404).send(err);
-                res.json(entity);
+                res.json({data:entity});
             });
     })
     .post(PATH_ENTITY, function (req, res, next) {
