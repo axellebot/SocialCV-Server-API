@@ -6,6 +6,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var routeIndex = require('./routes/index');
+var routeComputingTags = require('./routes/computingTags');
 var routeEducations = require('./routes/educations');
 var routeEntities = require('./routes/entities');
 var routeExperiences = require('./routes/experiences');
@@ -29,6 +30,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // routes
 app.use('/', routeIndex);
+app.use('/computingTags', routeComputingTags);
 app.use('/educations', routeEducations);
 app.use('/entities', routeEntities);
 app.use('/experiences', routeExperiences);
