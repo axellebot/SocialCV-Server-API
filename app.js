@@ -15,6 +15,7 @@ var routeInterests = require('./routes/interests');
 var routeLanguages = require('./routes/languages');
 var routeLinks = require('./routes/links');
 var routeLinkTags = require('./routes/linkTags');
+var routeProjects = require('./routes/projects');
 var routeSoftwareFrameworks = require('./routes/softwareFrameworks');
 var routeSoftwares = require('./routes/softwares');
 
@@ -43,6 +44,7 @@ app.use('/interests', routeInterests);
 app.use('/languages', routeLanguages);
 app.use('/links', routeLinks);
 app.use('/linkTags', routeLinkTags);
+app.use('/projects', routeProjects);
 app.use('/softwareFrameworks', routeSoftwareFrameworks);
 app.use('/softwares', routeSoftwares);
 

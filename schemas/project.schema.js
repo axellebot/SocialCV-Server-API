@@ -5,10 +5,10 @@ var projectSchema = new Schema({
     _id:String,
     label:String,
     description:String,
-    computingCategoryIds:[String],
-    computingLanguageIds:[String],
-    computingFrameworkIds:[String],
-    computingPlatformIds:[String],
+    computingTagIds:[String],
+    programmingLanguageIds:[String],
+    frameworkIds:[String],
+    platformIds:[String],
     linkIds:[String]
 });
 
