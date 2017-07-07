@@ -7,6 +7,7 @@ var bodyParser = require('body-parser');
 
 var routeIndex = require('./routes/index');
 var routeEntities = require('./routes/entities');
+var routeExperiences = require('./routes/experiences');
 var routeLinks = require('./routes/links');
 var routeLinkTags = require('./routes/linkTags');
 var routeSoftwares = require('./routes/softwares');
@@ -28,6 +29,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // routes
 app.use('/', routeIndex);
 app.use('/entities', routeEntities);
+app.use('/experiences', routeExperiences);
 app.use('/links', routeLinks);
 app.use('/linkTags', routeLinkTags);
 app.use('/softwares', routeSoftwares);
