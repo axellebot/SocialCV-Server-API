@@ -6,9 +6,9 @@ var utils = require("../utils");
 const OperatingSystem = require('../schemas/operatingSystem.schema');
 
 /* OperatingSystems page. */
-var PATH_Operating_SystemS = "/";
+var PATH_OPERATING_SYSTEMS = "/";
 router
-    .get(PATH_Operating_SystemS, function (req, res, next) {
+    .get(PATH_OPERATING_SYSTEMS, function (req, res, next) {
         //TODO : OperatingSystems - Handle options
         var pagination = utils.getPagination(req);
 
@@ -21,23 +21,23 @@ router
                 res.json({data:operatingSystems});
             });
     })
-    .post(PATH_Operating_SystemS, function (req, res, next) {
+    .post(PATH_OPERATING_SYSTEMS, function (req, res, next) {
         //TODO : OperatingSystems - Create operatingSystem
         res.status(404).send('Create a OperatingSystem');
     })
-    .put(PATH_Operating_SystemS, function (req, res, next) {
+    .put(PATH_OPERATING_SYSTEMS, function (req, res, next) {
         //TODO : OperatingSystems - Add Bulk update
         res.status(404).send('Bulk update of operatingSystems');
     })
-    .delete(PATH_Operating_SystemS, function (req, res, next) {
+    .delete(PATH_OPERATING_SYSTEMS, function (req, res, next) {
         //TODO : OperatingSystems - Remove all operatingSystems
         res.status(404).send('Remove all operatingSystems');
     });
 
 /* OperatingSystem page. */
-var PATH_Operating_System = PATH_Operating_SystemS + ":id";
+var PATH_OPERATING_SYSTEM = PATH_OPERATING_SYSTEMS + ":id";
 router
-    .get(PATH_Operating_System, function (req, res, next) {
+    .get(PATH_OPERATING_SYSTEM, function (req, res, next) {
         OperatingSystem
             .findById(req.params.id)
             .exec(function (err, operatingSystem) {
@@ -45,14 +45,14 @@ router
                 res.json({data:operatingSystem});
             });
     })
-    .post(PATH_Operating_System, function (req, res, next) {
+    .post(PATH_OPERATING_SYSTEM, function (req, res, next) {
         res.sendStatus(403);
     })
-    .put(PATH_Operating_System, function (req, res, next) {
+    .put(PATH_OPERATING_SYSTEM, function (req, res, next) {
         //TODO : OperatingSystem - Update operatingSystem
         res.status(404).send('Bulk update of operatingSystems');
     })
-    .delete(PATH_Operating_SystemS, function (req, res, next) {
+    .delete(PATH_OPERATING_SYSTEMS, function (req, res, next) {
         //TODO : OperatingSystem - Remove operatingSystem
         res.status(404).send('Remove operatingSystem');
     });
