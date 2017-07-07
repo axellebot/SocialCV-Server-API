@@ -15,6 +15,7 @@ var routeInterests = require('./routes/interests');
 var routeLanguages = require('./routes/languages');
 var routeLinks = require('./routes/links');
 var routeLinkTags = require('./routes/linkTags');
+var routeSoftwareFrameworks = require('./routes/softwareFrameworks');
 var routeSoftwares = require('./routes/softwares');
 
 var app = express();
@@ -42,6 +43,7 @@ app.use('/interests', routeInterests);
 app.use('/languages', routeLanguages);
 app.use('/links', routeLinks);
 app.use('/linkTags', routeLinkTags);
+app.use('/softwareFrameworks', routeSoftwareFrameworks);
 app.use('/softwares', routeSoftwares);
 
 // catch 404 and forward to error handler
