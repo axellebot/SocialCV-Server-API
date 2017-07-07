@@ -1,7 +1,7 @@
 var mongoose = require('../mongoose');
 var Schema = mongoose.Schema;
 
-var computingExperienceSchema = new Schema({
+var ExperienceSchema = new Schema({
     _id:String,
     label:String,
     description:String,
@@ -10,4 +10,4 @@ var computingExperienceSchema = new Schema({
     endDate:Date
 });
 
-module.exports = mongoose.model('ComputingExperience', computingExperienceSchema);
+module.exports = mongoose.model('Experience', ExperienceSchema);

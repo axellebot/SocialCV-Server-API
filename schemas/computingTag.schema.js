@@ -1,10 +1,10 @@
 var mongoose = require('../mongoose');
 var Schema = mongoose.Schema;
 
-var computingCategorySchema = new Schema({
+var computingTagSchema = new Schema({
     _id:String,
     label:String,
     icon:String
 });
 
-module.exports = mongoose.model('ComputingCategory', computingCategorySchema);
+module.exports = mongoose.model('ComputingTag', computingTagSchema);

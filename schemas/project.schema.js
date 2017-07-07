@@ -1,7 +1,7 @@
 var mongoose = require('../mongoose');
 var Schema = mongoose.Schema;
 
-var computingProjectSchema = new Schema({
+var projectSchema = new Schema({
     _id:String,
     label:String,
     description:String,
@@ -12,4 +12,4 @@ var computingProjectSchema = new Schema({
     linkIds:[String]
 });
 
-module.exports = mongoose.model('ComputingProject', computingProjectSchema);
+module.exports = mongoose.model('Project', projectSchema);

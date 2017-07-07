@@ -9,8 +9,6 @@ const Software = require('../schemas/software.schema');
 var PATH_SOFTWARES = "/";
 router
     .get(PATH_SOFTWARES, function (req, res, next) {
-
-       console.log("test");
         //TODO : Softwares - Handle options
         var pagination = utils.getPagination(req);
 

@@ -9,8 +9,6 @@ const Entity = require('../schemas/entity.schema');
 var PATH_ENTITIES = "/";
 router
     .get(PATH_ENTITIES, function (req, res, next) {
-
-       console.log("test");
         //TODO : Entities - Handle options
         var pagination = utils.getPagination(req);
 
