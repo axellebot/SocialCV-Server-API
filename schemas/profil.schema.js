@@ -1,12 +1,12 @@
 var mongoose = require('../mongoose');
 var Schema = mongoose.Schema;
 
-var entitySchema = new Schema({
+var profilSchema = new Schema({
     _id:String,
-    label:String,
-    description:String,
+    firstName:String,
+    lastname:String,
     address:String,
     linkIds:[String]
 });
 
-module.exports = mongoose.model('Entity', entitySchema);
+module.exports = mongoose.model('Profil', profilSchema);

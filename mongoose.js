@@ -1,6 +1,8 @@
 var config = require("./config");
 
 var mongoose = require("mongoose");
+//Fixing promises
+mongoose.Promise = global.Promise;
 mongoose.connect(config.database.uri, {useMongoClient: true});
 
 var db = mongoose.connection;
