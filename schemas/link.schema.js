@@ -1,10 +1,11 @@
 var mongoose = require('../mongoose');
 var Schema = mongoose.Schema;
 
-var linkSchema = new Schema({
-    _id:String,
+var LinkSchema = new Schema({
     uri:String,
-    categoryId:String
+    tag:{ type: Schema.Types.ObjectId, ref: 'LinkTag' }
+},{
+    timestamps: true
 });
 
-module.exports = mongoose.model('Link', linkSchema);
+module.exports = mongoose.model('Link', LinkSchema);

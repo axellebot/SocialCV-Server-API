@@ -1,10 +1,11 @@
 var mongoose = require('../mongoose');
 var Schema = mongoose.Schema;
 
-var languageSchema = new Schema({
-    _id:String,
+var LanguageSchema = new Schema({
     label:String,
     description:String
+},{
+    timestamps: true
 });
 
-module.exports = mongoose.model('Language', languageSchema);
+module.exports = mongoose.model('Language', LanguageSchema);

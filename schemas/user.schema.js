@@ -19,10 +19,7 @@ var UserSchema = new Schema({
         type: String,
         required: true
     },
-    profile: {
-        firstName: {type: String},
-        lastName: {type: String}
-    },
+    profile: { type: Schema.Types.ObjectId, ref: 'Profile' },
     role: {
         type: String,
         enum: [ROLE_MEMBER, ROLE_CLIENT, ROLE_OWNER, ROLE_ADMIN],

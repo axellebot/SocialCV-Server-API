@@ -1,10 +1,11 @@
 var mongoose = require('../mongoose');
 var Schema = mongoose.Schema;
 
-var softwareSchema = new Schema({
-    _id:String,
+var SoftwareSchema = new Schema({
     label:String,
     description:String
+},{
+    timestamps: true
 });
 
-module.exports = mongoose.model('Software', softwareSchema);
+module.exports = mongoose.model('Software', SoftwareSchema);

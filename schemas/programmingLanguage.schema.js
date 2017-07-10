@@ -1,9 +1,10 @@
 var mongoose = require('../mongoose');
 var Schema = mongoose.Schema;
 
-var programmingLanguageSchema = new Schema({
-    _id:String,
+var ProgrammingLanguageSchema = new Schema({
     label:String
+},{
+    timestamps: true
 });
 
-module.exports = mongoose.model('ProgrammingLanguage', programmingLanguageSchema);
+module.exports = mongoose.model('ProgrammingLanguage', ProgrammingLanguageSchema);

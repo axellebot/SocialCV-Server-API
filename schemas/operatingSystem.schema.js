@@ -1,9 +1,10 @@
 var mongoose = require('../mongoose');
 var Schema = mongoose.Schema;
 
-var operatingSystemSchema = new Schema({
-    _id:String,
+var OperatingSystemSchema = new Schema({
     label:String
+},{
+    timestamps: true
 });
 
-module.exports = mongoose.model('OperatingSystem', operatingSystemSchema);
+module.exports = mongoose.model('OperatingSystem', OperatingSystemSchema);
