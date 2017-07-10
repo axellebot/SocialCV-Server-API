@@ -1,5 +1,6 @@
 {
+  "secret": "thisisasecret",
   "database": {
-    "uri": "mongodb://localhost/vitrine"
+    "uri": "uriofdatabase"
   }
 }

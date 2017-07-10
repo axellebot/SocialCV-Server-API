@@ -1,0 +1,6 @@
+{
+  "secret":"",
+  "database": {
+    "uri": ""
+  }
+}
