@@ -4,7 +4,12 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var jwt = require('jwt');
 
+var config = require('./config');
+var app = express();
+
+// get routes
 var routeIndex = require('./routes');
 var routeComputingTags = require('./routes/computingTags');
 var routeEducations = require('./routes/educations');
@@ -22,8 +27,6 @@ var routeProjects = require('./routes/projects');
 var routeSoftwareFrameworks = require('./routes/softwareFrameworks');
 var routeSoftwares = require('./routes/softwares');
 
-var app = express();
-
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
@@ -31,12 +34,16 @@ app.set('view engine', 'pug');
 // uncomment after placing your favicon in /public
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
+// use body parser so we can get info from POST and/or URL parameters
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// routes
+// add variables
+app.set('superSecret', config.secret); // secret variable
+
+// add routes
 app.use('/', routeIndex);
 app.use('/computingTags', routeComputingTags);
 app.use('/educations', routeEducations);
