@@ -16,7 +16,6 @@ router
             .limit(pagination.limit)
             .skip(pagination.skip)
             .exec(function (err, users) {
-                console.log('test');
                 if (err) return res.status(404).send(err);
                 res.json({data: users});
             });

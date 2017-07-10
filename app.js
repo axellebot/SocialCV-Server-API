@@ -4,9 +4,9 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var jwt = require('jsonwebtoken');
+var verifyToken = require('./middlewares/verifyToken');
 
-var config = require('./config');
+global.config = require("./config");
 var app = express();
 
 // get routes
@@ -27,6 +27,7 @@ var routeProjects = require('./routes/projects');
 var routeSoftwareFrameworks = require('./routes/softwareFrameworks');
 var routeSoftwares = require('./routes/softwares');
 var routeUsers = require('./routes/users');
+var routeAuth = require('./routes/auth');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -41,11 +42,9 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// add variables
-app.set('superSecret', config.secret); // secret variable
-
 // add routes
 app.use('/', routeIndex);
+app.use('/', routeAuth);
 app.use('/computingTags', routeComputingTags);
 app.use('/educations', routeEducations);
 app.use('/entities', routeEntities);
@@ -61,7 +60,7 @@ app.use('/programmingLanguages', routeProgrammingLanguages);
 app.use('/projects', routeProjects);
 app.use('/softwareFrameworks', routeSoftwareFrameworks);
 app.use('/softwares', routeSoftwares);
-app.use('/users', routeUsers);
+app.use('/users',verifyToken, routeUsers);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

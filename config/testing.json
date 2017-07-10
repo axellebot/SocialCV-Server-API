@@ -1,5 +1,6 @@
 {
   "secret": "thisisasecret",
+  "saltWorkFactor":10,
   "database": {
     "uri": "uriofdatabase"
   }
