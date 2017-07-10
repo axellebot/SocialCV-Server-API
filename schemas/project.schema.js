@@ -1,15 +1,16 @@
 var mongoose = require('../mongoose');
 var Schema = mongoose.Schema;
 
-var projectSchema = new Schema({
-    _id:String,
+var ProjectSchema = new Schema({
     label:String,
     description:String,
-    computingTagIds:[String],
-    programmingLanguageIds:[String],
-    frameworkIds:[String],
-    platformIds:[String],
-    linkIds:[String]
+    computingTag:[{ type: Schema.Types.ObjectId, ref: 'ComputingTag' }],
+    programmingLanguages:[{ type: Schema.Types.ObjectId, ref: 'ProgrammingLanguage' }],
+    frameworks:[{ type: Schema.Types.ObjectId, ref: 'Framework' }],
+    platforms:[{ type: Schema.Types.ObjectId, ref: 'Platform' }],
+    links:[{ type: Schema.Types.ObjectId, ref: 'Link' }]
+},{
+    timestamps: true
 });
 
-module.exports = mongoose.model('Project', projectSchema);
+module.exports = mongoose.model('Project', ProjectSchema);

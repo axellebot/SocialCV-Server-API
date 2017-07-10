@@ -1,5 +1,7 @@
 {
+  "secret": "thisisasecret",
+  "saltWorkFactor":10,
   "database": {
-    "uri": "mongodb://localhost/vitrine"
+    "uri": "uriofdatabase"
   }
 }

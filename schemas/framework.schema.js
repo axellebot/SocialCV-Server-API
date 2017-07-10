@@ -1,11 +1,12 @@
 var mongoose = require('../mongoose');
 var Schema = mongoose.Schema;
 
-var frameworkSchema = new Schema({
-    _id:String,
+var FrameworkSchema = new Schema({
     label:String,
-    computingCategoryIds:[String],
+    computingCategories:[{ type: Schema.Types.ObjectId, ref: 'ComputingCategory' }],
     languageId:String
+},{
+    timestamps: true
 });
 
-module.exports = mongoose.model('Framework', frameworkSchema);
+module.exports = mongoose.model('Framework', FrameworkSchema);

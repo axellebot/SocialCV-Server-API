@@ -1,0 +1,7 @@
+{
+  "secret":"",
+  "saltWorkFactor":10,
+  "database": {
+    "uri": ""
+  }
+}

@@ -1,10 +1,11 @@
 var mongoose = require('../mongoose');
 var Schema = mongoose.Schema;
 
-var interestSchema = new Schema({
-    _id:String,
+var InterestSchema = new Schema({
     label:String,
     description:String
+},{
+    timestamps: true
 });
 
-module.exports = mongoose.model('Interest', interestSchema);
+module.exports = mongoose.model('Interest', InterestSchema);

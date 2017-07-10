@@ -1,12 +1,13 @@
 var mongoose = require('../mongoose');
 var Schema = mongoose.Schema;
 
-var entitySchema = new Schema({
-    _id:String,
-    label:String,
-    description:String,
-    address:String,
-    linkIds:[String]
+var EntitySchema = new Schema({
+    label: String,
+    description: String,
+    address: String,
+    links: [{type: Schema.Types.ObjectId, ref: 'Link'}]
+},{
+    timestamps: true
 });
 
-module.exports = mongoose.model('Entity', entitySchema);
+module.exports = mongoose.model('Entity', EntitySchema);

@@ -3,7 +3,7 @@ var router = express.Router();
 
 var utils = require("../utils");
 
-const Profil = require('../schemas/profil.schema');
+const Profil = require('../schemas/profile.schema');
 
 /* Profils page. */
 var PATH_PROFILS = "/";
