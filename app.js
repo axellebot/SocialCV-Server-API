@@ -27,7 +27,7 @@ var routeProjects = require('./routes/projects');
 var routeSoftwareFrameworks = require('./routes/softwareFrameworks');
 var routeSoftwares = require('./routes/softwares');
 var routeUsers = require('./routes/users');
-var routeAuth = require('./routes/auth');
+var routeAuth = require('./routes/authentication');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

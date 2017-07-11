@@ -1,9 +1,9 @@
 var express = require('express');
 var router = express.Router();
 
-var utils = require("../utils");
+var utils = require("../helpers");
 
-const Software = require('../schemas/software.schema');
+const Software = require('../models/software.schema');
 
 /* Softwares page. */
 var PATH_SOFTWARES = "/";
@@ -17,8 +17,7 @@ router
             .limit(pagination.limit)
             .skip(pagination.skip)
             .exec(function (err, softwares) {
-                if (err) return res.status(404).send(err);
-                res.json({data:softwares});
+                if (err) return next(err);                res.json({data:softwares});
             });
     })
     .post(PATH_SOFTWARES, function (req, res, next) {
@@ -41,8 +40,7 @@ router
         Software
             .findById(req.params.id)
             .exec(function (err, software) {
-                if (err) return res.status(404).send(err);
-                res.json({data:software});
+                if (err) return next(err);                res.json({data:software});
             });
     })
     .post(PATH_SOFTWARE, function (req, res, next) {

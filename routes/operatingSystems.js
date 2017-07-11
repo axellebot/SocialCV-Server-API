@@ -1,9 +1,9 @@
 var express = require('express');
 var router = express.Router();
 
-var utils = require("../utils");
+var utils = require("../helpers");
 
-const OperatingSystem = require('../schemas/operatingSystem.schema');
+const OperatingSystem = require('../models/operatingSystem.schema');
 
 /* OperatingSystems page. */
 var PATH_OPERATING_SYSTEMS = "/";
@@ -17,8 +17,7 @@ router
             .limit(pagination.limit)
             .skip(pagination.skip)
             .exec(function (err, operatingSystems) {
-                if (err) return res.status(404).send(err);
-                res.json({data:operatingSystems});
+                if (err) return next(err);                res.json({data:operatingSystems});
             });
     })
     .post(PATH_OPERATING_SYSTEMS, function (req, res, next) {
@@ -41,8 +40,7 @@ router
         OperatingSystem
             .findById(req.params.id)
             .exec(function (err, operatingSystem) {
-                if (err) return res.status(404).send(err);
-                res.json({data:operatingSystem});
+                if (err) return next(err);                res.json({data:operatingSystem});
             });
     })
     .post(PATH_OPERATING_SYSTEM, function (req, res, next) {

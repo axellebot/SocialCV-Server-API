@@ -1,15 +1,17 @@
 var mongoose = require('../mongoose');
 var bcrypt = require('bcrypt');
 
-const ROLE_OWNER = require('../constants').ROLE_OWNER;
 const ROLE_ADMIN = require('../constants').ROLE_ADMIN;
 const ROLE_MEMBER = require('../constants').ROLE_MEMBER;
-const ROLE_CLIENT = require('../constants').ROLE_CLIENT;
 
 var Schema = mongoose.Schema;
 
+//= ===============================
+// User Schema
+//= ===============================
+
 var UserSchema = new Schema({
-    username: {
+    email: {
         type: String,
         lowercase: true,
         unique: true,
@@ -19,15 +21,22 @@ var UserSchema = new Schema({
         type: String,
         required: true
     },
-    profile: { type: Schema.Types.ObjectId, ref: 'Profile' },
+    profile: {
+        firstName: {type: String},
+        lastName: {type: String}
+    },
     role: {
         type: String,
-        enum: [ROLE_MEMBER, ROLE_CLIENT, ROLE_OWNER, ROLE_ADMIN],
+        enum: [ROLE_MEMBER, ROLE_ADMIN],
         default: ROLE_MEMBER
     }
 }, {
     timestamps: true
 });
+
+//= ===============================
+// User ORM Methods
+//= ===============================
 
 //add middleware to salt password
 UserSchema.pre('save', require('../middlewares/saltPassword'));

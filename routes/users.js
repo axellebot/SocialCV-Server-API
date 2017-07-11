@@ -1,9 +1,9 @@
 var express = require('express');
 var router = express.Router();
 
-var utils = require("../utils");
+var utils = require("../helpers");
 
-const user = require('../schemas/user.schema');
+const user = require('../models/user.schema');
 
 /* users page. */
 var PATH_USERS = "/";
@@ -16,7 +16,7 @@ router
             .limit(pagination.limit)
             .skip(pagination.skip)
             .exec(function (err, users) {
-                if (err) return res.status(404).send(err);
+                if (err) return next(err);
                 res.json({data: users});
             });
     })
@@ -40,7 +40,7 @@ router
         user
             .findById(req.params.id)
             .exec(function (err, user) {
-                if (err) return res.status(404).send(err);
+                if (err) return next(err);
                 res.json({data: user});
             });
     })

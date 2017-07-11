@@ -1,9 +1,9 @@
 var express = require('express');
 var router = express.Router();
 
-var utils = require("../utils");
+var utils = require("../helpers");
 
-const SoftwareFramework = require('../schemas/softwareFramework.schema');
+const SoftwareFramework = require('../models/softwareFramework.schema');
 
 /* SoftwareFrameworks page. */
 var PATH_Software_FrameworkS = "/";
@@ -17,8 +17,7 @@ router
             .limit(pagination.limit)
             .skip(pagination.skip)
             .exec(function (err, softwareFrameworks) {
-                if (err) return res.status(404).send(err);
-                res.json({data:softwareFrameworks});
+                if (err) return next(err);                res.json({data:softwareFrameworks});
             });
     })
     .post(PATH_Software_FrameworkS, function (req, res, next) {
@@ -41,8 +40,7 @@ router
         SoftwareFramework
             .findById(req.params.id)
             .exec(function (err, softwareFramework) {
-                if (err) return res.status(404).send(err);
-                res.json({data:softwareFramework});
+                if (err) return next(err);                res.json({data:softwareFramework});
             });
     })
     .post(PATH_Software_Framework, function (req, res, next) {

@@ -1,9 +1,9 @@
 var express = require('express');
 var router = express.Router();
 
-var utils = require("../utils");
+var utils = require("../helpers");
 
-const Interest = require('../schemas/interest.schema');
+const Interest = require('../models/interest.schema');
 
 /* Interests page. */
 var PATH_INTERESTS = "/";
@@ -17,7 +17,7 @@ router
             .limit(pagination.limit)
             .skip(pagination.skip)
             .exec(function (err, interests) {
-                if (err) return res.status(404).send(err);
+                if (err) return next(err);
                 res.json({data:interests});
             });
     })
@@ -41,7 +41,7 @@ router
         Interest
             .findById(req.params.id)
             .exec(function (err, interest) {
-                if (err) return res.status(404).send(err);
+                if (err) return next(err);
                 res.json({data:interest});
             });
     })

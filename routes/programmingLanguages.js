@@ -1,9 +1,9 @@
 var express = require('express');
 var router = express.Router();
 
-var utils = require("../utils");
+var utils = require("../helpers");
 
-const ProgrammingLanguage = require('../schemas/programmingLanguage.schema');
+const ProgrammingLanguage = require('../models/programmingLanguage.schema');
 
 /* ProgrammingLanguages page. */
 var PATH_PROGRAMMING_LANGUAGES = "/";
@@ -17,8 +17,7 @@ router
             .limit(pagination.limit)
             .skip(pagination.skip)
             .exec(function (err, programmingLanguages) {
-                if (err) return res.status(404).send(err);
-                res.json({data:programmingLanguages});
+                if (err) return next(err);                res.json({data:programmingLanguages});
             });
     })
     .post(PATH_PROGRAMMING_LANGUAGES, function (req, res, next) {
@@ -41,8 +40,7 @@ router
         ProgrammingLanguage
             .findById(req.params.id)
             .exec(function (err, programmingLanguage) {
-                if (err) return res.status(404).send(err);
-                res.json({data:programmingLanguage});
+                if (err) return next(err);                res.json({data:programmingLanguage});
             });
     })
     .post(PATH_PROGRAMMING_LANGUAGE, function (req, res, next) {

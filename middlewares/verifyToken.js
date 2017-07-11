@@ -4,7 +4,7 @@ module.exports = function (req, res, next) {
     var token = req.body.token || req.query.token || req.headers['x-access-token'];
     if (token) {
         // verifies secret and checks exp
-        jwt.verify(token, global.config.secret, function (err, decoded) {
+        jwt.verify(token, global.config.secret, (err, decoded) => {
             if (err) { //failed verification.
                 return res.json({
                     error: true,

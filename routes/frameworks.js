@@ -1,9 +1,9 @@
 var express = require('express');
 var router = express.Router();
 
-var utils = require("../utils");
+var utils = require("../helpers");
 
-const Framework = require('../schemas/framework.schema');
+const Framework = require('../models/framework.schema');
 
 /* Frameworks page. */
 var PATH_FRAMEWORKS = "/";
@@ -17,7 +17,7 @@ router
             .limit(pagination.limit)
             .skip(pagination.skip)
             .exec(function (err, frameworks) {
-                if (err) return res.status(404).send(err);
+                if (err) return next(err);
                 res.json({data:frameworks});
             });
     })
@@ -41,7 +41,7 @@ router
         Framework
             .findById(req.params.id)
             .exec(function (err, framework) {
-                if (err) return res.status(404).send(err);
+                if (err) return next(err);
                 res.json({data:framework});
             });
     })

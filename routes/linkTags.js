@@ -1,9 +1,9 @@
 var express = require('express');
 var router = express.Router();
 
-var utils = require("../utils");
+var utils = require("../helpers");
 
-const LinkTag = require('../schemas/linkTag.schema');
+const LinkTag = require('../models/linkTag.schema');
 
 /* Links page. */
 var PATH_LINK_TAGS = "/";
@@ -17,8 +17,7 @@ router
             .limit(pagination.limit)
             .skip(pagination.skip)
             .exec(function (err, linkTags) {
-                if (err) return res.status(404).send(err);
-                res.json({data:linkTags});
+                if (err) return next(err);                res.json({data:linkTags});
             });
     })
     .post(PATH_LINK_TAGS, function (req, res, next) {
@@ -41,8 +40,7 @@ router
         LinkTag
             .findById(req.params.id)
             .exec(function (err, linkTag) {
-                if (err) return res.status(404).send(err);
-                res.json({data:linkTag});
+                if (err) return next(err);                res.json({data:linkTag});
             });
     })
     .post(PATH_LINK_TAG, function (req, res, next) {

@@ -1,9 +1,9 @@
 var express = require('express');
 var router = express.Router();
 
-var utils = require("../utils");
+var utils = require("../helpers");
 
-const Link = require('../schemas/link.schema');
+const Link = require('../models/link.schema');
 
 /* Links page. */
 var PATH_LINKS = "/";
@@ -17,7 +17,7 @@ router
             .limit(pagination.limit)
             .skip(pagination.skip)
             .exec(function (err, links) {
-                if (err) return res.status(404).send(err);
+                if (err) return next(err);
                 res.json({data:links});
             });
     })
@@ -41,8 +41,7 @@ router
         Link
             .findById(req.params.id)
             .exec(function (err, link) {
-                if (err) return res.status(404).send(err);
-                res.json({data:link});
+                if (err) return next(err);                res.json({data:link});
             });
     })
     .post(PATH_LINK, function (req, res, next) {

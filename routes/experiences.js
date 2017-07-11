@@ -1,9 +1,9 @@
 var express = require('express');
 var router = express.Router();
 
-var utils = require("../utils");
+var utils = require("../helpers");
 
-const Experience = require('../schemas/experience.schema');
+const Experience = require('../models/experience.schema');
 
 /* Experiences page. */
 var PATH_EXPERIENCES = "/";
@@ -17,7 +17,7 @@ router
             .limit(pagination.limit)
             .skip(pagination.skip)
             .exec(function (err, experiences) {
-                if (err) return res.status(404).send(err);
+                if (err) return next(err);
                 res.json({data:experiences});
             });
     })
@@ -41,7 +41,7 @@ router
         Experience
             .findById(req.params.id)
             .exec(function (err, experience) {
-                if (err) return res.status(404).send(err);
+                if (err) return next(err);
                 res.json({data:experience});
             });
     })

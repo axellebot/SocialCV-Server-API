@@ -1,9 +1,9 @@
 var express = require('express');
 var router = express.Router();
 
-var utils = require("../utils");
+var utils = require("../helpers");
 
-const Profil = require('../schemas/profile.schema');
+const Profil = require('../models/profile.schema');
 
 /* Profils page. */
 var PATH_PROFILS = "/";
@@ -17,8 +17,7 @@ router
             .limit(pagination.limit)
             .skip(pagination.skip)
             .exec(function (err, profils) {
-                if (err) return res.status(404).send(err);
-                res.json({data:profils});
+                if (err) return next(err);                res.json({data:profils});
             });
     })
     .post(PATH_PROFILS, function (req, res, next) {
@@ -41,8 +40,7 @@ router
         Profil
             .findById(req.params.id)
             .exec(function (err, profil) {
-                if (err) return res.status(404).send(err);
-                res.json({data:profil});
+                if (err) return next(err);                res.json({data:profil});
             });
     })
     .post(PATH_PROFIL, function (req, res, next) {

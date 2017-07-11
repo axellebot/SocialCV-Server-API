@@ -1,9 +1,9 @@
 var express = require('express');
 var router = express.Router();
 
-var utils = require("../utils");
+var utils = require("../helpers");
 
-const Project = require('../schemas/project.schema');
+const Project = require('../models/project.schema');
 
 /* Projects page. */
 var PATH_PROJECTS = "/";
@@ -17,8 +17,7 @@ router
             .limit(pagination.limit)
             .skip(pagination.skip)
             .exec(function (err, projects) {
-                if (err) return res.status(404).send(err);
-                res.json({data:projects});
+                if (err) return next(err);                res.json({data:projects});
             });
     })
     .post(PATH_PROJECTS, function (req, res, next) {
@@ -41,8 +40,7 @@ router
         Project
             .findById(req.params.id)
             .exec(function (err, project) {
-                if (err) return res.status(404).send(err);
-                res.json({data:project});
+                if (err) return next(err);                res.json({data:project});
             });
     })
     .post(PATH_PROJECT, function (req, res, next) {

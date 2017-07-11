@@ -1,9 +1,9 @@
 var express = require('express');
 var router = express.Router();
 
-var utils = require("../utils");
+var utils = require("../helpers");
 
-const Language = require('../schemas/language.schema');
+const Language = require('../models/language.schema');
 
 /* Languages page. */
 var PATH_LANGUAGES = "/";
@@ -17,7 +17,7 @@ router
             .limit(pagination.limit)
             .skip(pagination.skip)
             .exec(function (err, languages) {
-                if (err) return res.status(404).send(err);
+                if (err) return next(err);
                 res.json({data:languages});
             });
     })
@@ -41,7 +41,7 @@ router
         Language
             .findById(req.params.id)
             .exec(function (err, language) {
-                if (err) return res.status(404).send(err);
+                if (err) return next(err);
                 res.json({data:language});
             });
     })

@@ -1,9 +1,9 @@
 var express = require('express');
 var router = express.Router();
 
-var utils = require("../utils");
+var utils = require("../helpers");
 
-const ComputingTag = require('../schemas/computingTag.schema');
+const ComputingTag = require('../models/computingTag.schema');
 
 /* ComputingTags page. */
 var PATH_COMPUTING_TAGS = "/";
@@ -17,7 +17,7 @@ router
             .limit(pagination.limit)
             .skip(pagination.skip)
             .exec(function (err, computingTags) {
-                if (err) return res.status(404).send(err);
+                if (err) return next(err);
                 res.json({data:computingTags});
             });
     })
@@ -41,7 +41,7 @@ router
         ComputingTag
             .findById(req.params.id)
             .exec(function (err, computingTag) {
-                if (err) return res.status(404).send(err);
+                if (err) return next(err);
                 res.json({data:computingTag});
             });
     })

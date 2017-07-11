@@ -1,9 +1,9 @@
 var express = require('express');
 var router = express.Router();
 
-var utils = require("../utils");
+var utils = require("../helpers");
 
-const Entity = require('../schemas/entity.schema');
+const Entity = require('../models/entity.schema');
 
 /* Entities page. */
 var PATH_ENTITIES = "/";
@@ -17,7 +17,7 @@ router
             .limit(pagination.limit)
             .skip(pagination.skip)
             .exec(function (err, entities) {
-                if (err) return res.status(404).send(err);
+                if (err) return next(err);
                 res.json({data:entities});
             });
     })
@@ -41,7 +41,7 @@ router
         Entity
             .findById(req.params.id)
             .exec(function (err, entity) {
-                if (err) return res.status(404).send(err);
+                if (err) return next(err);
                 res.json({data:entity});
             });
     })
