@@ -317,7 +317,7 @@ module.exports = function (app) {
     // User Routes
     //= ========================
 
-    app.use(PATH_USERS,requireRole(ROLE_MEMBER), routeUsers);
+    app.use(PATH_USERS,requireRole(ROLE_ADMIN), routeUsers);
 
     routeUsers.get('/', controllerUsers.users.get);
     routeUsers.post('/', controllerUsers.users.post);
