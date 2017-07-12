@@ -1,6 +1,4 @@
 var jwt = require('jsonwebtoken');
-var express = require('express');
-var router = express.Router();
 
 const setUserInfo = require('../helpers').setUserInfo;
 const getRole = require('../helpers').getRole;
@@ -16,9 +14,10 @@ function generateToken(user) {
 }
 
 //= =======================================
-// Registration Route
+// Registration Controller
 //= =======================================
-router.post('/register', (req, res, next) => {
+exports.register = {};
+exports.register.post = function (req, res, next) {
     // Check for registration errors
     const email = req.body.email;
     const firstName = req.body.firstName;
@@ -73,23 +72,24 @@ router.post('/register', (req, res, next) => {
 
             res.status(201).json({
                 error: false,
-                token: `JWT ${generateToken(userInfo)}`,
+                token: generateToken(userInfo),
                 user: userInfo
             });
         });
     });
-});
+};
 
 //= =======================================
-// Login Route
+// Login Controller
 //= =======================================
-router.post('/login', function (req, res, next) {
+exports.login = {};
+exports.login.post = function (req, res, next) {
     User
         .findOne({email: req.body.email})
         .exec(function (err, user) {
             if (err) return next(err);
             if (!user) return res.status(404).json({error: true, message: 'User not found!'});
-            user.comparePassword(req.body.password, function (err, isMatch) {
+            user.verifyPassword(req.body.password, function (err, isMatch) {
                 if (err) return next(err);
                 if (!isMatch) return res.status(404).json({error: true, message: "Password don't match!"});
 
@@ -101,9 +101,11 @@ router.post('/login', function (req, res, next) {
 
                 if (!token) return res.status(500).json({error: true, "message": "No token provided"});
 
-                res.status(200).json({error: false, token: token, user: userInfo});
+                res.status(200).json({
+                    error: false,
+                    token: generateToken(userInfo),
+                    user: userInfo
+                });
             });
         })
-});
-
-module.exports = router;
+};

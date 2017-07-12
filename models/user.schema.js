@@ -41,6 +41,6 @@ var UserSchema = new Schema({
 //add middleware to salt password
 UserSchema.pre('save', require('../middlewares/saltPassword'));
 //add middleware to verify the password
-UserSchema.methods.comparePassword = require('../middlewares/verifyPassword');
+UserSchema.methods.verifyPassword = require('../middlewares/verifyPassword');
 
 module.exports = mongoose.model('User', UserSchema);
