@@ -1,8 +1,9 @@
 var mongoose = require('../mongoose');
-var bcrypt = require('bcrypt');
 
 const ROLE_ADMIN = require('../constants').ROLE_ADMIN;
 const ROLE_MEMBER = require('../constants').ROLE_MEMBER;
+var saltPassword = require('../helpers').saltPassword;
+var verifyPassword = require('../helpers').verifyPassword;
 
 var Schema = mongoose.Schema;
 
@@ -39,8 +40,8 @@ var UserSchema = new Schema({
 //= ===============================
 
 //add middleware to salt password
-UserSchema.pre('save', require('../middlewares/saltPassword'));
+UserSchema.pre('save', saltPassword);
 //add middleware to verify the password
-UserSchema.methods.verifyPassword = require('../middlewares/verifyPassword');
+UserSchema.methods.verifyPassword = verifyPassword;
 
 module.exports = mongoose.model('User', UserSchema);

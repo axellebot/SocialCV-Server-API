@@ -1,7 +1,6 @@
 var jwt = require('jsonwebtoken');
 
 const setUserInfo = require('../helpers').setUserInfo;
-const getRole = require('../helpers').getRole;
 
 const User = require('../models/user.schema');
 

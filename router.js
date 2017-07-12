@@ -1,4 +1,12 @@
 const express = require('express');
+const requireRole = require('./middlewares/requireRole');
+
+// Roles
+const
+    ROLE_MEMBER = require('./constants').ROLE_MEMBER,
+    ROLE_ADMIN = require('./constants').ROLE_ADMIN;
+
+// Controllers
 const
     controllerIndex = require('./controllers/index'),
     controllerAuthentification = require('./controllers/authentication'),
@@ -19,6 +27,7 @@ const
     controllerSoftwares = require('./controllers/softwares'),
     controllerUsers = require('./controllers/users');
 
+// Route Paths
 const PATH_INDEX = "/",
     PATH_AUIHENTICATION = "/auth",
     PATH_COMPUTING_TAGS = "/computingTags",
@@ -39,6 +48,7 @@ const PATH_INDEX = "/",
     PATH_USERS = "/users";
 
 module.exports = function (app) {
+    // Routes
     const
         routeIndex = express.Router(),
         routeAuth = express.Router(),
@@ -307,7 +317,7 @@ module.exports = function (app) {
     // User Routes
     //= ========================
 
-    app.use(PATH_USERS, routeUsers);
+    app.use(PATH_USERS,requireRole(ROLE_MEMBER), routeUsers);
 
     routeUsers.get('/', controllerUsers.users.get);
     routeUsers.post('/', controllerUsers.users.post);
