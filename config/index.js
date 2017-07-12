@@ -11,6 +11,7 @@
  * @memberof handle config
  */
 function requiredProcessEnv() {
+    console.log("Requiring Process Env");
     if(process.env.NODE_ENV === "prod") {
         process.env.NODE_ENV = "production";
     }

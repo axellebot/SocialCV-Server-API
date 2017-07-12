@@ -1,33 +1,13 @@
+global.config = require("./config");
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var verifyToken = require('./middlewares/verifyToken');
+var router = require('./router');
 
-global.config = require("./config");
 var app = express();
-
-// get routes
-var routeIndex = require('./routes');
-var routeComputingTags = require('./routes/computingTags');
-var routeEducations = require('./routes/educations');
-var routeEntities = require('./routes/entities');
-var routeExperiences = require('./routes/experiences');
-var routeFrameworks = require('./routes/frameworks');
-var routeInterests = require('./routes/interests');
-var routeLanguages = require('./routes/languages');
-var routeLinks = require('./routes/links');
-var routeLinkTags = require('./routes/linkTags');
-var routeOperatingSystems = require('./routes/operatingSystems');
-var routeProfils = require('./routes/profils');
-var routeProgrammingLanguages = require('./routes/programmingLanguages');
-var routeProjects = require('./routes/projects');
-var routeSoftwareFrameworks = require('./routes/softwareFrameworks');
-var routeSoftwares = require('./routes/softwares');
-var routeUsers = require('./routes/users');
-var routeAuth = require('./routes/auth');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -42,25 +22,8 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// add routes
-app.use('/', routeIndex);
-app.use('/', routeAuth);
-app.use('/computingTags', routeComputingTags);
-app.use('/educations', routeEducations);
-app.use('/entities', routeEntities);
-app.use('/experiences', routeExperiences);
-app.use('/frameworks', routeFrameworks);
-app.use('/interests', routeInterests);
-app.use('/languages', routeLanguages);
-app.use('/links', routeLinks);
-app.use('/linkTags', routeLinkTags);
-app.use('/operatingSystems', routeOperatingSystems);
-app.use('/profils', routeProfils);
-app.use('/programmingLanguages', routeProgrammingLanguages);
-app.use('/projects', routeProjects);
-app.use('/softwareFrameworks', routeSoftwareFrameworks);
-app.use('/softwares', routeSoftwares);
-app.use('/users',verifyToken, routeUsers);
+// Import routes to be served
+router(app);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -80,5 +43,6 @@ app.use(function (err, req, res, next) {
     res.render('error');
     next();
 });
+
 
 module.exports = app;
