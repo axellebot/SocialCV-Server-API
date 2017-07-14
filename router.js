@@ -10,7 +10,7 @@ const
 const
     controllerIndex = require('./controllers/index'),
     controllerAuthentification = require('./controllers/authentication'),
-    controllerComputingTags = require('./controllers/computingTags'),
+    controllerFrameworkTags = require('./controllers/frameworkTags'),
     controllerEducations = require('./controllers/educations'),
     controllerEntities = require('./controllers/entities'),
     controllerExperiences = require('./controllers/experiences'),
@@ -23,6 +23,7 @@ const
     controllerProfils = require('./controllers/profils'),
     controllerProgrammingLanguages = require('./controllers/programmingLanguages'),
     controllerProjects = require('./controllers/projects'),
+    controllerProjectTags = require('./controllers/projectTags'),
     controllerSoftwareFrameworks = require('./controllers/softwareFrameworks'),
     controllerSoftwares = require('./controllers/softwares'),
     controllerUsers = require('./controllers/users');
@@ -30,7 +31,7 @@ const
 // Route Paths
 const PATH_INDEX = "/",
     PATH_AUIHENTICATION = "/auth",
-    PATH_COMPUTING_TAGS = "/computingTags",
+    PATH_FRAMEWORK_TAGS = "/frameworkTags",
     PATH_EDUCATIONS = "/educations",
     PATH_ENTITIES = "/entities",
     PATH_EXPERIENCES = "/experiences",
@@ -43,6 +44,7 @@ const PATH_INDEX = "/",
     PATH_PROFILS = "/profils",
     PATH_PROGRAMMING_LANGUAGES = "/programmingLanguages",
     PATH_PROJECTS = "/projects",
+    PATH_PROJECT_TAGS = "/projectTags",
     PATH_SOFTWARE_FRAMEWORKS = "/softwareFrameworks",
     PATH_SOFTWARES = "/softwares",
     PATH_USERS = "/users";
@@ -52,7 +54,7 @@ module.exports = function (app) {
     const
         routeIndex = express.Router(),
         routeAuth = express.Router(),
-        routeComputingTags = express.Router(),
+        routeFrameworkTags = express.Router(),
         routeEducations = express.Router(),
         routeEntities = express.Router(),
         routeExperiences = express.Router(),
@@ -65,6 +67,7 @@ module.exports = function (app) {
         routeProfils = express.Router(),
         routeProgrammingLanguages = express.Router(),
         routeProjects = express.Router(),
+        routeProjectTags = express.Router(),
         routeSoftwareFrameworks = express.Router(),
         routeSoftwares = express.Router(),
         routeUsers = express.Router();
@@ -87,19 +90,19 @@ module.exports = function (app) {
     routeAuth.post('/login', controllerAuthentification.login.post);
 
     //= ========================
-    // Computing Tag Routes
+    // Framework Tag Routes
     //= ========================
 
-    app.use(PATH_COMPUTING_TAGS, routeComputingTags);
+    app.use(PATH_FRAMEWORK_TAGS, routeFrameworkTags);
 
-    routeComputingTags.get('/', controllerComputingTags.computingTags.get);
-    routeComputingTags.post('/', controllerComputingTags.computingTags.post);
-    routeComputingTags.put('/', controllerComputingTags.computingTags.put);
-    routeComputingTags.delete('/', controllerComputingTags.computingTags.delete);
-    routeComputingTags.get('/:id', controllerComputingTags.computingTag.get);
-    routeComputingTags.post('/:id', controllerComputingTags.computingTag.post);
-    routeComputingTags.put('/:id', controllerComputingTags.computingTag.put);
-    routeComputingTags.delete('/:id', controllerComputingTags.computingTag.delete);
+    routeFrameworkTags.get('/', controllerFrameworkTags.frameworkTags.get);
+    routeFrameworkTags.post('/', controllerFrameworkTags.frameworkTags.post);
+    routeFrameworkTags.put('/', controllerFrameworkTags.frameworkTags.put);
+    routeFrameworkTags.delete('/', controllerFrameworkTags.frameworkTags.delete);
+    routeFrameworkTags.get('/:id', controllerFrameworkTags.frameworkTag.get);
+    routeFrameworkTags.post('/:id', controllerFrameworkTags.frameworkTag.post);
+    routeFrameworkTags.put('/:id', controllerFrameworkTags.frameworkTag.put);
+    routeFrameworkTags.delete('/:id', controllerFrameworkTags.frameworkTag.delete);
 
     //= ========================
     // Education Routes
@@ -283,6 +286,21 @@ module.exports = function (app) {
     routeProjects.delete('/:id', controllerProjects.project.delete);
 
     //= ========================
+    // Project Tag Routes
+    //= ========================
+
+    app.use(PATH_PROJECTS, routeProjects);
+
+    routeProjectTags.get('/', controllerProjectTags.projectTags.get);
+    routeProjectTags.post('/', controllerProjectTags.projectTags.post);
+    routeProjectTags.put('/', controllerProjectTags.projectTags.put);
+    routeProjectTags.delete('/', controllerProjectTags.projectTags.delete);
+    routeProjectTags.get('/:id', controllerProjectTags.projectTag.get);
+    routeProjectTags.post('/:id', controllerProjectTags.projectTag.post);
+    routeProjectTags.put('/:id', controllerProjectTags.projectTag.put);
+    routeProjectTags.delete('/:id', controllerProjectTags.projectTag.delete);
+
+    //= ========================
     // Software Framework Routes
     //= ========================
 
@@ -317,7 +335,7 @@ module.exports = function (app) {
     // User Routes
     //= ========================
 
-    app.use(PATH_USERS,requireRole(ROLE_ADMIN), routeUsers);
+    app.use(PATH_USERS, requireRole(ROLE_ADMIN), routeUsers);
 
     routeUsers.get('/', controllerUsers.users.get);
     routeUsers.post('/', controllerUsers.users.post);

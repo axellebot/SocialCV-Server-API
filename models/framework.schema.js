@@ -2,10 +2,10 @@ var mongoose = require('../mongoose');
 var Schema = mongoose.Schema;
 
 var FrameworkSchema = new Schema({
-    label:String,
-    computingCategories:[{ type: Schema.Types.ObjectId, ref: 'ComputingCategory' }],
-    languageId:String
-},{
+    label: String,
+    frameworkTags: [{type: Schema.Types.ObjectId, ref: 'FrameworkTag'}],
+    languageId: String
+}, {
     timestamps: true
 });
 
