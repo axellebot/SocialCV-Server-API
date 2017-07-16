@@ -7,11 +7,14 @@ var verifyPassword = require('../helpers').verifyPassword;
 
 var Schema = mongoose.Schema;
 
+const uuid = require("../helpers").uuid;
+
 //= ===============================
 // User Schema
 //= ===============================
 
 var UserSchema = new Schema({
+    _id: {type: String, default: uuid},
     email: {
         type: String,
         lowercase: true,
@@ -21,10 +24,6 @@ var UserSchema = new Schema({
     password: {
         type: String,
         required: true
-    },
-    profile: {
-        firstName: {type: String},
-        lastName: {type: String}
     },
     role: {
         type: String,

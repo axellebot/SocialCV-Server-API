@@ -1,10 +1,13 @@
 var mongoose = require('../mongoose');
 var Schema = mongoose.Schema;
 
+const uuid = require("../helpers").uuid;
+
 var LinkSchema = new Schema({
+    _id: {type: String, default: uuid},
     label: String,
     uri: String,
-    tag: {type: Schema.Types.ObjectId, ref: 'LinkTag'}
+    tag: {type: String, ref: 'LinkTag'}
 }, {
     timestamps: true
 });

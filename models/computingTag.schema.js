@@ -1,10 +1,13 @@
 var mongoose = require('../mongoose');
 var Schema = mongoose.Schema;
 
+const uuid = require("../helpers").uuid;
+
 var ComputingTagSchema = new Schema({
-    label:String,
-    icon:String
-},{
+    _id: {type: String, default: uuid},
+    label: String,
+    icon: String
+}, {
     timestamps: true
 });
 

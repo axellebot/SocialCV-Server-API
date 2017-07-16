@@ -1,13 +1,16 @@
 var mongoose = require('../mongoose');
 var Schema = mongoose.Schema;
 
+const uuid = require("../helpers").uuid;
+
 var EducationSchema = new Schema({
+    _id: {type: String, default: uuid},
     label: String,
     description: String,
-    entity: {type: Schema.Types.ObjectId, ref: 'Entity'},
+    entity: {type: String, ref: 'Entity'},
     startDate: Date,
     endDate: Date
-},{
+}, {
     timestamps: true
 });
 

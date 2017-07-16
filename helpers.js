@@ -1,5 +1,8 @@
 const ROLE_MEMBER = require('./constants').ROLE_MEMBER;
 const ROLE_ADMIN = require('./constants').ROLE_ADMIN;
+
+const uuidv4 = require('uuid/v4');
+
 var bcrypt = require('bcrypt');
 
 /**
@@ -74,4 +77,8 @@ exports.verifyPassword =function(candidatePassword, cb) {
         if (err) return cb(err);
         cb(null, isMatch);
     });
+};
+
+exports.uuid = function () {
+    return uuidv4
 };

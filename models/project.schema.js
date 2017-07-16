@@ -1,14 +1,17 @@
 var mongoose = require('../mongoose');
 var Schema = mongoose.Schema;
 
+const uuid = require("../helpers").uuid;
+
 var ProjectSchema = new Schema({
+    _id: {type: String, default: uuid},
     label: String,
     description: String,
-    projectTag: {type: Schema.Types.ObjectId, ref: 'ProjectTag'},
-    programmingLanguages: [{type: Schema.Types.ObjectId, ref: 'ProgrammingLanguage'}],
-    frameworks: [{type: Schema.Types.ObjectId, ref: 'Framework'}],
-    softwareFrameworks: [{type: Schema.Types.ObjectId, ref: 'SoftwareFrameworks'}],
-    links: [{type: Schema.Types.ObjectId, ref: 'Link'}]
+    projectTag: {type: String, ref: 'ProjectTag'},
+    programmingLanguages: [{type: String, ref: 'ProgrammingLanguage'}],
+    frameworks: [{type: String, ref: 'Framework'}],
+    softwareFrameworks: [{type: String, ref: 'SoftwareFrameworks'}],
+    links: [{type: String, ref: 'Link'}]
 }, {
     timestamps: true
 });
