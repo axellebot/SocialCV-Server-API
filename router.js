@@ -48,7 +48,7 @@ const PATH_INDEX = global.constants.PATH.PATH_INDEX,
     PATH_OPERATING_SYSTEMS = global.constants.PATH.PATH_OPERATING_SYSTEMS,
     PATH_PROFILES = global.constants.PATH.PATH_PROFILES,
     PATH_PROGRAMMING_LANGUAGES = global.constants.PATH.PATH_PROGRAMMING_LANGUAGES,
-    PATH_PROJECTS = global.constants.PATH.PATH.PATH_PROJECTS,
+    PATH_PROJECTS = global.constants.PATH.PATH_PROJECTS,
     PATH_PROJECT_TAGS = global.constants.PATH.PATH_PROJECT_TAGS,
     PATH_SOFTWARE_FRAMEWORKS = global.constants.PATH.PATH_SOFTWARE_FRAMEWORKS,
     PATH_SOFTWARES = global.constants.PATH.PATH_SOFTWARES,
@@ -359,27 +359,117 @@ module.exports = function (app) {
 
     app.use(PATH_SOFTWARE_TAGS, routeSoftwareTags);
 
-    routeSoftwareTags.get('/', controllerSoftwareTags.softwares.get);
-    routeSoftwareTags.post('/', controllerSoftwareTags.softwares.post);
-    routeSoftwareTags.put('/', controllerSoftwareTags.softwares.put);
-    routeSoftwareTags.delete('/', controllerSoftwareTags.softwares.delete);
-    routeSoftwareTags.get('/:id', controllerSoftwareTags.software.get);
-    routeSoftwareTags.post('/:id', controllerSoftwareTags.software.post);
-    routeSoftwareTags.put('/:id', controllerSoftwareTags.software.put);
-    routeSoftwareTags.delete('/:id', controllerSoftwareTags.software.delete);
+    routeSoftwareTags.get('/', controllerSoftwareTags.softwareTags.get);
+    routeSoftwareTags.post('/', controllerSoftwareTags.softwareTags.post);
+    routeSoftwareTags.put('/', controllerSoftwareTags.softwareTags.put);
+    routeSoftwareTags.delete('/', controllerSoftwareTags.softwareTags.delete);
+    routeSoftwareTags.get('/:id', controllerSoftwareTags.softwareTag.get);
+    routeSoftwareTags.post('/:id', controllerSoftwareTags.softwareTag.post);
+    routeSoftwareTags.put('/:id', controllerSoftwareTags.softwareTag.put);
+    routeSoftwareTags.delete('/:id', controllerSoftwareTags.softwareTag.delete);
 
     //= ========================
     // User Routes
     //= ========================
 
-    app.use(PATH_USERS, requireRole(ROLE_ADMIN), routeUsers);
+    app.use(PATH_USERS,  routeUsers);
 
-    routeUsers.get('/', controllerUsers.users.get);
-    routeUsers.post('/', controllerUsers.users.post);
-    routeUsers.put('/', controllerUsers.users.put);
-    routeUsers.delete('/', controllerUsers.users.delete);
-    routeUsers.get('/:id', controllerUsers.user.get);
-    routeUsers.post('/:id', controllerUsers.user.post);
-    routeUsers.put('/:id', controllerUsers.user.put);
-    routeUsers.delete('/:id', controllerUsers.user.delete);
+    routeUsers.get('/', requireRole(ROLE_ADMIN),controllerUsers.users.get);
+    routeUsers.post('/',requireRole(ROLE_ADMIN), controllerUsers.users.post);
+    routeUsers.put('/', requireRole(ROLE_ADMIN),controllerUsers.users.put);
+    routeUsers.delete('/', requireRole(ROLE_ADMIN),controllerUsers.users.delete);
+    routeUsers.get('/:id', requireRole(ROLE_ADMIN),controllerUsers.user.get);
+    routeUsers.post('/:id', requireRole(ROLE_ADMIN),controllerUsers.user.post);
+    routeUsers.put('/:id', requireRole(ROLE_ADMIN),controllerUsers.user.put);
+    routeUsers.delete('/:id',requireRole(ROLE_ADMIN), controllerUsers.user.delete);
+    //Computing Tag Routes
+    routeUsers.get('/:id' + PATH_COMPUTING_TAGS, controllerUsers.user.computingTags.get);
+    routeUsers.post('/:id' + PATH_COMPUTING_TAGS, controllerUsers.user.computingTags.post);
+    routeUsers.put('/:id' + PATH_COMPUTING_TAGS, controllerUsers.user.computingTags.put);
+    routeUsers.delete('/:id' + PATH_COMPUTING_TAGS, controllerUsers.user.computingTags.delete);
+    //Education Routes
+    routeUsers.get('/:id' + PATH_EDUCATIONS, controllerUsers.user.educations.get);
+    routeUsers.post('/:id' + PATH_EDUCATIONS, controllerUsers.user.educations.post);
+    routeUsers.put('/:id' + PATH_EDUCATIONS, controllerUsers.user.educations.put);
+    routeUsers.delete('/:id' + PATH_EDUCATIONS, controllerUsers.user.educations.delete);
+    //Entity Routes
+    routeUsers.get('/:id' + PATH_ENTITIES, controllerUsers.user.entities.get);
+    routeUsers.post('/:id' + PATH_ENTITIES, controllerUsers.user.entities.post);
+    routeUsers.put('/:id' + PATH_ENTITIES, controllerUsers.user.entities.put);
+    routeUsers.delete('/:id' + PATH_ENTITIES, controllerUsers.user.entities.delete);
+    //Experience Routes
+    routeUsers.get('/:id' + PATH_EXPERIENCES, controllerUsers.user.experiences.get);
+    routeUsers.post('/:id' + PATH_EXPERIENCES, controllerUsers.user.experiences.post);
+    routeUsers.put('/:id' + PATH_EXPERIENCES, controllerUsers.user.experiences.put);
+    routeUsers.delete('/:id' + PATH_EXPERIENCES, controllerUsers.user.experiences.delete);
+    //Framework Routes
+    routeUsers.get('/:id' + PATH_FRAMEWORKS, controllerUsers.user.frameworks.get);
+    routeUsers.post('/:id' + PATH_FRAMEWORKS, controllerUsers.user.frameworks.post);
+    routeUsers.put('/:id' + PATH_FRAMEWORKS, controllerUsers.user.frameworks.put);
+    routeUsers.delete('/:id' + PATH_FRAMEWORKS, controllerUsers.user.frameworks.delete);
+    //Framework Tag Routes
+    routeUsers.get('/:id' + PATH_FRAMEWORK_TAGS, controllerUsers.user.frameworkTags.get);
+    routeUsers.post('/:id' + PATH_FRAMEWORK_TAGS, controllerUsers.user.frameworkTags.post);
+    routeUsers.put('/:id' + PATH_FRAMEWORK_TAGS, controllerUsers.user.frameworkTags.put);
+    routeUsers.delete('/:id' + PATH_FRAMEWORK_TAGS, controllerUsers.user.frameworkTags.delete);
+    //Interest Routes
+    routeUsers.get('/:id' + PATH_INTERESTS, controllerUsers.user.interests.get);
+    routeUsers.post('/:id' + PATH_INTERESTS, controllerUsers.user.interests.post);
+    routeUsers.put('/:id' + PATH_INTERESTS, controllerUsers.user.interests.put);
+    routeUsers.delete('/:id' + PATH_INTERESTS, controllerUsers.user.interests.delete);
+    //Language Routes
+    routeUsers.get('/:id' + PATH_LANGUAGES, controllerUsers.user.languages.get);
+    routeUsers.post('/:id' + PATH_LANGUAGES, controllerUsers.user.languages.post);
+    routeUsers.put('/:id' + PATH_LANGUAGES, controllerUsers.user.languages.put);
+    routeUsers.delete('/:id' + PATH_LANGUAGES, controllerUsers.user.languages.delete);
+    //Links Routes
+    routeUsers.get('/:id' + PATH_LINKS, controllerUsers.user.links.get);
+    routeUsers.post('/:id' + PATH_LINKS, controllerUsers.user.links.post);
+    routeUsers.put('/:id' + PATH_LINKS, controllerUsers.user.links.put);
+    routeUsers.delete('/:id' + PATH_LINKS, controllerUsers.user.links.delete);
+    //Link Tag Routes
+    routeUsers.get('/:id' + PATH_LINK_TAGS, controllerUsers.user.linkTags.get);
+    routeUsers.post('/:id' + PATH_LINK_TAGS, controllerUsers.user.linkTags.post);
+    routeUsers.put('/:id' + PATH_LINK_TAGS, controllerUsers.user.linkTags.put);
+    routeUsers.delete('/:id' + PATH_LINK_TAGS, controllerUsers.user.linkTags.delete);
+    //Operating System Routes
+    routeUsers.get('/:id' + PATH_OPERATING_SYSTEMS, controllerUsers.user.operatingSystems.get);
+    routeUsers.post('/:id' + PATH_OPERATING_SYSTEMS, controllerUsers.user.operatingSystems.post);
+    routeUsers.put('/:id' + PATH_OPERATING_SYSTEMS, controllerUsers.user.operatingSystems.put);
+    routeUsers.delete('/:id' + PATH_OPERATING_SYSTEMS, controllerUsers.user.operatingSystems.delete);
+    //Profile Routes
+    routeUsers.get('/:id' + PATH_PROFILES, controllerUsers.user.profiles.get);
+    routeUsers.post('/:id' + PATH_PROFILES, controllerUsers.user.profiles.post);
+    routeUsers.put('/:id' + PATH_PROFILES, controllerUsers.user.profiles.put);
+    routeUsers.delete('/:id' + PATH_PROFILES, controllerUsers.user.profiles.delete);
+    //Programming Language Routes
+    routeUsers.get('/:id' + PATH_PROGRAMMING_LANGUAGES, controllerUsers.user.programmingLanguages.get);
+    routeUsers.post('/:id' + PATH_PROGRAMMING_LANGUAGES, controllerUsers.user.programmingLanguages.post);
+    routeUsers.put('/:id' + PATH_PROGRAMMING_LANGUAGES, controllerUsers.user.programmingLanguages.put);
+    routeUsers.delete('/:id' + PATH_PROGRAMMING_LANGUAGES, controllerUsers.user.programmingLanguages.delete);
+    //Project Routes
+    routeUsers.get('/:id' + PATH_PROJECTS, controllerUsers.user.projects.get);
+    routeUsers.post('/:id' + PATH_PROJECTS, controllerUsers.user.projects.post);
+    routeUsers.put('/:id' + PATH_PROJECTS, controllerUsers.user.projects.put);
+    routeUsers.delete('/:id' + PATH_PROJECTS, controllerUsers.user.projects.delete);
+    //Project Tag Routes
+    routeUsers.get('/:id' + PATH_PROJECT_TAGS, controllerUsers.user.projectTags.get);
+    routeUsers.post('/:id' + PATH_PROJECT_TAGS, controllerUsers.user.projectTags.post);
+    routeUsers.put('/:id' + PATH_PROJECT_TAGS, controllerUsers.user.projectTags.put);
+    routeUsers.delete('/:id' + PATH_PROJECT_TAGS, controllerUsers.user.projectTags.delete);
+    //Software Framework Routes
+    routeUsers.get('/:id' + PATH_SOFTWARE_FRAMEWORKS, controllerUsers.user.softwareFrameworks.get);
+    routeUsers.post('/:id' + PATH_SOFTWARE_FRAMEWORKS, controllerUsers.user.softwareFrameworks.post);
+    routeUsers.put('/:id' + PATH_SOFTWARE_FRAMEWORKS, controllerUsers.user.softwareFrameworks.put);
+    routeUsers.delete('/:id' + PATH_SOFTWARE_FRAMEWORKS, controllerUsers.user.softwareFrameworks.delete);
+    //Software Routes
+    routeUsers.get('/:id' + PATH_SOFTWARES, controllerUsers.user.softwares.get);
+    routeUsers.post('/:id' + PATH_SOFTWARES, controllerUsers.user.softwares.post);
+    routeUsers.put('/:id' + PATH_SOFTWARES, controllerUsers.user.softwares.put);
+    routeUsers.delete('/:id' + PATH_SOFTWARES, controllerUsers.user.softwares.delete);
+    //Software Tag Routes
+    routeUsers.get('/:id' + PATH_SOFTWARE_TAGS, controllerUsers.user.softwareTags.get);
+    routeUsers.post('/:id' + PATH_SOFTWARE_TAGS, controllerUsers.user.softwareTags.post);
+    routeUsers.put('/:id' + PATH_SOFTWARE_TAGS, controllerUsers.user.softwareTags.put);
+    routeUsers.delete('/:id' + PATH_SOFTWARE_TAGS, controllerUsers.user.softwareTags.delete);
 };
