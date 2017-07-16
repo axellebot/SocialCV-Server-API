@@ -19,7 +19,7 @@ exports.frameworkTags.get = function (req, res, next) {
 };
 exports.frameworkTags.post = function (req, res, next) {
     //TODO : FrameworkTags - Create frameworkTag
-    res.status(404).send('Create a FrameworkTag');
+    res.status(404).send('Create a new FrameworkTag');
 };
 exports.frameworkTags.put = function (req, res, next) {
     //TODO : FrameworkTags - Add Bulk update
@@ -31,12 +31,10 @@ exports.frameworkTags.delete = function (req, res, next) {
 };
 
 /* FrameworkTag page. */
-const FRAMEWORK_TAG_ID = "id";
 exports.frameworkTag = {};
-
 exports.frameworkTag.get = function (req, res, next) {
     FrameworkTag
-        .findById(req.params[FRAMEWORK_TAG_ID])
+        .findById(req.params.id)
         .exec(function (err, FrameworkTag) {
             if (err) return next(err);
             res.json({data: FrameworkTag});
@@ -47,7 +45,7 @@ exports.frameworkTag.post = function (req, res, next) {
 };
 exports.frameworkTag.put = function (req, res, next) {
     //TODO : FrameworkTag - Update frameworkTag
-    res.status(404).send('Bulk update of frameworkTags');
+    res.status(404).send('Update details of frameworkTags');
 };
 exports.frameworkTag.delete = function (req, res, next) {
     //TODO : FrameworkTag - Remove frameworkTag

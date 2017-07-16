@@ -18,7 +18,7 @@ exports.projects.get = function (req, res, next) {
 };
 exports.projects.post = function (req, res, next) {
     //TODO : Projects - Create project
-    res.status(404).send('Create a Project');
+    res.status(404).send('Create a new Project');
 };
 exports.projects.put = function (req, res, next) {
     //TODO : Projects - Add Bulk update
@@ -44,7 +44,7 @@ exports.project.post = function (req, res, next) {
 };
 exports.project.put = function (req, res, next) {
     //TODO : Project - Update project
-    res.status(404).send('Bulk update of projects');
+    res.status(404).send('Update details of project');
 };
 exports.project.delete = function (req, res, next) {
     //TODO : Project - Remove project

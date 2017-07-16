@@ -18,7 +18,7 @@ exports.softwareFrameworks.get = function (req, res, next) {
 };
 exports.softwareFrameworks.post = function (req, res, next) {
     //TODO : SoftwareFrameworks - Create softwareFramework
-    res.status(404).send('Create a SoftwareFramework');
+    res.status(404).send('Create a new SoftwareFramework');
 };
 exports.softwareFrameworks.put = function (req, res, next) {
     //TODO : SoftwareFrameworks - Add Bulk update
@@ -44,7 +44,7 @@ exports.softwareFramework.post = function (req, res, next) {
 };
 exports.softwareFramework.put = function (req, res, next) {
     //TODO : SoftwareFramework - Update softwareFramework
-    res.status(404).send('Bulk update of softwareFrameworks');
+    res.status(404).send('Update details of softwareFrameworks');
 };
 exports.softwareFramework.delete = function (req, res, next) {
     //TODO : SoftwareFramework - Remove softwareFramework

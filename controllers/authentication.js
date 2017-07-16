@@ -51,8 +51,7 @@ exports.register.post = function (req, res, next) {
         // If email is unique and password was provided, create account
         const user = new User({
             email,
-            password,
-            profile: {firstName, lastName}
+            password
         });
 
         console.log("create account");

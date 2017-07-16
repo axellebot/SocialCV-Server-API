@@ -18,7 +18,7 @@ exports.languages.get = function (req, res, next) {
 };
 exports.languages.post = function (req, res, next) {
     //TODO : Languages - Create language
-    res.status(404).send('Create a Language');
+    res.status(404).send('Create a new Language');
 };
 exports.languages.put = function (req, res, next) {
     //TODO : Languages - Add Bulk update
@@ -44,7 +44,7 @@ exports.language.post = function (req, res, next) {
 };
 exports.language.put = function (req, res, next) {
     //TODO : Language - Update language
-    res.status(404).send('Bulk update of languages');
+    res.status(404).send('Update details of languages');
 };
 exports.language.delete = function (req, res, next) {
     //TODO : Language - Remove language

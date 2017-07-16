@@ -18,7 +18,7 @@ exports.operatingSystems.get = function (req, res, next) {
 };
 exports.operatingSystems.post = function (req, res, next) {
     //TODO : OperatingSystems - Create operatingSystem
-    res.status(404).send('Create a OperatingSystem');
+    res.status(404).send('Create a new OperatingSystem');
 };
 exports.operatingSystems.put = function (req, res, next) {
     //TODO : OperatingSystems - Add Bulk update
@@ -44,7 +44,7 @@ exports.operatingSystem.post = function (req, res, next) {
 };
 exports.operatingSystem.put = function (req, res, next) {
     //TODO : OperatingSystem - Update operatingSystem
-    res.status(404).send('Bulk update of operatingSystems');
+    res.status(404).send('Update details of operatingSystems');
 };
 exports.operatingSystem.delete = function (req, res, next) {
     //TODO : OperatingSystem - Remove operatingSystem

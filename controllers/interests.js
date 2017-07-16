@@ -18,7 +18,7 @@ exports.interests.get = function (req, res, next) {
 };
 exports.interests.post = function (req, res, next) {
     //TODO : Interests - Create interest
-    res.status(404).send('Create a Interest');
+    res.status(404).send('Create a new Interest');
 };
 exports.interests.put = function (req, res, next) {
     //TODO : Interests - Add Bulk update
@@ -44,7 +44,7 @@ exports.interest.post = function (req, res, next) {
 };
 exports.interest.put = function (req, res, next) {
     //TODO : Interest - Update interest
-    res.status(404).send('Bulk update of interests');
+    res.status(404).send('Update details of interests');
 };
 exports.interest.delete = function (req, res, next) {
     //TODO : Interest - Remove interest

@@ -19,7 +19,7 @@ exports.educations.get = function (req, res, next) {
 };
 exports.educations.post = function (req, res, next) {
     //TODO : Educations - Create education
-    res.status(404).send('Create a Education');
+    res.status(404).send('Create a new Education');
 };
 exports.educations.put = function (req, res, next) {
     //TODO : Educations - Add Bulk update
@@ -32,7 +32,6 @@ exports.educations.delete = function (req, res, next) {
 
 /* Education page. */
 exports.education = {};
-
 exports.education.get = function (req, res, next) {
     Education
         .findById(req.params.id)
@@ -46,7 +45,7 @@ exports.education.post = function (req, res, next) {
 };
 exports.education.put = function (req, res, next) {
     //TODO : Education - Update education
-    res.status(404).send('Bulk update of educations');
+    res.status(404).send('Update details of education');
 };
 exports.education.delete = function (req, res, next) {
     //TODO : Education - Remove education

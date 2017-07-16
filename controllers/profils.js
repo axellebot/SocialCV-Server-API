@@ -18,7 +18,7 @@ exports.profils.get = function (req, res, next) {
 };
 exports.profils.post = function (req, res, next) {
     //TODO : Profils - Create profil
-    res.status(404).send('Create a Profil');
+    res.status(404).send('Create a new Profil');
 };
 exports.profils.put = function (req, res, next) {
     //TODO : Profils - Add Bulk update
@@ -44,7 +44,7 @@ exports.profil.post = function (req, res, next) {
 };
 exports.profil.put = function (req, res, next) {
     //TODO : Profil - Update profil
-    res.status(404).send('Bulk update of profils');
+    res.status(404).send('Update details of profils');
 };
 exports.profil.delete = function (req, res, next) {
     //TODO : Profil - Remove profil

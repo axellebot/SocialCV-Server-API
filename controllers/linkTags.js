@@ -19,7 +19,7 @@ exports.linkTags.get = function (req, res, next) {
 };
 exports.linkTags.post = function (req, res, next) {
     //TODO : LinkTags - Create link
-    res.status(404).send('Create a LinkTag');
+    res.status(404).send('Create a new LinkTag');
 };
 exports.linkTags.put = function (req, res, next) {
     //TODO : LinkTags - Add Bulk update
@@ -32,7 +32,6 @@ exports.linkTags.delete = function (req, res, next) {
 
 /* LinkTag page. */
 exports.linkTag = {};
-
 exports.linkTag.get = function (req, res, next) {
     LinkTag
         .findById(req.params.id)
@@ -46,7 +45,7 @@ exports.linkTag.post = function (req, res, next) {
 };
 exports.linkTag.put = function (req, res, next) {
     //TODO : LinkTag - Update link
-    res.status(404).send('Bulk update of links');
+    res.status(404).send('Update details of links');
 };
 exports.linkTag.delete = function (req, res, next) {
     //TODO : LinkTag - Remove link

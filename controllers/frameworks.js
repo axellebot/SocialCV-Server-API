@@ -18,7 +18,7 @@ exports.frameworks.get = function (req, res, next) {
 };
 exports.frameworks.post = function (req, res, next) {
     //TODO : Frameworks - Create framework
-    res.status(404).send('Create a Framework');
+    res.status(404).send('Create a new Framework');
 };
 exports.frameworks.put = function (req, res, next) {
     //TODO : Frameworks - Add Bulk update
@@ -44,7 +44,7 @@ exports.framework.post = function (req, res, next) {
 };
 exports.framework.put = function (req, res, next) {
     //TODO : Framework - Update framework
-    res.status(404).send('Bulk update of frameworks');
+    res.status(404).send('Update details of frameworks');
 };
 exports.framework.delete = function (req, res, next) {
     //TODO : Framework - Remove framework

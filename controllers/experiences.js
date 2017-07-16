@@ -18,7 +18,7 @@ exports.experiences.get = function (req, res, next) {
 };
 exports.experiences.post = function (req, res, next) {
     //TODO : Experiences - Create experience
-    res.status(404).send('Create a Experience');
+    res.status(404).send('Create a new Experience');
 };
 exports.experiences.put = function (req, res, next) {
     //TODO : Experiences - Add Bulk update
@@ -44,7 +44,7 @@ exports.experience.post = function (req, res, next) {
 };
 exports.experience.put = function (req, res, next) {
     //TODO : Experience - Update experience
-    res.status(404).send('Bulk update of experiences');
+    res.status(404).send('Update details of experience');
 };
 exports.experience.delete = function (req, res, next) {
     //TODO : Experience - Remove experience

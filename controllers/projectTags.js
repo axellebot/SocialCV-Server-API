@@ -19,24 +19,22 @@ exports.projectTags.get = function (req, res, next) {
 };
 exports.projectTags.post = function (req, res, next) {
     //TODO : ProjectTags - Create projectTag
-    res.status(404).send('Create a ProjectTag');
+    res.status(404).send('Create a new ProjectTag');
 };
 exports.projectTags.put = function (req, res, next) {
     //TODO : ProjectTags - Add Bulk update
-    res.status(404).send('Bulk update of projectTags');
+    res.status(404).send('Bulk update of ProjectTags');
 };
 exports.projectTags.delete = function (req, res, next) {
     //TODO : ProjectTags - Remove all projectTags
-    res.status(404).send('Remove all projectTags');
+    res.status(404).send('Remove all ProjectTags');
 };
 
 /* ProjectTag page. */
-const FRAMEWORK_TAG_ID = "id";
 exports.projectTag = {};
-
 exports.projectTag.get = function (req, res, next) {
     ProjectTag
-        .findById(req.params[FRAMEWORK_TAG_ID])
+        .findById(req.params.id)
         .exec(function (err, ProjectTag) {
             if (err) return next(err);
             res.json({data: ProjectTag});
@@ -47,7 +45,7 @@ exports.projectTag.post = function (req, res, next) {
 };
 exports.projectTag.put = function (req, res, next) {
     //TODO : ProjectTag - Update projectTag
-    res.status(404).send('Bulk update of projectTags');
+    res.status(404).send('Update details of projectTag');
 };
 exports.projectTag.delete = function (req, res, next) {
     //TODO : ProjectTag - Remove projectTag
