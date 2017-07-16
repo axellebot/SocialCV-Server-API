@@ -289,7 +289,7 @@ module.exports = function (app) {
     // Project Tag Routes
     //= ========================
 
-    app.use(PATH_PROJECTS, routeProjects);
+    app.use(PATH_PROJECT_TAGS, routeProjectTags);
 
     routeProjectTags.get('/', controllerProjectTags.projectTags.get);
     routeProjectTags.post('/', controllerProjectTags.projectTags.post);
