@@ -2,21 +2,22 @@ var mongoose = require('../mongoose');
 var Schema = mongoose.Schema;
 
 const uuid = require("../helpers").uuid;
+const COLLECTION_NAME = global.constants.COLLECTION.COLLECTION_PROJECT;
 
 var ProjectSchema = new Schema({
     _id: {type: String, default: uuid},
-    user: {type: String, ref: 'User'},
     label: String,
     description: String,
-    links: [{type: String, ref: 'Link'}],
-    projectTag: {type: String, ref: 'ProjectTag'},
+    links: [{type: String, ref: global.constants.COLLECTION.LINK}],
+    tag: {type: String, ref: global.constants.COLLECTION.COLLECTION_PROJECT},
     more: {
-        programmingLanguages: [{type: String, ref: 'ProgrammingLanguage'}],
-        frameworks: [{type: String, ref: 'Framework'}],
-        softwareFrameworks: [{type: String, ref: 'SoftwareFrameworks'}]
-    }
+        programmingLanguages: [{type: String, ref: global.constants.COLLECTION.COLLECTION_PROGRAMMING_LANGUAGE}],
+        frameworks: [{type: String, ref: global.constants.COLLECTION.COLLECTION_FRAMEWORK}],
+        softwareFrameworks: [{type: String, ref: global.constants.COLLECTION.COLLECTION_SOFTWARE_FRAMEWORK}]
+    },
+    user: {type: String, ref: global.constants.COLLECTION.COLLECTION_USER}
 }, {
     timestamps: true
 });
 
-module.exports = mongoose.model('Project', ProjectSchema);
+module.exports = mongoose.model(COLLECTION_NAME, ProjectSchema);

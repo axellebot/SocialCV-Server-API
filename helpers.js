@@ -1,9 +1,8 @@
-const ROLE_MEMBER = require('./constants').ROLE_MEMBER;
-const ROLE_ADMIN = require('./constants').ROLE_ADMIN;
+const ROLE_MEMBER = global.constants.ROLE_MEMBER,
+    ROLE_ADMIN = global.constants.ROLE_ADMIN;
 
-const uuidv4 = require('uuid/v4');
-
-var bcrypt = require('bcrypt');
+const uuidv4 = require('uuid/v4'),
+    bcrypt = require('bcrypt');
 
 /**
  * @param req
@@ -70,7 +69,7 @@ exports.saltPassword = function (next) {
     });
 };
 
-exports.verifyPassword =function(candidatePassword, cb) {
+exports.verifyPassword = function (candidatePassword, cb) {
     bcrypt.compare(candidatePassword, this.password, function (err, isMatch) {
         if (err) return cb(err);
         cb(null, isMatch);

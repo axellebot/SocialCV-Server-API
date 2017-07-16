@@ -3,73 +3,78 @@ const requireRole = require('./middlewares/requireRole');
 
 // Roles
 const
-    ROLE_MEMBER = require('./constants').ROLE_MEMBER,
-    ROLE_ADMIN = require('./constants').ROLE_ADMIN;
+    ROLE_MEMBER = global.constants.ROLE.ROLE_MEMBER,
+    ROLE_ADMIN = global.constants.ROLE.ROLE_ADMIN;
 
 // Controllers
 const
     controllerIndex = require('./controllers/index'),
     controllerAuthentification = require('./controllers/authentication'),
-    controllerFrameworkTags = require('./controllers/frameworkTags'),
+    controllerComputingTags = require('./controllers/computingTags'),
     controllerEducations = require('./controllers/educations'),
     controllerEntities = require('./controllers/entities'),
     controllerExperiences = require('./controllers/experiences'),
     controllerFrameworks = require('./controllers/frameworks'),
+    controllerFrameworkTags = require('./controllers/frameworkTags'),
     controllerInterests = require('./controllers/interests'),
     controllerLanguages = require('./controllers/languages'),
     controllerLinks = require('./controllers/links'),
     controllerLinkTags = require('./controllers/linkTags'),
     controllerOperatingSystems = require('./controllers/operatingSystems'),
-    controllerProfils = require('./controllers/profils'),
+    controllerProfiles = require('./controllers/profiles'),
     controllerProgrammingLanguages = require('./controllers/programmingLanguages'),
     controllerProjects = require('./controllers/projects'),
     controllerProjectTags = require('./controllers/projectTags'),
-    controllerSoftwareFrameworks = require('./controllers/softwareFrameworks'),
     controllerSoftwares = require('./controllers/softwares'),
+    controllerSoftwareFrameworks = require('./controllers/softwareFrameworks'),
     controllerUsers = require('./controllers/users');
 
 // Route Paths
-const PATH_INDEX = "/",
-    PATH_AUIHENTICATION = "/auth",
-    PATH_FRAMEWORK_TAGS = "/frameworkTags",
-    PATH_EDUCATIONS = "/educations",
-    PATH_ENTITIES = "/entities",
-    PATH_EXPERIENCES = "/experiences",
-    PATH_FRAMEWORKS = "/frameworks",
-    PATH_INTERESTS = "/interests",
-    PATH_LANGUAGES = "/languages",
-    PATH_LINKS = "/links",
-    PATH_LINK_TAGS = "/linkTags",
-    PATH_OPERATING_SYSTEMS = "/operatingSystems",
-    PATH_PROFILS = "/profils",
-    PATH_PROGRAMMING_LANGUAGES = "/programmingLanguages",
-    PATH_PROJECTS = "/projects",
-    PATH_PROJECT_TAGS = "/projectTags",
-    PATH_SOFTWARE_FRAMEWORKS = "/softwareFrameworks",
-    PATH_SOFTWARES = "/softwares",
-    PATH_USERS = "/users";
+const PATH_INDEX = global.constants.PATH.PATH_INDEX,
+    PATH_AUTHENTICATION = global.constants.PATH.PATH_AUTHENTICATION,
+    PATH_REGISTER = global.constants.PATH.PATH_REGISTER,
+    PATH_LOGIN = global.constants.PATH.PATH_LOGIN,
+    PATH_COMPUTING_TAGS = global.constants.PATH.PATH_COMPUTING_TAGS,
+    PATH_EDUCATIONS = global.constants.PATH.PATH_EDUCATIONS,
+    PATH_ENTITIES = global.constants.PATH.PATH_ENTITIES,
+    PATH_EXPERIENCES = global.constants.PATH.PATH_EXPERIENCES,
+    PATH_FRAMEWORKS = global.constants.PATH.PATH_FRAMEWORKS,
+    PATH_FRAMEWORK_TAGS = global.constants.PATH.PATH_FRAMEWORK_TAGS,
+    PATH_INTERESTS = global.constants.PATH.PATH_INTERESTS,
+    PATH_LANGUAGES = global.constants.PATH.PATH_LANGUAGES,
+    PATH_LINKS = global.constants.PATH.PATH_LINKS,
+    PATH_LINK_TAGS = global.constants.PATH.PATH_LINK_TAGS,
+    PATH_OPERATING_SYSTEMS = global.constants.PATH.PATH_OPERATING_SYSTEMS,
+    PATH_PROFILES = global.constants.PATH.PATH_PROFILES,
+    PATH_PROGRAMMING_LANGUAGES = global.constants.PATH.PATH_PROGRAMMING_LANGUAGES,
+    PATH_PROJECTS = global.constants.PATH.PATH.PATH_PROJECTS,
+    PATH_PROJECT_TAGS = global.constants.PATH.PATH_PROJECT_TAGS,
+    PATH_SOFTWARE_FRAMEWORKS = global.constants.PATH.PATH_SOFTWARE_FRAMEWORKS,
+    PATH_SOFTWARES = global.constants.PATH.PATH_SOFTWARES,
+    PATH_USERS = global.constants.PATH.PATH_USERS;
 
 module.exports = function (app) {
     // Routes
     const
         routeIndex = express.Router(),
         routeAuth = express.Router(),
-        routeFrameworkTags = express.Router(),
+        routeComputingTags = express.Router(),
         routeEducations = express.Router(),
         routeEntities = express.Router(),
         routeExperiences = express.Router(),
         routeFrameworks = express.Router(),
+        routeFrameworkTags = express.Router(),
         routeInterests = express.Router(),
         routeLanguages = express.Router(),
         routeLinks = express.Router(),
         routeLinkTags = express.Router(),
         routeOperatingSystems = express.Router(),
-        routeProfils = express.Router(),
+        routeProfiles = express.Router(),
         routeProgrammingLanguages = express.Router(),
         routeProjects = express.Router(),
         routeProjectTags = express.Router(),
-        routeSoftwareFrameworks = express.Router(),
         routeSoftwares = express.Router(),
+        routeSoftwareFrameworks = express.Router(),
         routeUsers = express.Router();
 
     //= ========================
@@ -84,25 +89,25 @@ module.exports = function (app) {
     // Auth Routes
     //= ========================
 
-    app.use(PATH_AUIHENTICATION, routeAuth);
+    app.use(PATH_AUTHENTICATION, routeAuth);
 
-    routeAuth.post('/register', controllerAuthentification.register.post);
-    routeAuth.post('/login', controllerAuthentification.login.post);
+    routeAuth.post(PATH_REGISTER, controllerAuthentification.register.post);
+    routeAuth.post(PATH_LOGIN, controllerAuthentification.login.post);
 
     //= ========================
-    // Framework Tag Routes
+    // Computing Tag Routes
     //= ========================
 
-    app.use(PATH_FRAMEWORK_TAGS, routeFrameworkTags);
+    app.use(PATH_COMPUTING_TAGS, routeComputingTags);
 
-    routeFrameworkTags.get('/', controllerFrameworkTags.frameworkTags.get);
-    routeFrameworkTags.post('/', controllerFrameworkTags.frameworkTags.post);
-    routeFrameworkTags.put('/', controllerFrameworkTags.frameworkTags.put);
-    routeFrameworkTags.delete('/', controllerFrameworkTags.frameworkTags.delete);
-    routeFrameworkTags.get('/:id', controllerFrameworkTags.frameworkTag.get);
-    routeFrameworkTags.post('/:id', controllerFrameworkTags.frameworkTag.post);
-    routeFrameworkTags.put('/:id', controllerFrameworkTags.frameworkTag.put);
-    routeFrameworkTags.delete('/:id', controllerFrameworkTags.frameworkTag.delete);
+    routeComputingTags.get('/', controllerComputingTags.computingTags.get);
+    routeComputingTags.post('/', controllerComputingTags.computingTags.post);
+    routeComputingTags.put('/', controllerComputingTags.computingTags.put);
+    routeComputingTags.delete('/', controllerComputingTags.computingTags.delete);
+    routeComputingTags.get('/:id', controllerComputingTags.computingTag.get);
+    routeComputingTags.post('/:id', controllerComputingTags.computingTag.post);
+    routeComputingTags.put('/:id', controllerComputingTags.computingTag.put);
+    routeComputingTags.delete('/:id', controllerComputingTags.computingTag.delete);
 
     //= ========================
     // Education Routes
@@ -120,7 +125,7 @@ module.exports = function (app) {
     routeEducations.delete('/:id', controllerEducations.education.delete);
 
     //= ========================
-    // Entitiy Routes
+    // Entity Routes
     //= ========================
 
     app.use(PATH_ENTITIES, routeEntities);
@@ -165,7 +170,22 @@ module.exports = function (app) {
     routeFrameworks.delete('/:id', controllerFrameworks.framework.delete);
 
     //= ========================
-    // Interests Routes
+    // Framework Tag Routes
+    //= ========================
+
+    app.use(PATH_FRAMEWORK_TAGS, routeFrameworkTags);
+
+    routeFrameworkTags.get('/', controllerFrameworkTags.frameworkTags.get);
+    routeFrameworkTags.post('/', controllerFrameworkTags.frameworkTags.post);
+    routeFrameworkTags.put('/', controllerFrameworkTags.frameworkTags.put);
+    routeFrameworkTags.delete('/', controllerFrameworkTags.frameworkTags.delete);
+    routeFrameworkTags.get('/:id', controllerFrameworkTags.frameworkTag.get);
+    routeFrameworkTags.post('/:id', controllerFrameworkTags.frameworkTag.post);
+    routeFrameworkTags.put('/:id', controllerFrameworkTags.frameworkTag.put);
+    routeFrameworkTags.delete('/:id', controllerFrameworkTags.frameworkTag.delete);
+
+    //= ========================
+    // Interest Routes
     //= ========================
 
     app.use(PATH_INTERESTS, routeInterests);
@@ -180,7 +200,7 @@ module.exports = function (app) {
     routeInterests.delete('/:id', controllerInterests.interest.delete);
 
     //= ========================
-    // Interests Routes
+    // Language Routes
     //= ========================
 
     app.use(PATH_LANGUAGES, routeLanguages);
@@ -195,7 +215,7 @@ module.exports = function (app) {
     routeLanguages.delete('/:id', controllerLanguages.language.delete);
 
     //= ========================
-    // Interests Routes
+    // Link Routes
     //= ========================
 
     app.use(PATH_LINKS, routeLinks);
@@ -241,19 +261,19 @@ module.exports = function (app) {
 
 
     //= ========================
-    // Profil Routes
+    // Profile Routes
     //= ========================
 
-    app.use(PATH_PROFILS, routeProfils);
+    app.use(PATH_PROFILES, routeProfiles);
 
-    routeProfils.get('/', controllerProfils.profils.get);
-    routeProfils.post('/', controllerProfils.profils.post);
-    routeProfils.put('/', controllerProfils.profils.put);
-    routeProfils.delete('/', controllerProfils.profils.delete);
-    routeProfils.get('/:id', controllerProfils.profil.get);
-    routeProfils.post('/:id', controllerProfils.profil.post);
-    routeProfils.put('/:id', controllerProfils.profil.put);
-    routeProfils.delete('/:id', controllerProfils.profil.delete);
+    routeProfiles.get('/', controllerProfiles.profiles.get);
+    routeProfiles.post('/', controllerProfiles.profiles.post);
+    routeProfiles.put('/', controllerProfiles.profiles.put);
+    routeProfiles.delete('/', controllerProfiles.profiles.delete);
+    routeProfiles.get('/:id', controllerProfiles.profile.get);
+    routeProfiles.post('/:id', controllerProfiles.profile.post);
+    routeProfiles.put('/:id', controllerProfiles.profile.put);
+    routeProfiles.delete('/:id', controllerProfiles.profile.delete);
 
     //= ========================
     // Programming Languages Routes
@@ -301,21 +321,6 @@ module.exports = function (app) {
     routeProjectTags.delete('/:id', controllerProjectTags.projectTag.delete);
 
     //= ========================
-    // Software Framework Routes
-    //= ========================
-
-    app.use(PATH_SOFTWARE_FRAMEWORKS, routeSoftwareFrameworks);
-
-    routeSoftwareFrameworks.get('/', controllerSoftwareFrameworks.softwareFrameworks.get);
-    routeSoftwareFrameworks.post('/', controllerSoftwareFrameworks.softwareFrameworks.post);
-    routeSoftwareFrameworks.put('/', controllerSoftwareFrameworks.softwareFrameworks.put);
-    routeSoftwareFrameworks.delete('/', controllerSoftwareFrameworks.softwareFrameworks.delete);
-    routeSoftwareFrameworks.get('/:id', controllerSoftwareFrameworks.softwareFramework.get);
-    routeSoftwareFrameworks.post('/:id', controllerSoftwareFrameworks.softwareFramework.post);
-    routeSoftwareFrameworks.put('/:id', controllerSoftwareFrameworks.softwareFramework.put);
-    routeSoftwareFrameworks.delete('/:id', controllerSoftwareFrameworks.softwareFramework.delete);
-
-    //= ========================
     // Software Routes
     //= ========================
 
@@ -329,6 +334,21 @@ module.exports = function (app) {
     routeSoftwares.post('/:id', controllerSoftwares.software.post);
     routeSoftwares.put('/:id', controllerSoftwares.software.put);
     routeSoftwares.delete('/:id', controllerSoftwares.software.delete);
+
+    //= ========================
+    // Software Framework Routes
+    //= ========================
+
+    app.use(PATH_SOFTWARE_FRAMEWORKS, routeSoftwareFrameworks);
+
+    routeSoftwareFrameworks.get('/', controllerSoftwareFrameworks.softwareFrameworks.get);
+    routeSoftwareFrameworks.post('/', controllerSoftwareFrameworks.softwareFrameworks.post);
+    routeSoftwareFrameworks.put('/', controllerSoftwareFrameworks.softwareFrameworks.put);
+    routeSoftwareFrameworks.delete('/', controllerSoftwareFrameworks.softwareFrameworks.delete);
+    routeSoftwareFrameworks.get('/:id', controllerSoftwareFrameworks.softwareFramework.get);
+    routeSoftwareFrameworks.post('/:id', controllerSoftwareFrameworks.softwareFramework.post);
+    routeSoftwareFrameworks.put('/:id', controllerSoftwareFrameworks.softwareFramework.put);
+    routeSoftwareFrameworks.delete('/:id', controllerSoftwareFrameworks.softwareFramework.delete);
 
 
     //= ========================

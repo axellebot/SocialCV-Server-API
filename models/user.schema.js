@@ -8,6 +8,7 @@ var verifyPassword = require('../helpers').verifyPassword;
 var Schema = mongoose.Schema;
 
 const uuid = require("../helpers").uuid;
+const COLLECTION_NAME = global.constants.COLLECTION.COLLECTION_USER;
 
 //= ===============================
 // User Schema
@@ -43,4 +44,4 @@ UserSchema.pre('save', saltPassword);
 //add middleware to verify the password
 UserSchema.methods.verifyPassword = verifyPassword;
 
-module.exports = mongoose.model('User', UserSchema);
+module.exports = mongoose.model(COLLECTION_NAME, UserSchema);
