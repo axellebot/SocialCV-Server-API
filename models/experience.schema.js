@@ -5,6 +5,7 @@ const uuid = require("../helpers").uuid;
 
 var ExperienceSchema = new Schema({
     _id: {type: String, default: uuid},
+    user:{ type: String, ref: 'User' },
     label:String,
     description:String,
     entity: {type: String, ref: 'Entity'},

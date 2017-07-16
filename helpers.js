@@ -26,8 +26,6 @@ exports.getPagination = function (req) {
 exports.setUserInfo = function setUserInfo(user) {
     const getUserInfo = {
         _id: user._id,
-        firstName: user.profile.firstName,
-        lastName: user.profile.lastName,
         email: user.email,
         role: user.role
     };

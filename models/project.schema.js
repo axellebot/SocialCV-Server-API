@@ -5,6 +5,7 @@ const uuid = require("../helpers").uuid;
 
 var ProjectSchema = new Schema({
     _id: {type: String, default: uuid},
+    user:{ type: String, ref: 'User' },
     label: String,
     description: String,
     projectTag: {type: String, ref: 'ProjectTag'},

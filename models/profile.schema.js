@@ -5,6 +5,7 @@ const uuid = require("../helpers").uuid;
 
 var ProfileSchema = new Schema({
     _id: {type: String, default: uuid},
+    user:{ type: String, ref: 'User' },
     firstName:String,
     lastName:String,
     address:String,
