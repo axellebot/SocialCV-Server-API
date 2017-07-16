@@ -25,8 +25,9 @@ const
     controllerProgrammingLanguages = require('./controllers/programmingLanguages'),
     controllerProjects = require('./controllers/projects'),
     controllerProjectTags = require('./controllers/projectTags'),
-    controllerSoftwares = require('./controllers/softwares'),
     controllerSoftwareFrameworks = require('./controllers/softwareFrameworks'),
+    controllerSoftwares = require('./controllers/softwares'),
+    controllerSoftwareTags = require('./controllers/softwareTags'),
     controllerUsers = require('./controllers/users');
 
 // Route Paths
@@ -51,6 +52,7 @@ const PATH_INDEX = global.constants.PATH.PATH_INDEX,
     PATH_PROJECT_TAGS = global.constants.PATH.PATH_PROJECT_TAGS,
     PATH_SOFTWARE_FRAMEWORKS = global.constants.PATH.PATH_SOFTWARE_FRAMEWORKS,
     PATH_SOFTWARES = global.constants.PATH.PATH_SOFTWARES,
+    PATH_SOFTWARE_TAGS = global.constants.PATH.PATH_SOFTWARE_TAGS,
     PATH_USERS = global.constants.PATH.PATH_USERS;
 
 module.exports = function (app) {
@@ -73,8 +75,9 @@ module.exports = function (app) {
         routeProgrammingLanguages = express.Router(),
         routeProjects = express.Router(),
         routeProjectTags = express.Router(),
-        routeSoftwares = express.Router(),
         routeSoftwareFrameworks = express.Router(),
+        routeSoftwares = express.Router(),
+        routeSoftwareTags = express.Router(),
         routeUsers = express.Router();
 
     //= ========================
@@ -321,6 +324,21 @@ module.exports = function (app) {
     routeProjectTags.delete('/:id', controllerProjectTags.projectTag.delete);
 
     //= ========================
+    // Software Framework Routes
+    //= ========================
+
+    app.use(PATH_SOFTWARE_FRAMEWORKS, routeSoftwareFrameworks);
+
+    routeSoftwareFrameworks.get('/', controllerSoftwareFrameworks.softwareFrameworks.get);
+    routeSoftwareFrameworks.post('/', controllerSoftwareFrameworks.softwareFrameworks.post);
+    routeSoftwareFrameworks.put('/', controllerSoftwareFrameworks.softwareFrameworks.put);
+    routeSoftwareFrameworks.delete('/', controllerSoftwareFrameworks.softwareFrameworks.delete);
+    routeSoftwareFrameworks.get('/:id', controllerSoftwareFrameworks.softwareFramework.get);
+    routeSoftwareFrameworks.post('/:id', controllerSoftwareFrameworks.softwareFramework.post);
+    routeSoftwareFrameworks.put('/:id', controllerSoftwareFrameworks.softwareFramework.put);
+    routeSoftwareFrameworks.delete('/:id', controllerSoftwareFrameworks.softwareFramework.delete);
+
+    //= ========================
     // Software Routes
     //= ========================
 
@@ -336,20 +354,19 @@ module.exports = function (app) {
     routeSoftwares.delete('/:id', controllerSoftwares.software.delete);
 
     //= ========================
-    // Software Framework Routes
+    // Software Tag Routes
     //= ========================
 
-    app.use(PATH_SOFTWARE_FRAMEWORKS, routeSoftwareFrameworks);
+    app.use(PATH_SOFTWARE_TAGS, routeSoftwareTags);
 
-    routeSoftwareFrameworks.get('/', controllerSoftwareFrameworks.softwareFrameworks.get);
-    routeSoftwareFrameworks.post('/', controllerSoftwareFrameworks.softwareFrameworks.post);
-    routeSoftwareFrameworks.put('/', controllerSoftwareFrameworks.softwareFrameworks.put);
-    routeSoftwareFrameworks.delete('/', controllerSoftwareFrameworks.softwareFrameworks.delete);
-    routeSoftwareFrameworks.get('/:id', controllerSoftwareFrameworks.softwareFramework.get);
-    routeSoftwareFrameworks.post('/:id', controllerSoftwareFrameworks.softwareFramework.post);
-    routeSoftwareFrameworks.put('/:id', controllerSoftwareFrameworks.softwareFramework.put);
-    routeSoftwareFrameworks.delete('/:id', controllerSoftwareFrameworks.softwareFramework.delete);
-
+    routeSoftwareTags.get('/', controllerSoftwareTags.softwares.get);
+    routeSoftwareTags.post('/', controllerSoftwareTags.softwares.post);
+    routeSoftwareTags.put('/', controllerSoftwareTags.softwares.put);
+    routeSoftwareTags.delete('/', controllerSoftwareTags.softwares.delete);
+    routeSoftwareTags.get('/:id', controllerSoftwareTags.software.get);
+    routeSoftwareTags.post('/:id', controllerSoftwareTags.software.post);
+    routeSoftwareTags.put('/:id', controllerSoftwareTags.software.put);
+    routeSoftwareTags.delete('/:id', controllerSoftwareTags.software.delete);
 
     //= ========================
     // User Routes
