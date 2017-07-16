@@ -18,7 +18,7 @@ exports.programmingLanguages.get = function (req, res, next) {
 };
 exports.programmingLanguages.post = function (req, res, next) {
     //TODO : ProgrammingLanguages - Create programmingLanguage
-    res.status(404).send('Create a ProgrammingLanguage');
+    res.status(404).send('Create a new ProgrammingLanguage');
 };
 exports.programmingLanguages.put = function (req, res, next) {
     //TODO : ProgrammingLanguages - Add Bulk update
@@ -44,7 +44,7 @@ exports.programmingLanguage.post = function (req, res, next) {
 };
 exports.programmingLanguage.put = function (req, res, next) {
     //TODO : ProgrammingLanguage - Update programmingLanguage
-    res.status(404).send('Bulk update of programmingLanguages');
+    res.status(404).send('Update details of programmingLanguages');
 };
 exports.programmingLanguage.delete = function (req, res, next) {
     //TODO : ProgrammingLanguage - Remove programmingLanguage

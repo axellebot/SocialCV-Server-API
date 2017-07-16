@@ -19,7 +19,7 @@ exports.computingTags.get = function (req, res, next) {
 };
 exports.computingTags.post = function (req, res, next) {
     //TODO : ComputingTags - Create computingTag
-    res.status(404).send('Create a ComputingTag');
+    res.status(404).send('Create a new ComputingTag');
 };
 exports.computingTags.put = function (req, res, next) {
     //TODO : ComputingTags - Add Bulk update
@@ -31,12 +31,10 @@ exports.computingTags.delete = function (req, res, next) {
 };
 
 /* ComputingTag page. */
-const COMPUTING_TAG_ID = "id";
 exports.computingTag = {};
-
 exports.computingTag.get = function (req, res, next) {
     ComputingTag
-        .findById(req.params[COMPUTING_TAG_ID])
+        .findById(req.params.id)
         .exec(function (err, computingTag) {
             if (err) return next(err);
             res.json({data: computingTag});
@@ -47,7 +45,7 @@ exports.computingTag.post = function (req, res, next) {
 };
 exports.computingTag.put = function (req, res, next) {
     //TODO : ComputingTag - Update computingTag
-    res.status(404).send('Bulk update of computingTags');
+    res.status(404).send('Update details of computingTag');
 };
 exports.computingTag.delete = function (req, res, next) {
     //TODO : ComputingTag - Remove computingTag

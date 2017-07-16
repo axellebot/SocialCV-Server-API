@@ -2,9 +2,9 @@ var mongoose = require('../mongoose');
 var Schema = mongoose.Schema;
 
 const uuid = require("../helpers").uuid;
-const COLLECTION_NAME = global.constants.COLLECTION.COLLECTION_COMPUTING_TAG;
+const COLLECTION_NAME = global.constants.COLLECTION.COLLECTION_PROJECT_TAG;
 
-var ComputingTagSchema = new Schema({
+var ProjectTagSchema = new Schema({
     _id: {type: String, default: uuid},
     label: String,
     icon: String,
@@ -13,4 +13,4 @@ var ComputingTagSchema = new Schema({
     timestamps: true
 });
 
-module.exports = mongoose.model(COLLECTION_NAME, ComputingTagSchema);
+module.exports = mongoose.model(COLLECTION_NAME, ProjectTagSchema);

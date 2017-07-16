@@ -1,6 +1,8 @@
-const ROLE_MEMBER = require('./constants').ROLE_MEMBER;
-const ROLE_ADMIN = require('./constants').ROLE_ADMIN;
-var bcrypt = require('bcrypt');
+const ROLE_MEMBER = global.constants.ROLE_MEMBER,
+    ROLE_ADMIN = global.constants.ROLE_ADMIN;
+
+const uuidv4 = require('uuid/v4'),
+    bcrypt = require('bcrypt');
 
 /**
  * @param req
@@ -23,8 +25,6 @@ exports.getPagination = function (req) {
 exports.setUserInfo = function setUserInfo(user) {
     const getUserInfo = {
         _id: user._id,
-        firstName: user.profile.firstName,
-        lastName: user.profile.lastName,
         email: user.email,
         role: user.role
     };
@@ -69,9 +69,13 @@ exports.saltPassword = function (next) {
     });
 };
 
-exports.verifyPassword =function(candidatePassword, cb) {
+exports.verifyPassword = function (candidatePassword, cb) {
     bcrypt.compare(candidatePassword, this.password, function (err, isMatch) {
         if (err) return cb(err);
         cb(null, isMatch);
     });
+};
+
+exports.uuid = function () {
+    return uuidv4
 };

@@ -7,11 +7,15 @@ var verifyPassword = require('../helpers').verifyPassword;
 
 var Schema = mongoose.Schema;
 
+const uuid = require("../helpers").uuid;
+const COLLECTION_NAME = global.constants.COLLECTION.COLLECTION_USER;
+
 //= ===============================
 // User Schema
 //= ===============================
 
 var UserSchema = new Schema({
+    _id: {type: String, default: uuid},
     email: {
         type: String,
         lowercase: true,
@@ -21,10 +25,6 @@ var UserSchema = new Schema({
     password: {
         type: String,
         required: true
-    },
-    profile: {
-        firstName: {type: String},
-        lastName: {type: String}
     },
     role: {
         type: String,
@@ -44,4 +44,4 @@ UserSchema.pre('save', saltPassword);
 //add middleware to verify the password
 UserSchema.methods.verifyPassword = verifyPassword;
 
-module.exports = mongoose.model('User', UserSchema);
+module.exports = mongoose.model(COLLECTION_NAME, UserSchema);

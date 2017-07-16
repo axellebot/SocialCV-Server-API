@@ -18,7 +18,7 @@ exports.softwares.get = function (req, res, next) {
 };
 exports.softwares.post = function (req, res, next) {
     //TODO : Softwares - Create software
-    res.status(404).send('Create a Software');
+    res.status(404).send('Create a new Software');
 };
 exports.softwares.put = function (req, res, next) {
     //TODO : Softwares - Add Bulk update
@@ -44,7 +44,7 @@ exports.software.post = function (req, res, next) {
 };
 exports.software.put = function (req, res, next) {
     //TODO : Software - Update software
-    res.status(404).send('Bulk update of softwares');
+    res.status(404).send('Update details of softwares');
 };
 exports.software.delete = function (req, res, next) {
     //TODO : Software - Remove software

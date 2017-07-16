@@ -18,7 +18,7 @@ exports.links.get = function (req, res, next) {
 };
 exports.links.post = function (req, res, next) {
     //TODO : Links - Create link
-    res.status(404).send('Create a Link');
+    res.status(404).send('Create a new Link');
 };
 exports.links.put = function (req, res, next) {
     //TODO : Links - Add Bulk update
@@ -44,7 +44,7 @@ exports.link.post = function (req, res, next) {
 };
 exports.link.put = function (req, res, next) {
     //TODO : Link - Update link
-    res.status(404).send('Bulk update of links');
+    res.status(404).send('Update details of links');
 };
 exports.link.delete = function (req, res, next) {
     //TODO : Link - Remove link

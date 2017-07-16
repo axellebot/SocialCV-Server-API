@@ -19,7 +19,7 @@ exports.entities.get = function (req, res, next) {
 };
 exports.entities.post = function (req, res, next) {
     //TODO : Entities - Create entity
-    res.status(404).send('Create a Entity');
+    res.status(404).send('Create a new Entity');
 };
 exports.entities.put = function (req, res, next) {
     //TODO : Entities - Add Bulk update
@@ -32,7 +32,6 @@ exports.entities.delete = function (req, res, next) {
 
 /* Entity page. */
 exports.entity = {};
-
 exports.entity.get = function (req, res, next) {
     Entity
         .findById(req.params.id)
@@ -46,7 +45,7 @@ exports.entity.post = function (req, res, next) {
 };
 exports.entity.put = function (req, res, next) {
     //TODO : Entity - Update entity
-    res.status(404).send('Bulk update of entities');
+    res.status(404).send('Update details of entity');
 };
 exports.entity.delete = function (req, res, next) {
     //TODO : Entity - Remove entity

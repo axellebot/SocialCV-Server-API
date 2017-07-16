@@ -18,7 +18,7 @@ exports.users.get = function (req, res, next) {
 };
 exports.users.post = function (req, res, next) {
     //TODO : users - Create user
-    res.status(404).send('Create a user');
+    res.status(404).send('Create a new user');
 };
 exports.users.put = function (req, res, next) {
     //TODO : users - Add Bulk update
@@ -44,7 +44,7 @@ exports.user.post = function (req, res, next) {
 };
 exports.user.put = function (req, res, next) {
     //TODO : user - Update user
-    res.status(404).send('Bulk update of users');
+    res.status(404).send('Update details of user');
 };
 exports.user.delete = function (req, res, next) {
     //TODO : user - Remove user
