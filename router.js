@@ -131,13 +131,13 @@ module.exports = function (app) {
     app.use(PATH_COMPUTING_TAGS, routeComputingTags);
 
     routeComputingTags.get(PATH_INDEX, controllerComputingTags.computingTags.get);
-    routeComputingTags.post(PATH_INDEX, requireAuthentication, controllerComputingTags.computingTags.post);
-    routeComputingTags.put(PATH_INDEX, requireAuthentication, controllerComputingTags.computingTags.put);
-    routeComputingTags.delete(PATH_INDEX, requireAuthentication, controllerComputingTags.computingTags.delete);
+    routeComputingTags.post(PATH_INDEX, requireRole(ROLE_MEMBER), controllerComputingTags.computingTags.post);
+    routeComputingTags.put(PATH_INDEX, requireRole(ROLE_MEMBER), controllerComputingTags.computingTags.put);
+    routeComputingTags.delete(PATH_INDEX, requireRole(ROLE_ADMIN), controllerComputingTags.computingTags.delete);
     routeComputingTags.get(PATH_INDEX + ':' + PARAM_ID_COMPUTING_TAG, controllerComputingTags.computingTag.get);
-    routeComputingTags.post(PATH_INDEX + ':' + PARAM_ID_COMPUTING_TAG, requireAuthentication, controllerComputingTags.computingTag.post);
-    routeComputingTags.put(PATH_INDEX + ':' + PARAM_ID_COMPUTING_TAG, requireAuthentication, controllerComputingTags.computingTag.put);
-    routeComputingTags.delete(PATH_INDEX + ':' + PARAM_ID_COMPUTING_TAG, requireAuthentication, controllerComputingTags.computingTag.delete);
+    routeComputingTags.post(PATH_INDEX + ':' + PARAM_ID_COMPUTING_TAG, requireRole(ROLE_MEMBER), controllerComputingTags.computingTag.post);
+    routeComputingTags.put(PATH_INDEX + ':' + PARAM_ID_COMPUTING_TAG, requireRole(ROLE_MEMBER), controllerComputingTags.computingTag.put);
+    routeComputingTags.delete(PATH_INDEX + ':' + PARAM_ID_COMPUTING_TAG, requireRole(ROLE_MEMBER), controllerComputingTags.computingTag.delete);
 
     //= ========================
     // Education Routes
@@ -146,13 +146,13 @@ module.exports = function (app) {
     app.use(PATH_EDUCATIONS, routeEducations);
 
     routeEducations.get(PATH_INDEX, controllerEducations.educations.get);
-    routeEducations.post(PATH_INDEX, requireAuthentication, controllerEducations.educations.post);
-    routeEducations.put(PATH_INDEX, requireAuthentication, controllerEducations.educations.put);
-    routeEducations.delete(PATH_INDEX, requireAuthentication, controllerEducations.educations.delete);
+    routeEducations.post(PATH_INDEX, requireRole(ROLE_MEMBER), controllerEducations.educations.post);
+    routeEducations.put(PATH_INDEX, requireRole(ROLE_MEMBER), controllerEducations.educations.put);
+    routeEducations.delete(PATH_INDEX, requireRole(ROLE_ADMIN), controllerEducations.educations.delete);
     routeEducations.get(PATH_INDEX + ':' + PARAM_ID_EDUCATION, controllerEducations.education.get);
-    routeEducations.post(PATH_INDEX + ':' + PARAM_ID_EDUCATION, requireAuthentication, controllerEducations.education.post);
-    routeEducations.put(PATH_INDEX + ':' + PARAM_ID_EDUCATION, requireAuthentication, controllerEducations.education.put);
-    routeEducations.delete(PATH_INDEX + ':' + PARAM_ID_EDUCATION, requireAuthentication, controllerEducations.education.delete);
+    routeEducations.post(PATH_INDEX + ':' + PARAM_ID_EDUCATION, requireRole(ROLE_MEMBER), controllerEducations.education.post);
+    routeEducations.put(PATH_INDEX + ':' + PARAM_ID_EDUCATION, requireRole(ROLE_MEMBER), controllerEducations.education.put);
+    routeEducations.delete(PATH_INDEX + ':' + PARAM_ID_EDUCATION, requireRole(ROLE_MEMBER), controllerEducations.education.delete);
 
     //= ========================
     // Entity Routes
@@ -161,13 +161,13 @@ module.exports = function (app) {
     app.use(PATH_ENTITIES, routeEntities);
 
     routeEntities.get(PATH_INDEX, controllerEntities.entities.get);
-    routeEntities.post(PATH_INDEX, requireAuthentication, controllerEntities.entities.post);
-    routeEntities.put(PATH_INDEX, requireAuthentication, controllerEntities.entities.put);
-    routeEntities.delete(PATH_INDEX, requireAuthentication, controllerEntities.entities.delete);
+    routeEntities.post(PATH_INDEX, requireRole(ROLE_MEMBER), controllerEntities.entities.post);
+    routeEntities.put(PATH_INDEX, requireRole(ROLE_MEMBER), controllerEntities.entities.put);
+    routeEntities.delete(PATH_INDEX, requireRole(ROLE_ADMIN), controllerEntities.entities.delete);
     routeEntities.get(PATH_INDEX + ':' + PARAM_ID_ENTITY, controllerEntities.entity.get);
-    routeEntities.post(PATH_INDEX + ':' + PARAM_ID_ENTITY, requireAuthentication, controllerEntities.entity.post);
-    routeEntities.put(PATH_INDEX + ':' + PARAM_ID_ENTITY, requireAuthentication, controllerEntities.entity.put);
-    routeEntities.delete(PATH_INDEX + ':' + PARAM_ID_ENTITY, requireAuthentication, controllerEntities.entity.delete);
+    routeEntities.post(PATH_INDEX + ':' + PARAM_ID_ENTITY, requireRole(ROLE_MEMBER), controllerEntities.entity.post);
+    routeEntities.put(PATH_INDEX + ':' + PARAM_ID_ENTITY, requireRole(ROLE_MEMBER), controllerEntities.entity.put);
+    routeEntities.delete(PATH_INDEX + ':' + PARAM_ID_ENTITY, requireRole(ROLE_MEMBER), controllerEntities.entity.delete);
 
     //= ========================
     // Experience Routes
@@ -176,13 +176,13 @@ module.exports = function (app) {
     app.use(PATH_EXPERIENCES, routeExperiences);
 
     routeExperiences.get(PATH_INDEX, controllerExperiences.experiences.get);
-    routeExperiences.post(PATH_INDEX, requireAuthentication, controllerExperiences.experiences.post);
-    routeExperiences.put(PATH_INDEX, requireAuthentication, controllerExperiences.experiences.put);
-    routeExperiences.delete(PATH_INDEX, requireAuthentication, controllerExperiences.experiences.delete);
+    routeExperiences.post(PATH_INDEX, requireRole(ROLE_MEMBER), controllerExperiences.experiences.post);
+    routeExperiences.put(PATH_INDEX, requireRole(ROLE_MEMBER), controllerExperiences.experiences.put);
+    routeExperiences.delete(PATH_INDEX, requireRole(ROLE_ADMIN), controllerExperiences.experiences.delete);
     routeExperiences.get(PATH_INDEX + ':' + PARAM_ID_EXPERIENCE, controllerExperiences.experience.get);
-    routeExperiences.post(PATH_INDEX + ':' + PARAM_ID_EXPERIENCE, requireAuthentication, controllerExperiences.experience.post);
-    routeExperiences.put(PATH_INDEX + ':' + PARAM_ID_EXPERIENCE, requireAuthentication, controllerExperiences.experience.put);
-    routeExperiences.delete(PATH_INDEX + ':' + PARAM_ID_EXPERIENCE, requireAuthentication, controllerExperiences.experience.delete);
+    routeExperiences.post(PATH_INDEX + ':' + PARAM_ID_EXPERIENCE, requireRole(ROLE_MEMBER), controllerExperiences.experience.post);
+    routeExperiences.put(PATH_INDEX + ':' + PARAM_ID_EXPERIENCE, requireRole(ROLE_MEMBER), controllerExperiences.experience.put);
+    routeExperiences.delete(PATH_INDEX + ':' + PARAM_ID_EXPERIENCE, requireRole(ROLE_MEMBER), controllerExperiences.experience.delete);
 
     //= ========================
     // Framework Routes
@@ -191,13 +191,13 @@ module.exports = function (app) {
     app.use(PATH_FRAMEWORKS, routeFrameworks);
 
     routeFrameworks.get(PATH_INDEX, controllerFrameworks.frameworks.get);
-    routeFrameworks.post(PATH_INDEX, requireAuthentication, controllerFrameworks.frameworks.post);
-    routeFrameworks.put(PATH_INDEX, requireAuthentication, controllerFrameworks.frameworks.put);
-    routeFrameworks.delete(PATH_INDEX, requireAuthentication, controllerFrameworks.frameworks.delete);
+    routeFrameworks.post(PATH_INDEX, requireRole(ROLE_MEMBER), controllerFrameworks.frameworks.post);
+    routeFrameworks.put(PATH_INDEX, requireRole(ROLE_MEMBER), controllerFrameworks.frameworks.put);
+    routeFrameworks.delete(PATH_INDEX, requireRole(ROLE_ADMIN), controllerFrameworks.frameworks.delete);
     routeFrameworks.get(PATH_INDEX + ':' + PARAM_ID_FRAMEWORK, controllerFrameworks.framework.get);
-    routeFrameworks.post(PATH_INDEX + ':' + PARAM_ID_FRAMEWORK, requireAuthentication, controllerFrameworks.framework.post);
-    routeFrameworks.put(PATH_INDEX + ':' + PARAM_ID_FRAMEWORK, requireAuthentication, controllerFrameworks.framework.put);
-    routeFrameworks.delete(PATH_INDEX + ':' + PARAM_ID_FRAMEWORK, requireAuthentication, controllerFrameworks.framework.delete);
+    routeFrameworks.post(PATH_INDEX + ':' + PARAM_ID_FRAMEWORK, requireRole(ROLE_MEMBER), controllerFrameworks.framework.post);
+    routeFrameworks.put(PATH_INDEX + ':' + PARAM_ID_FRAMEWORK, requireRole(ROLE_MEMBER), controllerFrameworks.framework.put);
+    routeFrameworks.delete(PATH_INDEX + ':' + PARAM_ID_FRAMEWORK, requireRole(ROLE_MEMBER), controllerFrameworks.framework.delete);
 
     //= ========================
     // Framework Tag Routes
@@ -206,13 +206,13 @@ module.exports = function (app) {
     app.use(PATH_FRAMEWORK_TAGS, routeFrameworkTags);
 
     routeFrameworkTags.get(PATH_INDEX, controllerFrameworkTags.frameworkTags.get);
-    routeFrameworkTags.post(PATH_INDEX, requireAuthentication, controllerFrameworkTags.frameworkTags.post);
-    routeFrameworkTags.put(PATH_INDEX, requireAuthentication, controllerFrameworkTags.frameworkTags.put);
-    routeFrameworkTags.delete(PATH_INDEX, requireAuthentication, controllerFrameworkTags.frameworkTags.delete);
+    routeFrameworkTags.post(PATH_INDEX, requireRole(ROLE_MEMBER), controllerFrameworkTags.frameworkTags.post);
+    routeFrameworkTags.put(PATH_INDEX, requireRole(ROLE_MEMBER), controllerFrameworkTags.frameworkTags.put);
+    routeFrameworkTags.delete(PATH_INDEX, requireRole(ROLE_ADMIN), controllerFrameworkTags.frameworkTags.delete);
     routeFrameworkTags.get(PATH_INDEX + ':' + PARAM_ID_FRAMEWORK_TAG, controllerFrameworkTags.frameworkTag.get);
-    routeFrameworkTags.post(PATH_INDEX + ':' + PARAM_ID_FRAMEWORK_TAG, requireAuthentication, controllerFrameworkTags.frameworkTag.post);
-    routeFrameworkTags.put(PATH_INDEX + ':' + PARAM_ID_FRAMEWORK_TAG, requireAuthentication, controllerFrameworkTags.frameworkTag.put);
-    routeFrameworkTags.delete(PATH_INDEX + ':' + PARAM_ID_FRAMEWORK_TAG, requireAuthentication, controllerFrameworkTags.frameworkTag.delete);
+    routeFrameworkTags.post(PATH_INDEX + ':' + PARAM_ID_FRAMEWORK_TAG, requireRole(ROLE_MEMBER), controllerFrameworkTags.frameworkTag.post);
+    routeFrameworkTags.put(PATH_INDEX + ':' + PARAM_ID_FRAMEWORK_TAG, requireRole(ROLE_MEMBER), controllerFrameworkTags.frameworkTag.put);
+    routeFrameworkTags.delete(PATH_INDEX + ':' + PARAM_ID_FRAMEWORK_TAG, requireRole(ROLE_MEMBER), controllerFrameworkTags.frameworkTag.delete);
 
     //= ========================
     // Interest Routes
@@ -221,13 +221,13 @@ module.exports = function (app) {
     app.use(PATH_INTERESTS, routeInterests);
 
     routeInterests.get(PATH_INDEX, controllerInterests.interests.get);
-    routeInterests.post(PATH_INDEX, requireAuthentication, controllerInterests.interests.post);
-    routeInterests.put(PATH_INDEX, requireAuthentication, controllerInterests.interests.put);
-    routeInterests.delete(PATH_INDEX, requireAuthentication, controllerInterests.interests.delete);
+    routeInterests.post(PATH_INDEX, requireRole(ROLE_MEMBER), controllerInterests.interests.post);
+    routeInterests.put(PATH_INDEX, requireRole(ROLE_MEMBER), controllerInterests.interests.put);
+    routeInterests.delete(PATH_INDEX, requireRole(ROLE_ADMIN), controllerInterests.interests.delete);
     routeInterests.get(PATH_INDEX + ':' + PARAM_ID_INTEREST, controllerInterests.interest.get);
-    routeInterests.post(PATH_INDEX + ':' + PARAM_ID_INTEREST, requireAuthentication, controllerInterests.interest.post);
-    routeInterests.put(PATH_INDEX + ':' + PARAM_ID_INTEREST, requireAuthentication, controllerInterests.interest.put);
-    routeInterests.delete(PATH_INDEX + ':' + PARAM_ID_INTEREST, requireAuthentication, controllerInterests.interest.delete);
+    routeInterests.post(PATH_INDEX + ':' + PARAM_ID_INTEREST, requireRole(ROLE_MEMBER), controllerInterests.interest.post);
+    routeInterests.put(PATH_INDEX + ':' + PARAM_ID_INTEREST, requireRole(ROLE_MEMBER), controllerInterests.interest.put);
+    routeInterests.delete(PATH_INDEX + ':' + PARAM_ID_INTEREST, requireRole(ROLE_MEMBER), controllerInterests.interest.delete);
 
     //= ========================
     // Language Routes
@@ -236,13 +236,13 @@ module.exports = function (app) {
     app.use(PATH_LANGUAGES, routeLanguages);
 
     routeLanguages.get(PATH_INDEX, controllerLanguages.languages.get);
-    routeLanguages.post(PATH_INDEX, requireAuthentication, controllerLanguages.languages.post);
-    routeLanguages.put(PATH_INDEX, requireAuthentication, controllerLanguages.languages.put);
-    routeLanguages.delete(PATH_INDEX, requireAuthentication, controllerLanguages.languages.delete);
+    routeLanguages.post(PATH_INDEX, requireRole(ROLE_MEMBER), controllerLanguages.languages.post);
+    routeLanguages.put(PATH_INDEX, requireRole(ROLE_MEMBER), controllerLanguages.languages.put);
+    routeLanguages.delete(PATH_INDEX, requireRole(ROLE_ADMIN), controllerLanguages.languages.delete);
     routeLanguages.get(PATH_INDEX + ':' + PARAM_ID_LANGUAGE, controllerLanguages.language.get);
-    routeLanguages.post(PATH_INDEX + ':' + PARAM_ID_LANGUAGE, requireAuthentication, controllerLanguages.language.post);
-    routeLanguages.put(PATH_INDEX + ':' + PARAM_ID_LANGUAGE, requireAuthentication, controllerLanguages.language.put);
-    routeLanguages.delete(PATH_INDEX + ':' + PARAM_ID_LANGUAGE, requireAuthentication, controllerLanguages.language.delete);
+    routeLanguages.post(PATH_INDEX + ':' + PARAM_ID_LANGUAGE, requireRole(ROLE_MEMBER), controllerLanguages.language.post);
+    routeLanguages.put(PATH_INDEX + ':' + PARAM_ID_LANGUAGE, requireRole(ROLE_MEMBER), controllerLanguages.language.put);
+    routeLanguages.delete(PATH_INDEX + ':' + PARAM_ID_LANGUAGE, requireRole(ROLE_MEMBER), controllerLanguages.language.delete);
 
     //= ========================
     // Link Routes
@@ -251,13 +251,13 @@ module.exports = function (app) {
     app.use(PATH_LINKS, routeLinks);
 
     routeLinks.get(PATH_INDEX, controllerLinks.links.get);
-    routeLinks.post(PATH_INDEX, requireAuthentication, controllerLinks.links.post);
-    routeLinks.put(PATH_INDEX, requireAuthentication, controllerLinks.links.put);
-    routeLinks.delete(PATH_INDEX, requireAuthentication, controllerLinks.links.delete);
+    routeLinks.post(PATH_INDEX, requireRole(ROLE_MEMBER), controllerLinks.links.post);
+    routeLinks.put(PATH_INDEX, requireRole(ROLE_MEMBER), controllerLinks.links.put);
+    routeLinks.delete(PATH_INDEX, requireRole(ROLE_ADMIN), controllerLinks.links.delete);
     routeLinks.get(PATH_INDEX + ':' + PARAM_ID_LINK, controllerLinks.link.get);
-    routeLinks.post(PATH_INDEX + ':' + PARAM_ID_LINK, requireAuthentication, controllerLinks.link.post);
-    routeLinks.put(PATH_INDEX + ':' + PARAM_ID_LINK, requireAuthentication, controllerLinks.link.put);
-    routeLinks.delete(PATH_INDEX + ':' + PARAM_ID_LINK, requireAuthentication, controllerLinks.link.delete);
+    routeLinks.post(PATH_INDEX + ':' + PARAM_ID_LINK, requireRole(ROLE_MEMBER), controllerLinks.link.post);
+    routeLinks.put(PATH_INDEX + ':' + PARAM_ID_LINK, requireRole(ROLE_MEMBER), controllerLinks.link.put);
+    routeLinks.delete(PATH_INDEX + ':' + PARAM_ID_LINK, requireRole(ROLE_MEMBER), controllerLinks.link.delete);
 
     //= ========================
     // Link Tag Routes
@@ -266,13 +266,13 @@ module.exports = function (app) {
     app.use(PATH_LINK_TAGS, routeLinkTags);
 
     routeLinkTags.get(PATH_INDEX, controllerLinkTags.linkTags.get);
-    routeLinkTags.post(PATH_INDEX, requireAuthentication, controllerLinkTags.linkTags.post);
-    routeLinkTags.put(PATH_INDEX, requireAuthentication, controllerLinkTags.linkTags.put);
-    routeLinkTags.delete(PATH_INDEX, requireAuthentication, controllerLinkTags.linkTags.delete);
+    routeLinkTags.post(PATH_INDEX, requireRole(ROLE_MEMBER), controllerLinkTags.linkTags.post);
+    routeLinkTags.put(PATH_INDEX, requireRole(ROLE_MEMBER), controllerLinkTags.linkTags.put);
+    routeLinkTags.delete(PATH_INDEX, requireRole(ROLE_ADMIN), controllerLinkTags.linkTags.delete);
     routeLinkTags.get(PATH_INDEX + ':' + PARAM_ID_LINK_TAG, controllerLinkTags.linkTag.get);
-    routeLinkTags.post(PATH_INDEX + ':' + PARAM_ID_LINK_TAG, requireAuthentication, controllerLinkTags.linkTag.post);
-    routeLinkTags.put(PATH_INDEX + ':' + PARAM_ID_LINK_TAG, requireAuthentication, controllerLinkTags.linkTag.put);
-    routeLinkTags.delete(PATH_INDEX + ':' + PARAM_ID_LINK_TAG, requireAuthentication, controllerLinkTags.linkTag.delete);
+    routeLinkTags.post(PATH_INDEX + ':' + PARAM_ID_LINK_TAG, requireRole(ROLE_MEMBER), controllerLinkTags.linkTag.post);
+    routeLinkTags.put(PATH_INDEX + ':' + PARAM_ID_LINK_TAG, requireRole(ROLE_MEMBER), controllerLinkTags.linkTag.put);
+    routeLinkTags.delete(PATH_INDEX + ':' + PARAM_ID_LINK_TAG, requireRole(ROLE_MEMBER), controllerLinkTags.linkTag.delete);
 
     //= ========================
     // Operating System Routes
@@ -281,13 +281,13 @@ module.exports = function (app) {
     app.use(PATH_OPERATING_SYSTEMS, routeOperatingSystems);
 
     routeOperatingSystems.get(PATH_INDEX, controllerOperatingSystems.operatingSystems.get);
-    routeOperatingSystems.post(PATH_INDEX, requireAuthentication, controllerOperatingSystems.operatingSystems.post);
-    routeOperatingSystems.put(PATH_INDEX, requireAuthentication, controllerOperatingSystems.operatingSystems.put);
-    routeOperatingSystems.delete(PATH_INDEX, requireAuthentication, controllerOperatingSystems.operatingSystems.delete);
+    routeOperatingSystems.post(PATH_INDEX, requireRole(ROLE_MEMBER), controllerOperatingSystems.operatingSystems.post);
+    routeOperatingSystems.put(PATH_INDEX, requireRole(ROLE_MEMBER), controllerOperatingSystems.operatingSystems.put);
+    routeOperatingSystems.delete(PATH_INDEX, requireRole(ROLE_ADMIN), controllerOperatingSystems.operatingSystems.delete);
     routeOperatingSystems.get(PATH_INDEX + ':' + PARAM_ID_OPERATING_SYSTEM, controllerOperatingSystems.operatingSystem.get);
-    routeOperatingSystems.post(PATH_INDEX + ':' + PARAM_ID_OPERATING_SYSTEM, requireAuthentication, controllerOperatingSystems.operatingSystem.post);
-    routeOperatingSystems.put(PATH_INDEX + ':' + PARAM_ID_OPERATING_SYSTEM, requireAuthentication, controllerOperatingSystems.operatingSystem.put);
-    routeOperatingSystems.delete(PATH_INDEX + ':' + PARAM_ID_OPERATING_SYSTEM, requireAuthentication, controllerOperatingSystems.operatingSystem.delete);
+    routeOperatingSystems.post(PATH_INDEX + ':' + PARAM_ID_OPERATING_SYSTEM, requireRole(ROLE_MEMBER), controllerOperatingSystems.operatingSystem.post);
+    routeOperatingSystems.put(PATH_INDEX + ':' + PARAM_ID_OPERATING_SYSTEM, requireRole(ROLE_MEMBER), controllerOperatingSystems.operatingSystem.put);
+    routeOperatingSystems.delete(PATH_INDEX + ':' + PARAM_ID_OPERATING_SYSTEM, requireRole(ROLE_MEMBER), controllerOperatingSystems.operatingSystem.delete);
 
 
     //= ========================
@@ -297,13 +297,13 @@ module.exports = function (app) {
     app.use(PATH_PROFILES, routeProfiles);
 
     routeProfiles.get(PATH_INDEX, controllerProfiles.profiles.get);
-    routeProfiles.post(PATH_INDEX, requireAuthentication, controllerProfiles.profiles.post);
-    routeProfiles.put(PATH_INDEX, requireAuthentication, controllerProfiles.profiles.put);
-    routeProfiles.delete(PATH_INDEX, requireAuthentication, controllerProfiles.profiles.delete);
+    routeProfiles.post(PATH_INDEX, requireRole(ROLE_MEMBER), controllerProfiles.profiles.post);
+    routeProfiles.put(PATH_INDEX, requireRole(ROLE_MEMBER), controllerProfiles.profiles.put);
+    routeProfiles.delete(PATH_INDEX, requireRole(ROLE_ADMIN), controllerProfiles.profiles.delete);
     routeProfiles.get(PATH_INDEX + ':' + PARAM_ID_PROFILE, controllerProfiles.profile.get);
-    routeProfiles.post(PATH_INDEX + ':' + PARAM_ID_PROFILE, requireAuthentication, controllerProfiles.profile.post);
-    routeProfiles.put(PATH_INDEX + ':' + PARAM_ID_PROFILE, requireAuthentication, controllerProfiles.profile.put);
-    routeProfiles.delete(PATH_INDEX + ':' + PARAM_ID_PROFILE, requireAuthentication, controllerProfiles.profile.delete);
+    routeProfiles.post(PATH_INDEX + ':' + PARAM_ID_PROFILE, requireRole(ROLE_MEMBER), controllerProfiles.profile.post);
+    routeProfiles.put(PATH_INDEX + ':' + PARAM_ID_PROFILE, requireRole(ROLE_MEMBER), controllerProfiles.profile.put);
+    routeProfiles.delete(PATH_INDEX + ':' + PARAM_ID_PROFILE, requireRole(ROLE_MEMBER), controllerProfiles.profile.delete);
 
     //= ========================
     // Programming Languages Routes
@@ -312,13 +312,13 @@ module.exports = function (app) {
     app.use(PATH_PROGRAMMING_LANGUAGES, routeProgrammingLanguages);
 
     routeProgrammingLanguages.get(PATH_INDEX, controllerProgrammingLanguages.programmingLanguages.get);
-    routeProgrammingLanguages.post(PATH_INDEX, requireAuthentication, controllerProgrammingLanguages.programmingLanguages.post);
-    routeProgrammingLanguages.put(PATH_INDEX, requireAuthentication, controllerProgrammingLanguages.programmingLanguages.put);
-    routeProgrammingLanguages.delete(PATH_INDEX, requireAuthentication, controllerProgrammingLanguages.programmingLanguages.delete);
+    routeProgrammingLanguages.post(PATH_INDEX, requireRole(ROLE_MEMBER), controllerProgrammingLanguages.programmingLanguages.post);
+    routeProgrammingLanguages.put(PATH_INDEX, requireRole(ROLE_MEMBER), controllerProgrammingLanguages.programmingLanguages.put);
+    routeProgrammingLanguages.delete(PATH_INDEX, requireRole(ROLE_ADMIN), controllerProgrammingLanguages.programmingLanguages.delete);
     routeProgrammingLanguages.get(PATH_INDEX + ':' + PARAM_ID_PROGRAMMING_LANGUAGE, controllerProgrammingLanguages.programmingLanguage.get);
-    routeProgrammingLanguages.post(PATH_INDEX + ':' + PARAM_ID_PROGRAMMING_LANGUAGE, requireAuthentication, controllerProgrammingLanguages.programmingLanguage.post);
-    routeProgrammingLanguages.put(PATH_INDEX + ':' + PARAM_ID_PROGRAMMING_LANGUAGE, requireAuthentication, controllerProgrammingLanguages.programmingLanguage.put);
-    routeProgrammingLanguages.delete(PATH_INDEX + ':' + PARAM_ID_PROGRAMMING_LANGUAGE, requireAuthentication, controllerProgrammingLanguages.programmingLanguage.delete);
+    routeProgrammingLanguages.post(PATH_INDEX + ':' + PARAM_ID_PROGRAMMING_LANGUAGE, requireRole(ROLE_MEMBER), controllerProgrammingLanguages.programmingLanguage.post);
+    routeProgrammingLanguages.put(PATH_INDEX + ':' + PARAM_ID_PROGRAMMING_LANGUAGE, requireRole(ROLE_MEMBER), controllerProgrammingLanguages.programmingLanguage.put);
+    routeProgrammingLanguages.delete(PATH_INDEX + ':' + PARAM_ID_PROGRAMMING_LANGUAGE, requireRole(ROLE_MEMBER), controllerProgrammingLanguages.programmingLanguage.delete);
 
     //= ========================
     // Project Routes
@@ -327,13 +327,13 @@ module.exports = function (app) {
     app.use(PATH_PROJECTS, routeProjects);
 
     routeProjects.get(PATH_INDEX, controllerProjects.projects.get);
-    routeProjects.post(PATH_INDEX, requireAuthentication, controllerProjects.projects.post);
-    routeProjects.put(PATH_INDEX, requireAuthentication, controllerProjects.projects.put);
-    routeProjects.delete(PATH_INDEX, requireAuthentication, controllerProjects.projects.delete);
+    routeProjects.post(PATH_INDEX, requireRole(ROLE_MEMBER), controllerProjects.projects.post);
+    routeProjects.put(PATH_INDEX, requireRole(ROLE_MEMBER), controllerProjects.projects.put);
+    routeProjects.delete(PATH_INDEX, requireRole(ROLE_ADMIN), controllerProjects.projects.delete);
     routeProjects.get(PATH_INDEX + ':' + PARAM_ID_PROJECT, controllerProjects.project.get);
-    routeProjects.post(PATH_INDEX + ':' + PARAM_ID_PROJECT, requireAuthentication, controllerProjects.project.post);
-    routeProjects.put(PATH_INDEX + ':' + PARAM_ID_PROJECT, requireAuthentication, controllerProjects.project.put);
-    routeProjects.delete(PATH_INDEX + ':' + PARAM_ID_PROJECT, requireAuthentication, controllerProjects.project.delete);
+    routeProjects.post(PATH_INDEX + ':' + PARAM_ID_PROJECT, requireRole(ROLE_MEMBER), controllerProjects.project.post);
+    routeProjects.put(PATH_INDEX + ':' + PARAM_ID_PROJECT, requireRole(ROLE_MEMBER), controllerProjects.project.put);
+    routeProjects.delete(PATH_INDEX + ':' + PARAM_ID_PROJECT, requireRole(ROLE_MEMBER), controllerProjects.project.delete);
 
     //= ========================
     // Project Tag Routes
@@ -342,13 +342,13 @@ module.exports = function (app) {
     app.use(PATH_PROJECT_TAGS, routeProjectTags);
 
     routeProjectTags.get(PATH_INDEX, controllerProjectTags.projectTags.get);
-    routeProjectTags.post(PATH_INDEX, requireAuthentication, controllerProjectTags.projectTags.post);
-    routeProjectTags.put(PATH_INDEX, requireAuthentication, controllerProjectTags.projectTags.put);
-    routeProjectTags.delete(PATH_INDEX, requireAuthentication, controllerProjectTags.projectTags.delete);
+    routeProjectTags.post(PATH_INDEX, requireRole(ROLE_MEMBER), controllerProjectTags.projectTags.post);
+    routeProjectTags.put(PATH_INDEX, requireRole(ROLE_MEMBER), controllerProjectTags.projectTags.put);
+    routeProjectTags.delete(PATH_INDEX, requireRole(ROLE_ADMIN), controllerProjectTags.projectTags.delete);
     routeProjectTags.get(PATH_INDEX + ':' + PARAM_ID_PROJECT_TAG, controllerProjectTags.projectTag.get);
-    routeProjectTags.post(PATH_INDEX + ':' + PARAM_ID_PROJECT_TAG, requireAuthentication, controllerProjectTags.projectTag.post);
-    routeProjectTags.put(PATH_INDEX + ':' + PARAM_ID_PROJECT_TAG, requireAuthentication, controllerProjectTags.projectTag.put);
-    routeProjectTags.delete(PATH_INDEX + ':' + PARAM_ID_PROJECT_TAG, requireAuthentication, controllerProjectTags.projectTag.delete);
+    routeProjectTags.post(PATH_INDEX + ':' + PARAM_ID_PROJECT_TAG, requireRole(ROLE_MEMBER), controllerProjectTags.projectTag.post);
+    routeProjectTags.put(PATH_INDEX + ':' + PARAM_ID_PROJECT_TAG, requireRole(ROLE_MEMBER), controllerProjectTags.projectTag.put);
+    routeProjectTags.delete(PATH_INDEX + ':' + PARAM_ID_PROJECT_TAG, requireRole(ROLE_MEMBER), controllerProjectTags.projectTag.delete);
 
     //= ========================
     // Software Framework Routes
@@ -357,13 +357,13 @@ module.exports = function (app) {
     app.use(PATH_SOFTWARE_FRAMEWORKS, routeSoftwareFrameworks);
 
     routeSoftwareFrameworks.get(PATH_INDEX, controllerSoftwareFrameworks.softwareFrameworks.get);
-    routeSoftwareFrameworks.post(PATH_INDEX, requireAuthentication, controllerSoftwareFrameworks.softwareFrameworks.post);
-    routeSoftwareFrameworks.put(PATH_INDEX, requireAuthentication, controllerSoftwareFrameworks.softwareFrameworks.put);
-    routeSoftwareFrameworks.delete(PATH_INDEX, requireAuthentication, controllerSoftwareFrameworks.softwareFrameworks.delete);
+    routeSoftwareFrameworks.post(PATH_INDEX, requireRole(ROLE_MEMBER), controllerSoftwareFrameworks.softwareFrameworks.post);
+    routeSoftwareFrameworks.put(PATH_INDEX, requireRole(ROLE_MEMBER), controllerSoftwareFrameworks.softwareFrameworks.put);
+    routeSoftwareFrameworks.delete(PATH_INDEX, requireRole(ROLE_ADMIN), controllerSoftwareFrameworks.softwareFrameworks.delete);
     routeSoftwareFrameworks.get(PATH_INDEX + ':' + PARAM_ID_SOFTWARE_FRAMEWORK, controllerSoftwareFrameworks.softwareFramework.get);
-    routeSoftwareFrameworks.post(PATH_INDEX + ':' + PARAM_ID_SOFTWARE_FRAMEWORK, requireAuthentication, controllerSoftwareFrameworks.softwareFramework.post);
-    routeSoftwareFrameworks.put(PATH_INDEX + ':' + PARAM_ID_SOFTWARE_FRAMEWORK, requireAuthentication, controllerSoftwareFrameworks.softwareFramework.put);
-    routeSoftwareFrameworks.delete(PATH_INDEX + ':' + PARAM_ID_SOFTWARE_FRAMEWORK, requireAuthentication, controllerSoftwareFrameworks.softwareFramework.delete);
+    routeSoftwareFrameworks.post(PATH_INDEX + ':' + PARAM_ID_SOFTWARE_FRAMEWORK, requireRole(ROLE_MEMBER), controllerSoftwareFrameworks.softwareFramework.post);
+    routeSoftwareFrameworks.put(PATH_INDEX + ':' + PARAM_ID_SOFTWARE_FRAMEWORK, requireRole(ROLE_MEMBER), controllerSoftwareFrameworks.softwareFramework.put);
+    routeSoftwareFrameworks.delete(PATH_INDEX + ':' + PARAM_ID_SOFTWARE_FRAMEWORK, requireRole(ROLE_MEMBER), controllerSoftwareFrameworks.softwareFramework.delete);
 
     //= ========================
     // Software Routes
@@ -372,13 +372,13 @@ module.exports = function (app) {
     app.use(PATH_SOFTWARES, routeSoftwares);
 
     routeSoftwares.get(PATH_INDEX, controllerSoftwares.softwares.get);
-    routeSoftwares.post(PATH_INDEX, requireAuthentication, controllerSoftwares.softwares.post);
-    routeSoftwares.put(PATH_INDEX, requireAuthentication, controllerSoftwares.softwares.put);
-    routeSoftwares.delete(PATH_INDEX, requireAuthentication, controllerSoftwares.softwares.delete);
+    routeSoftwares.post(PATH_INDEX, requireRole(ROLE_MEMBER), controllerSoftwares.softwares.post);
+    routeSoftwares.put(PATH_INDEX, requireRole(ROLE_MEMBER), controllerSoftwares.softwares.put);
+    routeSoftwares.delete(PATH_INDEX, requireRole(ROLE_ADMIN), controllerSoftwares.softwares.delete);
     routeSoftwares.get(PATH_INDEX + ':' + PARAM_ID_SOFTWARE, controllerSoftwares.software.get);
-    routeSoftwares.post(PATH_INDEX + ':' + PARAM_ID_SOFTWARE, requireAuthentication, controllerSoftwares.software.post);
-    routeSoftwares.put(PATH_INDEX + ':' + PARAM_ID_SOFTWARE, requireAuthentication, controllerSoftwares.software.put);
-    routeSoftwares.delete(PATH_INDEX + ':' + PARAM_ID_SOFTWARE, requireAuthentication, controllerSoftwares.software.delete);
+    routeSoftwares.post(PATH_INDEX + ':' + PARAM_ID_SOFTWARE, requireRole(ROLE_MEMBER), controllerSoftwares.software.post);
+    routeSoftwares.put(PATH_INDEX + ':' + PARAM_ID_SOFTWARE, requireRole(ROLE_MEMBER), controllerSoftwares.software.put);
+    routeSoftwares.delete(PATH_INDEX + ':' + PARAM_ID_SOFTWARE, requireRole(ROLE_MEMBER), controllerSoftwares.software.delete);
 
     //= ========================
     // Software Tag Routes
@@ -387,13 +387,13 @@ module.exports = function (app) {
     app.use(PATH_SOFTWARE_TAGS, routeSoftwareTags);
 
     routeSoftwareTags.get(PATH_INDEX, controllerSoftwareTags.softwareTags.get);
-    routeSoftwareTags.post(PATH_INDEX, requireAuthentication, controllerSoftwareTags.softwareTags.post);
-    routeSoftwareTags.put(PATH_INDEX, requireAuthentication, controllerSoftwareTags.softwareTags.put);
-    routeSoftwareTags.delete(PATH_INDEX, requireAuthentication, controllerSoftwareTags.softwareTags.delete);
+    routeSoftwareTags.post(PATH_INDEX, requireRole(ROLE_MEMBER), controllerSoftwareTags.softwareTags.post);
+    routeSoftwareTags.put(PATH_INDEX, requireRole(ROLE_MEMBER), controllerSoftwareTags.softwareTags.put);
+    routeSoftwareTags.delete(PATH_INDEX, requireRole(ROLE_ADMIN), controllerSoftwareTags.softwareTags.delete);
     routeSoftwareTags.get(PATH_INDEX + ':' + PARAM_ID_SOFTWARE_TAG, controllerSoftwareTags.softwareTag.get);
-    routeSoftwareTags.post(PATH_INDEX + ':' + PARAM_ID_SOFTWARE_TAG, requireAuthentication, controllerSoftwareTags.softwareTag.post);
-    routeSoftwareTags.put(PATH_INDEX + ':' + PARAM_ID_SOFTWARE_TAG, requireAuthentication, controllerSoftwareTags.softwareTag.put);
-    routeSoftwareTags.delete(PATH_INDEX + ':' + PARAM_ID_SOFTWARE_TAG, requireAuthentication, controllerSoftwareTags.softwareTag.delete);
+    routeSoftwareTags.post(PATH_INDEX + ':' + PARAM_ID_SOFTWARE_TAG, requireRole(ROLE_MEMBER), controllerSoftwareTags.softwareTag.post);
+    routeSoftwareTags.put(PATH_INDEX + ':' + PARAM_ID_SOFTWARE_TAG, requireRole(ROLE_MEMBER), controllerSoftwareTags.softwareTag.put);
+    routeSoftwareTags.delete(PATH_INDEX + ':' + PARAM_ID_SOFTWARE_TAG, requireRole(ROLE_MEMBER), controllerSoftwareTags.softwareTag.delete);
 
     //= ========================
     // User Routes
@@ -402,9 +402,9 @@ module.exports = function (app) {
     app.use(PATH_USERS, routeUsers);
 
     routeUsers.get(PATH_INDEX, requireRole(ROLE_ADMIN), controllerUsers.users.get);
-    routeUsers.post(PATH_INDEX, requireRole(ROLE_ADMIN), requireAuthentication, controllerUsers.users.post);
-    routeUsers.put(PATH_INDEX, requireRole(ROLE_ADMIN), requireAuthentication, controllerUsers.users.put);
-    routeUsers.delete(PATH_INDEX, requireRole(ROLE_ADMIN), requireAuthentication, controllerUsers.users.delete);
+    routeUsers.post(PATH_INDEX, requireRole(ROLE_ADMIN), controllerUsers.users.post);
+    routeUsers.put(PATH_INDEX, requireRole(ROLE_ADMIN), controllerUsers.users.put);
+    routeUsers.delete(PATH_INDEX, requireRole(ROLE_ADMIN), controllerUsers.users.delete);
     routeUsers.get(PATH_INDEX + ':' + PARAM_ID_USER, requireUserOwner, controllerUsers.user.get);
     routeUsers.post(PATH_INDEX + ':' + PARAM_ID_USER, requireUserOwner, controllerUsers.user.post);
     routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER, requireUserOwner, controllerUsers.user.put);
