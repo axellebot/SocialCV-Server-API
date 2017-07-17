@@ -1,6 +1,10 @@
+"use strict";
+
 var getPagination = require("../helpers").getPagination;
 
 const Framework = require('../models/framework.schema');
+
+const PARAM_ID = global.constants.PARAM.PARAM_ID_FRAMEWORK;
 
 /* Frameworks page. */
 exports.frameworks = {};
@@ -33,7 +37,7 @@ exports.frameworks.delete = function (req, res, next) {
 exports.framework = {};
 exports.framework.get = function (req, res, next) {
     Framework
-        .findById(req.params.id)
+        .findById(req.params[PARAM_ID])
         .exec(function (err, framework) {
             if (err) return next(err);
             res.json({data: framework});

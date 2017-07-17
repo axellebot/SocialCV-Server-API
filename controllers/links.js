@@ -1,6 +1,10 @@
+"use strict";
+
 var getPagination = require("../helpers").getPagination;
 
 const Link = require('../models/link.schema');
+
+const PARAM_ID = global.constants.PARAM.PARAM_ID_LINK;
 
 /* Links page. */
 exports.links = {};
@@ -33,7 +37,7 @@ exports.links.delete = function (req, res, next) {
 exports.link = {};
 exports.link.get = function (req, res, next) {
     Link
-        .findById(req.params.id)
+        .findById(req.params[PARAM_ID])
         .exec(function (err, link) {
             if (err) return next(err);
             res.json({data: link});

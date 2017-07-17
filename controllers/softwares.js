@@ -1,6 +1,10 @@
+"use strict";
+
 var getPagination = require("../helpers").getPagination;
 
 const Software = require('../models/software.schema');
+
+const PARAM_ID = global.constants.PARAM.PARAM_ID_SOFTWARE;
 
 /* Softwares page. */
 exports.softwares = {};
@@ -33,7 +37,7 @@ exports.softwares.delete = function (req, res, next) {
 exports.software = {};
 exports.software.get = function (req, res, next) {
     Software
-        .findById(req.params.id)
+        .findById(req.params[PARAM_ID])
         .exec(function (err, software) {
             if (err) return next(err);
             res.json({data: software});

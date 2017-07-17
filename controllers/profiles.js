@@ -1,6 +1,10 @@
+"use strict";
+
 var getPagination = require("../helpers").getPagination;
 
 const Profile = require('../models/profile.schema');
+
+const PARAM_ID = global.constants.PARAM.PARAM_ID_PROFILE;
 
 /* Profiles page. */
 exports.profiles = {};
@@ -33,7 +37,7 @@ exports.profiles.delete = function (req, res, next) {
 exports.profile = {};
 exports.profile.get = function (req, res, next) {
     Profile
-        .findById(req.params.id)
+        .findById(req.params[PARAM_ID])
         .exec(function (err, profile) {
             if (err) return next(err);
             res.json({data: profile});

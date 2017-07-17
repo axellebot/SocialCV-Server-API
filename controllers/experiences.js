@@ -1,6 +1,10 @@
+"use strict";
+
 var getPagination = require("../helpers").getPagination;
 
 const Experience = require('../models/experience.schema');
+
+const PARAM_ID = global.constants.PARAM.PARAM_ID_EXPERIENCE;
 
 /* Experiences page. */
 exports.experiences = {};
@@ -33,7 +37,7 @@ exports.experiences.delete = function (req, res, next) {
 exports.experience = {};
 exports.experience.get = function (req, res, next) {
     Experience
-        .findById(req.params.id)
+        .findById(req.params[PARAM_ID])
         .exec(function (err, experience) {
             if (err) return next(err);
             res.json({data: experience});

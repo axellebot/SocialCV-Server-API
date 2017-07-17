@@ -1,6 +1,10 @@
+"use strict";
+
 var getPagination = require("../helpers").getPagination;
 
 const Education = require('../models/education.schema');
+
+const PARAM_ID = global.constants.PARAM.PARAM_ID_EDUCATION;
 
 /* Educations page. */
 exports.educations = {};
@@ -34,7 +38,7 @@ exports.educations.delete = function (req, res, next) {
 exports.education = {};
 exports.education.get = function (req, res, next) {
     Education
-        .findById(req.params.id)
+        .findById(req.params[PARAM_ID])
         .exec(function (err, education) {
             if (err) return next(err);
             res.json({data: education});

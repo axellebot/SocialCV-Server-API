@@ -1,6 +1,10 @@
+"use strict";
+
 var getPagination = require("../helpers").getPagination;
 
 const ComputingTag = require('../models/computingTag.schema');
+
+const PARAM_ID = global.constants.PARAM.PARAM_ID_COMPUTING_TAG;
 
 /* ComputingTags page. */
 exports.computingTags = {};
@@ -34,7 +38,7 @@ exports.computingTags.delete = function (req, res, next) {
 exports.computingTag = {};
 exports.computingTag.get = function (req, res, next) {
     ComputingTag
-        .findById(req.params.id)
+        .findById(req.params[PARAM_ID])
         .exec(function (err, computingTag) {
             if (err) return next(err);
             res.json({data: computingTag});

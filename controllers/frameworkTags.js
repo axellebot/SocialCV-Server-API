@@ -1,6 +1,10 @@
+"use strict";
+
 var getPagination = require("../helpers").getPagination;
 
 const FrameworkTag = require('../models/frameworkTag.schema');
+
+const PARAM_ID = global.constants.PARAM.PARAM_ID_FRAMEWORK_TAG;
 
 /* FrameworkTags page. */
 exports.frameworkTags = {};
@@ -34,7 +38,7 @@ exports.frameworkTags.delete = function (req, res, next) {
 exports.frameworkTag = {};
 exports.frameworkTag.get = function (req, res, next) {
     FrameworkTag
-        .findById(req.params.id)
+        .findById(req.params[PARAM_ID])
         .exec(function (err, FrameworkTag) {
             if (err) return next(err);
             res.json({data: FrameworkTag});

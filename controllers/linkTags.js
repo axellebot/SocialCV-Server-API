@@ -1,6 +1,10 @@
+"use strict";
+
 var getPagination = require("../helpers").getPagination;
 
 const LinkTag = require('../models/linkTag.schema');
+
+const PARAM_ID = global.constants.PARAM.PARAM_ID_LINK_TAG;
 
 /* Links page. */
 exports.linkTags = {};
@@ -34,7 +38,7 @@ exports.linkTags.delete = function (req, res, next) {
 exports.linkTag = {};
 exports.linkTag.get = function (req, res, next) {
     LinkTag
-        .findById(req.params.id)
+        .findById(req.params[PARAM_ID])
         .exec(function (err, linkTag) {
             if (err) return next(err);
             res.json({data: linkTag});

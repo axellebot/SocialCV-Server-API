@@ -1,6 +1,10 @@
+"use strict";
+
 var getPagination = require("../../helpers").getPagination;
 
 const User = require('../../models/user.schema');
+
+const PARAM_ID = global.constants.PARAM.PARAM_ID_USER;
 
 /* users page. */
 exports.users = {};
@@ -33,7 +37,7 @@ exports.users.delete = function (req, res, next) {
 exports.user = {};
 exports.user.get = function (req, res, next) {
     User
-        .findById(req.params.id)
+        .findById(req.params[PARAM_ID])
         .exec(function (err, user) {
             if (err) return next(err);
             res.json({data: user});

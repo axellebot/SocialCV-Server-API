@@ -1,13 +1,17 @@
+"use strict";
+
 var getPagination = require("../../helpers").getPagination;
 
 const OperatingSystem = require('../../models/operatingSystem.schema');
+
+const PARAM_ID = global.constants.PARAM.PARAM_ID_USER;
 
 /* OperatingSystems page. */
 exports.get = function (req, res, next) {
     //TODO : OperatingSystems - Handle options
     var pagination = getPagination(req);
     OperatingSystem
-        .find({user: req.params.id})
+        .find({user: req.params[PARAM_ID]})
         .limit(pagination.limit)
         .skip(pagination.skip)
         .exec(function (err, operatingSystems) {
@@ -17,13 +21,13 @@ exports.get = function (req, res, next) {
 };
 exports.post = function (req, res, next) {
     //TODO : OperatingSystems - Create operatingSystem for user
-    res.status(404).send('Create a new OperatingSystem for user : '+req.params.id);
+    res.status(404).send('Create a new OperatingSystem for user : '+req.params[PARAM_ID]);
 };
 exports.put = function (req, res, next) {
     //TODO : OperatingSystems - Add Bulk update for user
-    res.status(404).send('Bulk update of operatingSystems for user : '+req.params.id);
+    res.status(404).send('Bulk update of operatingSystems for user : '+req.params[PARAM_ID]);
 };
 exports.delete = function (req, res, next) {
     //TODO : OperatingSystems - Remove all operatingSystems for user
-    res.status(404).send('Remove all operatingSystems for user : '+req.params.id);
+    res.status(404).send('Remove all operatingSystems for user : '+req.params[PARAM_ID]);
 };

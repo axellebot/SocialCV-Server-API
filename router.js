@@ -1,3 +1,5 @@
+"use strict";
+
 const express = require('express');
 const requireRole = require('./middlewares/requireRole');
 
@@ -55,6 +57,26 @@ const PATH_INDEX = global.constants.PATH.PATH_INDEX,
     PATH_SOFTWARE_TAGS = global.constants.PATH.PATH_SOFTWARE_TAGS,
     PATH_USERS = global.constants.PATH.PATH_USERS;
 
+const PARAM_ID_COMPUTING_TAG = global.constants.PARAM.PARAM_ID_COMPUTING_TAG,
+    PARAM_ID_EDUCATION = global.constants.PARAM.PARAM_ID_EDUCATION,
+    PARAM_ID_ENTITY = global.constants.PARAM.PARAM_ID_ENTITY,
+    PARAM_ID_EXPERIENCE = global.constants.PARAM.PARAM_ID_EXPERIENCE,
+    PARAM_ID_FRAMEWORK = global.constants.PARAM.PARAM_ID_FRAMEWORK,
+    PARAM_ID_FRAMEWORK_TAG = global.constants.PARAM.PARAM_ID_FRAMEWORK_TAG,
+    PARAM_ID_INTEREST = global.constants.PARAM.PARAM_ID_INTEREST,
+    PARAM_ID_LANGUAGE = global.constants.PARAM.PARAM_ID_LANGUAGE,
+    PARAM_ID_LINK = global.constants.PARAM.PARAM_ID_LINK,
+    PARAM_ID_LINK_TAG = global.constants.PARAM.PARAM_ID_LINK_TAG,
+    PARAM_ID_OPERATING_SYSTEM = global.constants.PARAM.PARAM_ID_OPERATING_SYSTEM,
+    PARAM_ID_PROFILE = global.constants.PARAM.PARAM_ID_PROFILE,
+    PARAM_ID_PROGRAMMING_LANGUAGE = global.constants.PARAM.PARAM_ID_PROGRAMMING_LANGUAGE,
+    PARAM_ID_PROJECT = global.constants.PARAM.PARAM_ID_PROJECT,
+    PARAM_ID_PROJECT_TAG = global.constants.PARAM.PARAM_ID_PROJECT_TAG,
+    PARAM_ID_SOFTWARE_FRAMEWORK = global.constants.PARAM.PARAM_ID_SOFTWARE_FRAMEWORK,
+    PARAM_ID_SOFTWARE = global.constants.PARAM.PARAM_ID_SOFTWARE,
+    PARAM_ID_SOFTWARE_TAG = global.constants.PARAM.PARAM_ID_SOFTWARE_TAG,
+    PARAM_ID_USER = global.constants.PARAM.PARAM_ID_USER;
+
 module.exports = function (app) {
     // Routes
     const
@@ -103,14 +125,14 @@ module.exports = function (app) {
 
     app.use(PATH_COMPUTING_TAGS, routeComputingTags);
 
-    routeComputingTags.get('/', controllerComputingTags.computingTags.get);
-    routeComputingTags.post('/', controllerComputingTags.computingTags.post);
-    routeComputingTags.put('/', controllerComputingTags.computingTags.put);
-    routeComputingTags.delete('/', controllerComputingTags.computingTags.delete);
-    routeComputingTags.get('/:id', controllerComputingTags.computingTag.get);
-    routeComputingTags.post('/:id', controllerComputingTags.computingTag.post);
-    routeComputingTags.put('/:id', controllerComputingTags.computingTag.put);
-    routeComputingTags.delete('/:id', controllerComputingTags.computingTag.delete);
+    routeComputingTags.get(PATH_INDEX, controllerComputingTags.computingTags.get);
+    routeComputingTags.post(PATH_INDEX, controllerComputingTags.computingTags.post);
+    routeComputingTags.put(PATH_INDEX, controllerComputingTags.computingTags.put);
+    routeComputingTags.delete(PATH_INDEX, controllerComputingTags.computingTags.delete);
+    routeComputingTags.get(PATH_INDEX + ':' + PARAM_ID_COMPUTING_TAG, controllerComputingTags.computingTag.get);
+    routeComputingTags.post(PATH_INDEX + ':' + PARAM_ID_COMPUTING_TAG, controllerComputingTags.computingTag.post);
+    routeComputingTags.put(PATH_INDEX + ':' + PARAM_ID_COMPUTING_TAG, controllerComputingTags.computingTag.put);
+    routeComputingTags.delete(PATH_INDEX + ':' + PARAM_ID_COMPUTING_TAG, controllerComputingTags.computingTag.delete);
 
     //= ========================
     // Education Routes
@@ -118,14 +140,14 @@ module.exports = function (app) {
 
     app.use(PATH_EDUCATIONS, routeEducations);
 
-    routeEducations.get('/', controllerEducations.educations.get);
-    routeEducations.post('/', controllerEducations.educations.post);
-    routeEducations.put('/', controllerEducations.educations.put);
-    routeEducations.delete('/', controllerEducations.educations.delete);
-    routeEducations.get('/:id', controllerEducations.education.get);
-    routeEducations.post('/:id', controllerEducations.education.post);
-    routeEducations.put('/:id', controllerEducations.education.put);
-    routeEducations.delete('/:id', controllerEducations.education.delete);
+    routeEducations.get(PATH_INDEX, controllerEducations.educations.get);
+    routeEducations.post(PATH_INDEX, controllerEducations.educations.post);
+    routeEducations.put(PATH_INDEX, controllerEducations.educations.put);
+    routeEducations.delete(PATH_INDEX, controllerEducations.educations.delete);
+    routeEducations.get(PATH_INDEX + ':' + PARAM_ID_EDUCATION, controllerEducations.education.get);
+    routeEducations.post(PATH_INDEX + ':' + PARAM_ID_EDUCATION, controllerEducations.education.post);
+    routeEducations.put(PATH_INDEX + ':' + PARAM_ID_EDUCATION, controllerEducations.education.put);
+    routeEducations.delete(PATH_INDEX + ':' + PARAM_ID_EDUCATION, controllerEducations.education.delete);
 
     //= ========================
     // Entity Routes
@@ -133,14 +155,14 @@ module.exports = function (app) {
 
     app.use(PATH_ENTITIES, routeEntities);
 
-    routeEntities.get('/', controllerEntities.entities.get);
-    routeEntities.post('/', controllerEntities.entities.post);
-    routeEntities.put('/', controllerEntities.entities.put);
-    routeEntities.delete('/', controllerEntities.entities.delete);
-    routeEntities.get('/:id', controllerEntities.entity.get);
-    routeEntities.post('/:id', controllerEntities.entity.post);
-    routeEntities.put('/:id', controllerEntities.entity.put);
-    routeEntities.delete('/:id', controllerEntities.entity.delete);
+    routeEntities.get(PATH_INDEX, controllerEntities.entities.get);
+    routeEntities.post(PATH_INDEX, controllerEntities.entities.post);
+    routeEntities.put(PATH_INDEX, controllerEntities.entities.put);
+    routeEntities.delete(PATH_INDEX, controllerEntities.entities.delete);
+    routeEntities.get(PATH_INDEX + ':' + PARAM_ID_ENTITY, controllerEntities.entity.get);
+    routeEntities.post(PATH_INDEX + ':' + PARAM_ID_ENTITY, controllerEntities.entity.post);
+    routeEntities.put(PATH_INDEX + ':' + PARAM_ID_ENTITY, controllerEntities.entity.put);
+    routeEntities.delete(PATH_INDEX + ':' + PARAM_ID_ENTITY, controllerEntities.entity.delete);
 
     //= ========================
     // Experience Routes
@@ -148,14 +170,14 @@ module.exports = function (app) {
 
     app.use(PATH_EXPERIENCES, routeExperiences);
 
-    routeExperiences.get('/', controllerExperiences.experiences.get);
-    routeExperiences.post('/', controllerExperiences.experiences.post);
-    routeExperiences.put('/', controllerExperiences.experiences.put);
-    routeExperiences.delete('/', controllerExperiences.experiences.delete);
-    routeExperiences.get('/:id', controllerExperiences.experience.get);
-    routeExperiences.post('/:id', controllerExperiences.experience.post);
-    routeExperiences.put('/:id', controllerExperiences.experience.put);
-    routeExperiences.delete('/:id', controllerExperiences.experience.delete);
+    routeExperiences.get(PATH_INDEX, controllerExperiences.experiences.get);
+    routeExperiences.post(PATH_INDEX, controllerExperiences.experiences.post);
+    routeExperiences.put(PATH_INDEX, controllerExperiences.experiences.put);
+    routeExperiences.delete(PATH_INDEX, controllerExperiences.experiences.delete);
+    routeExperiences.get(PATH_INDEX + ':' + PARAM_ID_EXPERIENCE, controllerExperiences.experience.get);
+    routeExperiences.post(PATH_INDEX + ':' + PARAM_ID_EXPERIENCE, controllerExperiences.experience.post);
+    routeExperiences.put(PATH_INDEX + ':' + PARAM_ID_EXPERIENCE, controllerExperiences.experience.put);
+    routeExperiences.delete(PATH_INDEX + ':' + PARAM_ID_EXPERIENCE, controllerExperiences.experience.delete);
 
     //= ========================
     // Framework Routes
@@ -163,14 +185,14 @@ module.exports = function (app) {
 
     app.use(PATH_FRAMEWORKS, routeFrameworks);
 
-    routeFrameworks.get('/', controllerFrameworks.frameworks.get);
-    routeFrameworks.post('/', controllerFrameworks.frameworks.post);
-    routeFrameworks.put('/', controllerFrameworks.frameworks.put);
-    routeFrameworks.delete('/', controllerFrameworks.frameworks.delete);
-    routeFrameworks.get('/:id', controllerFrameworks.framework.get);
-    routeFrameworks.post('/:id', controllerFrameworks.framework.post);
-    routeFrameworks.put('/:id', controllerFrameworks.framework.put);
-    routeFrameworks.delete('/:id', controllerFrameworks.framework.delete);
+    routeFrameworks.get(PATH_INDEX, controllerFrameworks.frameworks.get);
+    routeFrameworks.post(PATH_INDEX, controllerFrameworks.frameworks.post);
+    routeFrameworks.put(PATH_INDEX, controllerFrameworks.frameworks.put);
+    routeFrameworks.delete(PATH_INDEX, controllerFrameworks.frameworks.delete);
+    routeFrameworks.get(PATH_INDEX + ':' + PARAM_ID_FRAMEWORK, controllerFrameworks.framework.get);
+    routeFrameworks.post(PATH_INDEX + ':' + PARAM_ID_FRAMEWORK, controllerFrameworks.framework.post);
+    routeFrameworks.put(PATH_INDEX + ':' + PARAM_ID_FRAMEWORK, controllerFrameworks.framework.put);
+    routeFrameworks.delete(PATH_INDEX + ':' + PARAM_ID_FRAMEWORK, controllerFrameworks.framework.delete);
 
     //= ========================
     // Framework Tag Routes
@@ -178,14 +200,14 @@ module.exports = function (app) {
 
     app.use(PATH_FRAMEWORK_TAGS, routeFrameworkTags);
 
-    routeFrameworkTags.get('/', controllerFrameworkTags.frameworkTags.get);
-    routeFrameworkTags.post('/', controllerFrameworkTags.frameworkTags.post);
-    routeFrameworkTags.put('/', controllerFrameworkTags.frameworkTags.put);
-    routeFrameworkTags.delete('/', controllerFrameworkTags.frameworkTags.delete);
-    routeFrameworkTags.get('/:id', controllerFrameworkTags.frameworkTag.get);
-    routeFrameworkTags.post('/:id', controllerFrameworkTags.frameworkTag.post);
-    routeFrameworkTags.put('/:id', controllerFrameworkTags.frameworkTag.put);
-    routeFrameworkTags.delete('/:id', controllerFrameworkTags.frameworkTag.delete);
+    routeFrameworkTags.get(PATH_INDEX, controllerFrameworkTags.frameworkTags.get);
+    routeFrameworkTags.post(PATH_INDEX, controllerFrameworkTags.frameworkTags.post);
+    routeFrameworkTags.put(PATH_INDEX, controllerFrameworkTags.frameworkTags.put);
+    routeFrameworkTags.delete(PATH_INDEX, controllerFrameworkTags.frameworkTags.delete);
+    routeFrameworkTags.get(PATH_INDEX + ':' + PARAM_ID_FRAMEWORK_TAG, controllerFrameworkTags.frameworkTag.get);
+    routeFrameworkTags.post(PATH_INDEX + ':' + PARAM_ID_FRAMEWORK_TAG, controllerFrameworkTags.frameworkTag.post);
+    routeFrameworkTags.put(PATH_INDEX + ':' + PARAM_ID_FRAMEWORK_TAG, controllerFrameworkTags.frameworkTag.put);
+    routeFrameworkTags.delete(PATH_INDEX + ':' + PARAM_ID_FRAMEWORK_TAG, controllerFrameworkTags.frameworkTag.delete);
 
     //= ========================
     // Interest Routes
@@ -193,14 +215,14 @@ module.exports = function (app) {
 
     app.use(PATH_INTERESTS, routeInterests);
 
-    routeInterests.get('/', controllerInterests.interests.get);
-    routeInterests.post('/', controllerInterests.interests.post);
-    routeInterests.put('/', controllerInterests.interests.put);
-    routeInterests.delete('/', controllerInterests.interests.delete);
-    routeInterests.get('/:id', controllerInterests.interest.get);
-    routeInterests.post('/:id', controllerInterests.interest.post);
-    routeInterests.put('/:id', controllerInterests.interest.put);
-    routeInterests.delete('/:id', controllerInterests.interest.delete);
+    routeInterests.get(PATH_INDEX, controllerInterests.interests.get);
+    routeInterests.post(PATH_INDEX, controllerInterests.interests.post);
+    routeInterests.put(PATH_INDEX, controllerInterests.interests.put);
+    routeInterests.delete(PATH_INDEX, controllerInterests.interests.delete);
+    routeInterests.get(PATH_INDEX + ':' + PARAM_ID_INTEREST, controllerInterests.interest.get);
+    routeInterests.post(PATH_INDEX + ':' + PARAM_ID_INTEREST, controllerInterests.interest.post);
+    routeInterests.put(PATH_INDEX + ':' + PARAM_ID_INTEREST, controllerInterests.interest.put);
+    routeInterests.delete(PATH_INDEX + ':' + PARAM_ID_INTEREST, controllerInterests.interest.delete);
 
     //= ========================
     // Language Routes
@@ -208,14 +230,14 @@ module.exports = function (app) {
 
     app.use(PATH_LANGUAGES, routeLanguages);
 
-    routeLanguages.get('/', controllerLanguages.languages.get);
-    routeLanguages.post('/', controllerLanguages.languages.post);
-    routeLanguages.put('/', controllerLanguages.languages.put);
-    routeLanguages.delete('/', controllerLanguages.languages.delete);
-    routeLanguages.get('/:id', controllerLanguages.language.get);
-    routeLanguages.post('/:id', controllerLanguages.language.post);
-    routeLanguages.put('/:id', controllerLanguages.language.put);
-    routeLanguages.delete('/:id', controllerLanguages.language.delete);
+    routeLanguages.get(PATH_INDEX, controllerLanguages.languages.get);
+    routeLanguages.post(PATH_INDEX, controllerLanguages.languages.post);
+    routeLanguages.put(PATH_INDEX, controllerLanguages.languages.put);
+    routeLanguages.delete(PATH_INDEX, controllerLanguages.languages.delete);
+    routeLanguages.get(PATH_INDEX + ':' + PARAM_ID_LANGUAGE, controllerLanguages.language.get);
+    routeLanguages.post(PATH_INDEX + ':' + PARAM_ID_LANGUAGE, controllerLanguages.language.post);
+    routeLanguages.put(PATH_INDEX + ':' + PARAM_ID_LANGUAGE, controllerLanguages.language.put);
+    routeLanguages.delete(PATH_INDEX + ':' + PARAM_ID_LANGUAGE, controllerLanguages.language.delete);
 
     //= ========================
     // Link Routes
@@ -223,14 +245,14 @@ module.exports = function (app) {
 
     app.use(PATH_LINKS, routeLinks);
 
-    routeLinks.get('/', controllerLinks.links.get);
-    routeLinks.post('/', controllerLinks.links.post);
-    routeLinks.put('/', controllerLinks.links.put);
-    routeLinks.delete('/', controllerLinks.links.delete);
-    routeLinks.get('/:id', controllerLinks.link.get);
-    routeLinks.post('/:id', controllerLinks.link.post);
-    routeLinks.put('/:id', controllerLinks.link.put);
-    routeLinks.delete('/:id', controllerLinks.link.delete);
+    routeLinks.get(PATH_INDEX, controllerLinks.links.get);
+    routeLinks.post(PATH_INDEX, controllerLinks.links.post);
+    routeLinks.put(PATH_INDEX, controllerLinks.links.put);
+    routeLinks.delete(PATH_INDEX, controllerLinks.links.delete);
+    routeLinks.get(PATH_INDEX + ':' + PARAM_ID_LINK, controllerLinks.link.get);
+    routeLinks.post(PATH_INDEX + ':' + PARAM_ID_LINK, controllerLinks.link.post);
+    routeLinks.put(PATH_INDEX + ':' + PARAM_ID_LINK, controllerLinks.link.put);
+    routeLinks.delete(PATH_INDEX + ':' + PARAM_ID_LINK, controllerLinks.link.delete);
 
     //= ========================
     // Link Tag Routes
@@ -238,14 +260,14 @@ module.exports = function (app) {
 
     app.use(PATH_LINK_TAGS, routeLinkTags);
 
-    routeLinkTags.get('/', controllerLinkTags.linkTags.get);
-    routeLinkTags.post('/', controllerLinkTags.linkTags.post);
-    routeLinkTags.put('/', controllerLinkTags.linkTags.put);
-    routeLinkTags.delete('/', controllerLinkTags.linkTags.delete);
-    routeLinkTags.get('/:id', controllerLinkTags.linkTag.get);
-    routeLinkTags.post('/:id', controllerLinkTags.linkTag.post);
-    routeLinkTags.put('/:id', controllerLinkTags.linkTag.put);
-    routeLinkTags.delete('/:id', controllerLinkTags.linkTag.delete);
+    routeLinkTags.get(PATH_INDEX, controllerLinkTags.linkTags.get);
+    routeLinkTags.post(PATH_INDEX, controllerLinkTags.linkTags.post);
+    routeLinkTags.put(PATH_INDEX, controllerLinkTags.linkTags.put);
+    routeLinkTags.delete(PATH_INDEX, controllerLinkTags.linkTags.delete);
+    routeLinkTags.get(PATH_INDEX + ':' + PARAM_ID_LINK_TAG, controllerLinkTags.linkTag.get);
+    routeLinkTags.post(PATH_INDEX + ':' + PARAM_ID_LINK_TAG, controllerLinkTags.linkTag.post);
+    routeLinkTags.put(PATH_INDEX + ':' + PARAM_ID_LINK_TAG, controllerLinkTags.linkTag.put);
+    routeLinkTags.delete(PATH_INDEX + ':' + PARAM_ID_LINK_TAG, controllerLinkTags.linkTag.delete);
 
     //= ========================
     // Operating System Routes
@@ -253,14 +275,14 @@ module.exports = function (app) {
 
     app.use(PATH_OPERATING_SYSTEMS, routeOperatingSystems);
 
-    routeOperatingSystems.get('/', controllerOperatingSystems.operatingSystems.get);
-    routeOperatingSystems.post('/', controllerOperatingSystems.operatingSystems.post);
-    routeOperatingSystems.put('/', controllerOperatingSystems.operatingSystems.put);
-    routeOperatingSystems.delete('/', controllerOperatingSystems.operatingSystems.delete);
-    routeOperatingSystems.get('/:id', controllerOperatingSystems.operatingSystem.get);
-    routeOperatingSystems.post('/:id', controllerOperatingSystems.operatingSystem.post);
-    routeOperatingSystems.put('/:id', controllerOperatingSystems.operatingSystem.put);
-    routeOperatingSystems.delete('/:id', controllerOperatingSystems.operatingSystem.delete);
+    routeOperatingSystems.get(PATH_INDEX, controllerOperatingSystems.operatingSystems.get);
+    routeOperatingSystems.post(PATH_INDEX, controllerOperatingSystems.operatingSystems.post);
+    routeOperatingSystems.put(PATH_INDEX, controllerOperatingSystems.operatingSystems.put);
+    routeOperatingSystems.delete(PATH_INDEX, controllerOperatingSystems.operatingSystems.delete);
+    routeOperatingSystems.get(PATH_INDEX + ':' + PARAM_ID_OPERATING_SYSTEM, controllerOperatingSystems.operatingSystem.get);
+    routeOperatingSystems.post(PATH_INDEX + ':' + PARAM_ID_OPERATING_SYSTEM, controllerOperatingSystems.operatingSystem.post);
+    routeOperatingSystems.put(PATH_INDEX + ':' + PARAM_ID_OPERATING_SYSTEM, controllerOperatingSystems.operatingSystem.put);
+    routeOperatingSystems.delete(PATH_INDEX + ':' + PARAM_ID_OPERATING_SYSTEM, controllerOperatingSystems.operatingSystem.delete);
 
 
     //= ========================
@@ -269,14 +291,14 @@ module.exports = function (app) {
 
     app.use(PATH_PROFILES, routeProfiles);
 
-    routeProfiles.get('/', controllerProfiles.profiles.get);
-    routeProfiles.post('/', controllerProfiles.profiles.post);
-    routeProfiles.put('/', controllerProfiles.profiles.put);
-    routeProfiles.delete('/', controllerProfiles.profiles.delete);
-    routeProfiles.get('/:id', controllerProfiles.profile.get);
-    routeProfiles.post('/:id', controllerProfiles.profile.post);
-    routeProfiles.put('/:id', controllerProfiles.profile.put);
-    routeProfiles.delete('/:id', controllerProfiles.profile.delete);
+    routeProfiles.get(PATH_INDEX, controllerProfiles.profiles.get);
+    routeProfiles.post(PATH_INDEX, controllerProfiles.profiles.post);
+    routeProfiles.put(PATH_INDEX, controllerProfiles.profiles.put);
+    routeProfiles.delete(PATH_INDEX, controllerProfiles.profiles.delete);
+    routeProfiles.get(PATH_INDEX + ':' + PARAM_ID_PROFILE, controllerProfiles.profile.get);
+    routeProfiles.post(PATH_INDEX + ':' + PARAM_ID_PROFILE, controllerProfiles.profile.post);
+    routeProfiles.put(PATH_INDEX + ':' + PARAM_ID_PROFILE, controllerProfiles.profile.put);
+    routeProfiles.delete(PATH_INDEX + ':' + PARAM_ID_PROFILE, controllerProfiles.profile.delete);
 
     //= ========================
     // Programming Languages Routes
@@ -284,14 +306,14 @@ module.exports = function (app) {
 
     app.use(PATH_PROGRAMMING_LANGUAGES, routeProgrammingLanguages);
 
-    routeProgrammingLanguages.get('/', controllerProgrammingLanguages.programmingLanguages.get);
-    routeProgrammingLanguages.post('/', controllerProgrammingLanguages.programmingLanguages.post);
-    routeProgrammingLanguages.put('/', controllerProgrammingLanguages.programmingLanguages.put);
-    routeProgrammingLanguages.delete('/', controllerProgrammingLanguages.programmingLanguages.delete);
-    routeProgrammingLanguages.get('/:id', controllerProgrammingLanguages.programmingLanguage.get);
-    routeProgrammingLanguages.post('/:id', controllerProgrammingLanguages.programmingLanguage.post);
-    routeProgrammingLanguages.put('/:id', controllerProgrammingLanguages.programmingLanguage.put);
-    routeProgrammingLanguages.delete('/:id', controllerProgrammingLanguages.programmingLanguage.delete);
+    routeProgrammingLanguages.get(PATH_INDEX, controllerProgrammingLanguages.programmingLanguages.get);
+    routeProgrammingLanguages.post(PATH_INDEX, controllerProgrammingLanguages.programmingLanguages.post);
+    routeProgrammingLanguages.put(PATH_INDEX, controllerProgrammingLanguages.programmingLanguages.put);
+    routeProgrammingLanguages.delete(PATH_INDEX, controllerProgrammingLanguages.programmingLanguages.delete);
+    routeProgrammingLanguages.get(PATH_INDEX + ':' + PARAM_ID_PROGRAMMING_LANGUAGE, controllerProgrammingLanguages.programmingLanguage.get);
+    routeProgrammingLanguages.post(PATH_INDEX + ':' + PARAM_ID_PROGRAMMING_LANGUAGE, controllerProgrammingLanguages.programmingLanguage.post);
+    routeProgrammingLanguages.put(PATH_INDEX + ':' + PARAM_ID_PROGRAMMING_LANGUAGE, controllerProgrammingLanguages.programmingLanguage.put);
+    routeProgrammingLanguages.delete(PATH_INDEX + ':' + PARAM_ID_PROGRAMMING_LANGUAGE, controllerProgrammingLanguages.programmingLanguage.delete);
 
     //= ========================
     // Project Routes
@@ -299,14 +321,14 @@ module.exports = function (app) {
 
     app.use(PATH_PROJECTS, routeProjects);
 
-    routeProjects.get('/', controllerProjects.projects.get);
-    routeProjects.post('/', controllerProjects.projects.post);
-    routeProjects.put('/', controllerProjects.projects.put);
-    routeProjects.delete('/', controllerProjects.projects.delete);
-    routeProjects.get('/:id', controllerProjects.project.get);
-    routeProjects.post('/:id', controllerProjects.project.post);
-    routeProjects.put('/:id', controllerProjects.project.put);
-    routeProjects.delete('/:id', controllerProjects.project.delete);
+    routeProjects.get(PATH_INDEX, controllerProjects.projects.get);
+    routeProjects.post(PATH_INDEX, controllerProjects.projects.post);
+    routeProjects.put(PATH_INDEX, controllerProjects.projects.put);
+    routeProjects.delete(PATH_INDEX, controllerProjects.projects.delete);
+    routeProjects.get(PATH_INDEX + ':' + PARAM_ID_PROJECT, controllerProjects.project.get);
+    routeProjects.post(PATH_INDEX + ':' + PARAM_ID_PROJECT, controllerProjects.project.post);
+    routeProjects.put(PATH_INDEX + ':' + PARAM_ID_PROJECT, controllerProjects.project.put);
+    routeProjects.delete(PATH_INDEX + ':' + PARAM_ID_PROJECT, controllerProjects.project.delete);
 
     //= ========================
     // Project Tag Routes
@@ -314,14 +336,14 @@ module.exports = function (app) {
 
     app.use(PATH_PROJECT_TAGS, routeProjectTags);
 
-    routeProjectTags.get('/', controllerProjectTags.projectTags.get);
-    routeProjectTags.post('/', controllerProjectTags.projectTags.post);
-    routeProjectTags.put('/', controllerProjectTags.projectTags.put);
-    routeProjectTags.delete('/', controllerProjectTags.projectTags.delete);
-    routeProjectTags.get('/:id', controllerProjectTags.projectTag.get);
-    routeProjectTags.post('/:id', controllerProjectTags.projectTag.post);
-    routeProjectTags.put('/:id', controllerProjectTags.projectTag.put);
-    routeProjectTags.delete('/:id', controllerProjectTags.projectTag.delete);
+    routeProjectTags.get(PATH_INDEX, controllerProjectTags.projectTags.get);
+    routeProjectTags.post(PATH_INDEX, controllerProjectTags.projectTags.post);
+    routeProjectTags.put(PATH_INDEX, controllerProjectTags.projectTags.put);
+    routeProjectTags.delete(PATH_INDEX, controllerProjectTags.projectTags.delete);
+    routeProjectTags.get(PATH_INDEX + ':' + PARAM_ID_PROJECT_TAG, controllerProjectTags.projectTag.get);
+    routeProjectTags.post(PATH_INDEX + ':' + PARAM_ID_PROJECT_TAG, controllerProjectTags.projectTag.post);
+    routeProjectTags.put(PATH_INDEX + ':' + PARAM_ID_PROJECT_TAG, controllerProjectTags.projectTag.put);
+    routeProjectTags.delete(PATH_INDEX + ':' + PARAM_ID_PROJECT_TAG, controllerProjectTags.projectTag.delete);
 
     //= ========================
     // Software Framework Routes
@@ -329,14 +351,14 @@ module.exports = function (app) {
 
     app.use(PATH_SOFTWARE_FRAMEWORKS, routeSoftwareFrameworks);
 
-    routeSoftwareFrameworks.get('/', controllerSoftwareFrameworks.softwareFrameworks.get);
-    routeSoftwareFrameworks.post('/', controllerSoftwareFrameworks.softwareFrameworks.post);
-    routeSoftwareFrameworks.put('/', controllerSoftwareFrameworks.softwareFrameworks.put);
-    routeSoftwareFrameworks.delete('/', controllerSoftwareFrameworks.softwareFrameworks.delete);
-    routeSoftwareFrameworks.get('/:id', controllerSoftwareFrameworks.softwareFramework.get);
-    routeSoftwareFrameworks.post('/:id', controllerSoftwareFrameworks.softwareFramework.post);
-    routeSoftwareFrameworks.put('/:id', controllerSoftwareFrameworks.softwareFramework.put);
-    routeSoftwareFrameworks.delete('/:id', controllerSoftwareFrameworks.softwareFramework.delete);
+    routeSoftwareFrameworks.get(PATH_INDEX, controllerSoftwareFrameworks.softwareFrameworks.get);
+    routeSoftwareFrameworks.post(PATH_INDEX, controllerSoftwareFrameworks.softwareFrameworks.post);
+    routeSoftwareFrameworks.put(PATH_INDEX, controllerSoftwareFrameworks.softwareFrameworks.put);
+    routeSoftwareFrameworks.delete(PATH_INDEX, controllerSoftwareFrameworks.softwareFrameworks.delete);
+    routeSoftwareFrameworks.get(PATH_INDEX + ':' + PARAM_ID_SOFTWARE_FRAMEWORK, controllerSoftwareFrameworks.softwareFramework.get);
+    routeSoftwareFrameworks.post(PATH_INDEX + ':' + PARAM_ID_SOFTWARE_FRAMEWORK, controllerSoftwareFrameworks.softwareFramework.post);
+    routeSoftwareFrameworks.put(PATH_INDEX + ':' + PARAM_ID_SOFTWARE_FRAMEWORK, controllerSoftwareFrameworks.softwareFramework.put);
+    routeSoftwareFrameworks.delete(PATH_INDEX + ':' + PARAM_ID_SOFTWARE_FRAMEWORK, controllerSoftwareFrameworks.softwareFramework.delete);
 
     //= ========================
     // Software Routes
@@ -344,14 +366,14 @@ module.exports = function (app) {
 
     app.use(PATH_SOFTWARES, routeSoftwares);
 
-    routeSoftwares.get('/', controllerSoftwares.softwares.get);
-    routeSoftwares.post('/', controllerSoftwares.softwares.post);
-    routeSoftwares.put('/', controllerSoftwares.softwares.put);
-    routeSoftwares.delete('/', controllerSoftwares.softwares.delete);
-    routeSoftwares.get('/:id', controllerSoftwares.software.get);
-    routeSoftwares.post('/:id', controllerSoftwares.software.post);
-    routeSoftwares.put('/:id', controllerSoftwares.software.put);
-    routeSoftwares.delete('/:id', controllerSoftwares.software.delete);
+    routeSoftwares.get(PATH_INDEX, controllerSoftwares.softwares.get);
+    routeSoftwares.post(PATH_INDEX, controllerSoftwares.softwares.post);
+    routeSoftwares.put(PATH_INDEX, controllerSoftwares.softwares.put);
+    routeSoftwares.delete(PATH_INDEX, controllerSoftwares.softwares.delete);
+    routeSoftwares.get(PATH_INDEX + ':' + PARAM_ID_SOFTWARE, controllerSoftwares.software.get);
+    routeSoftwares.post(PATH_INDEX + ':' + PARAM_ID_SOFTWARE, controllerSoftwares.software.post);
+    routeSoftwares.put(PATH_INDEX + ':' + PARAM_ID_SOFTWARE, controllerSoftwares.software.put);
+    routeSoftwares.delete(PATH_INDEX + ':' + PARAM_ID_SOFTWARE, controllerSoftwares.software.delete);
 
     //= ========================
     // Software Tag Routes
@@ -359,117 +381,117 @@ module.exports = function (app) {
 
     app.use(PATH_SOFTWARE_TAGS, routeSoftwareTags);
 
-    routeSoftwareTags.get('/', controllerSoftwareTags.softwareTags.get);
-    routeSoftwareTags.post('/', controllerSoftwareTags.softwareTags.post);
-    routeSoftwareTags.put('/', controllerSoftwareTags.softwareTags.put);
-    routeSoftwareTags.delete('/', controllerSoftwareTags.softwareTags.delete);
-    routeSoftwareTags.get('/:id', controllerSoftwareTags.softwareTag.get);
-    routeSoftwareTags.post('/:id', controllerSoftwareTags.softwareTag.post);
-    routeSoftwareTags.put('/:id', controllerSoftwareTags.softwareTag.put);
-    routeSoftwareTags.delete('/:id', controllerSoftwareTags.softwareTag.delete);
+    routeSoftwareTags.get(PATH_INDEX, controllerSoftwareTags.softwareTags.get);
+    routeSoftwareTags.post(PATH_INDEX, controllerSoftwareTags.softwareTags.post);
+    routeSoftwareTags.put(PATH_INDEX, controllerSoftwareTags.softwareTags.put);
+    routeSoftwareTags.delete(PATH_INDEX, controllerSoftwareTags.softwareTags.delete);
+    routeSoftwareTags.get(PATH_INDEX + ':' + PARAM_ID_SOFTWARE_TAG, controllerSoftwareTags.softwareTag.get);
+    routeSoftwareTags.post(PATH_INDEX + ':' + PARAM_ID_SOFTWARE_TAG, controllerSoftwareTags.softwareTag.post);
+    routeSoftwareTags.put(PATH_INDEX + ':' + PARAM_ID_SOFTWARE_TAG, controllerSoftwareTags.softwareTag.put);
+    routeSoftwareTags.delete(PATH_INDEX + ':' + PARAM_ID_SOFTWARE_TAG, controllerSoftwareTags.softwareTag.delete);
 
     //= ========================
     // User Routes
     //= ========================
 
-    app.use(PATH_USERS,  routeUsers);
+    app.use(PATH_USERS, routeUsers);
 
-    routeUsers.get('/', requireRole(ROLE_ADMIN),controllerUsers.users.get);
-    routeUsers.post('/',requireRole(ROLE_ADMIN), controllerUsers.users.post);
-    routeUsers.put('/', requireRole(ROLE_ADMIN),controllerUsers.users.put);
-    routeUsers.delete('/', requireRole(ROLE_ADMIN),controllerUsers.users.delete);
-    routeUsers.get('/:id', requireRole(ROLE_ADMIN),controllerUsers.user.get);
-    routeUsers.post('/:id', requireRole(ROLE_ADMIN),controllerUsers.user.post);
-    routeUsers.put('/:id', requireRole(ROLE_ADMIN),controllerUsers.user.put);
-    routeUsers.delete('/:id',requireRole(ROLE_ADMIN), controllerUsers.user.delete);
+    routeUsers.get(PATH_INDEX, requireRole(ROLE_ADMIN), controllerUsers.users.get);
+    routeUsers.post(PATH_INDEX, requireRole(ROLE_ADMIN), controllerUsers.users.post);
+    routeUsers.put(PATH_INDEX, requireRole(ROLE_ADMIN), controllerUsers.users.put);
+    routeUsers.delete(PATH_INDEX, requireRole(ROLE_ADMIN), controllerUsers.users.delete);
+    routeUsers.get(PATH_INDEX + ':' + PARAM_ID_USER, requireRole(ROLE_ADMIN), controllerUsers.user.get);
+    routeUsers.post(PATH_INDEX + ':' + PARAM_ID_USER, requireRole(ROLE_ADMIN), controllerUsers.user.post);
+    routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER, requireRole(ROLE_ADMIN), controllerUsers.user.put);
+    routeUsers.delete(PATH_INDEX + ':' + PARAM_ID_USER, requireRole(ROLE_ADMIN), controllerUsers.user.delete);
     //Computing Tag Routes
-    routeUsers.get('/:id' + PATH_COMPUTING_TAGS, controllerUsers.user.computingTags.get);
-    routeUsers.post('/:id' + PATH_COMPUTING_TAGS, controllerUsers.user.computingTags.post);
-    routeUsers.put('/:id' + PATH_COMPUTING_TAGS, controllerUsers.user.computingTags.put);
-    routeUsers.delete('/:id' + PATH_COMPUTING_TAGS, controllerUsers.user.computingTags.delete);
+    routeUsers.get(PATH_INDEX + ':' + PARAM_ID_USER + PATH_COMPUTING_TAGS, controllerUsers.user.computingTags.get);
+    routeUsers.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_COMPUTING_TAGS, controllerUsers.user.computingTags.post);
+    routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_COMPUTING_TAGS, controllerUsers.user.computingTags.put);
+    routeUsers.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_COMPUTING_TAGS, controllerUsers.user.computingTags.delete);
     //Education Routes
-    routeUsers.get('/:id' + PATH_EDUCATIONS, controllerUsers.user.educations.get);
-    routeUsers.post('/:id' + PATH_EDUCATIONS, controllerUsers.user.educations.post);
-    routeUsers.put('/:id' + PATH_EDUCATIONS, controllerUsers.user.educations.put);
-    routeUsers.delete('/:id' + PATH_EDUCATIONS, controllerUsers.user.educations.delete);
+    routeUsers.get(PATH_INDEX + ':' + PARAM_ID_USER + PATH_EDUCATIONS, controllerUsers.user.educations.get);
+    routeUsers.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_EDUCATIONS, controllerUsers.user.educations.post);
+    routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_EDUCATIONS, controllerUsers.user.educations.put);
+    routeUsers.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_EDUCATIONS, controllerUsers.user.educations.delete);
     //Entity Routes
-    routeUsers.get('/:id' + PATH_ENTITIES, controllerUsers.user.entities.get);
-    routeUsers.post('/:id' + PATH_ENTITIES, controllerUsers.user.entities.post);
-    routeUsers.put('/:id' + PATH_ENTITIES, controllerUsers.user.entities.put);
-    routeUsers.delete('/:id' + PATH_ENTITIES, controllerUsers.user.entities.delete);
+    routeUsers.get(PATH_INDEX + ':' + PARAM_ID_USER + PATH_ENTITIES, controllerUsers.user.entities.get);
+    routeUsers.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_ENTITIES, controllerUsers.user.entities.post);
+    routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_ENTITIES, controllerUsers.user.entities.put);
+    routeUsers.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_ENTITIES, controllerUsers.user.entities.delete);
     //Experience Routes
-    routeUsers.get('/:id' + PATH_EXPERIENCES, controllerUsers.user.experiences.get);
-    routeUsers.post('/:id' + PATH_EXPERIENCES, controllerUsers.user.experiences.post);
-    routeUsers.put('/:id' + PATH_EXPERIENCES, controllerUsers.user.experiences.put);
-    routeUsers.delete('/:id' + PATH_EXPERIENCES, controllerUsers.user.experiences.delete);
+    routeUsers.get(PATH_INDEX + ':' + PARAM_ID_USER + PATH_EXPERIENCES, controllerUsers.user.experiences.get);
+    routeUsers.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_EXPERIENCES, controllerUsers.user.experiences.post);
+    routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_EXPERIENCES, controllerUsers.user.experiences.put);
+    routeUsers.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_EXPERIENCES, controllerUsers.user.experiences.delete);
     //Framework Routes
-    routeUsers.get('/:id' + PATH_FRAMEWORKS, controllerUsers.user.frameworks.get);
-    routeUsers.post('/:id' + PATH_FRAMEWORKS, controllerUsers.user.frameworks.post);
-    routeUsers.put('/:id' + PATH_FRAMEWORKS, controllerUsers.user.frameworks.put);
-    routeUsers.delete('/:id' + PATH_FRAMEWORKS, controllerUsers.user.frameworks.delete);
+    routeUsers.get(PATH_INDEX + ':' + PARAM_ID_USER + PATH_FRAMEWORKS, controllerUsers.user.frameworks.get);
+    routeUsers.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_FRAMEWORKS, controllerUsers.user.frameworks.post);
+    routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_FRAMEWORKS, controllerUsers.user.frameworks.put);
+    routeUsers.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_FRAMEWORKS, controllerUsers.user.frameworks.delete);
     //Framework Tag Routes
-    routeUsers.get('/:id' + PATH_FRAMEWORK_TAGS, controllerUsers.user.frameworkTags.get);
-    routeUsers.post('/:id' + PATH_FRAMEWORK_TAGS, controllerUsers.user.frameworkTags.post);
-    routeUsers.put('/:id' + PATH_FRAMEWORK_TAGS, controllerUsers.user.frameworkTags.put);
-    routeUsers.delete('/:id' + PATH_FRAMEWORK_TAGS, controllerUsers.user.frameworkTags.delete);
+    routeUsers.get(PATH_INDEX + ':' + PARAM_ID_USER + PATH_FRAMEWORK_TAGS, controllerUsers.user.frameworkTags.get);
+    routeUsers.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_FRAMEWORK_TAGS, controllerUsers.user.frameworkTags.post);
+    routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_FRAMEWORK_TAGS, controllerUsers.user.frameworkTags.put);
+    routeUsers.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_FRAMEWORK_TAGS, controllerUsers.user.frameworkTags.delete);
     //Interest Routes
-    routeUsers.get('/:id' + PATH_INTERESTS, controllerUsers.user.interests.get);
-    routeUsers.post('/:id' + PATH_INTERESTS, controllerUsers.user.interests.post);
-    routeUsers.put('/:id' + PATH_INTERESTS, controllerUsers.user.interests.put);
-    routeUsers.delete('/:id' + PATH_INTERESTS, controllerUsers.user.interests.delete);
+    routeUsers.get(PATH_INDEX + ':' + PARAM_ID_USER + PATH_INTERESTS, controllerUsers.user.interests.get);
+    routeUsers.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_INTERESTS, controllerUsers.user.interests.post);
+    routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_INTERESTS, controllerUsers.user.interests.put);
+    routeUsers.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_INTERESTS, controllerUsers.user.interests.delete);
     //Language Routes
-    routeUsers.get('/:id' + PATH_LANGUAGES, controllerUsers.user.languages.get);
-    routeUsers.post('/:id' + PATH_LANGUAGES, controllerUsers.user.languages.post);
-    routeUsers.put('/:id' + PATH_LANGUAGES, controllerUsers.user.languages.put);
-    routeUsers.delete('/:id' + PATH_LANGUAGES, controllerUsers.user.languages.delete);
+    routeUsers.get(PATH_INDEX + ':' + PARAM_ID_USER + PATH_LANGUAGES, controllerUsers.user.languages.get);
+    routeUsers.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_LANGUAGES, controllerUsers.user.languages.post);
+    routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_LANGUAGES, controllerUsers.user.languages.put);
+    routeUsers.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_LANGUAGES, controllerUsers.user.languages.delete);
     //Links Routes
-    routeUsers.get('/:id' + PATH_LINKS, controllerUsers.user.links.get);
-    routeUsers.post('/:id' + PATH_LINKS, controllerUsers.user.links.post);
-    routeUsers.put('/:id' + PATH_LINKS, controllerUsers.user.links.put);
-    routeUsers.delete('/:id' + PATH_LINKS, controllerUsers.user.links.delete);
+    routeUsers.get(PATH_INDEX + ':' + PARAM_ID_USER + PATH_LINKS, controllerUsers.user.links.get);
+    routeUsers.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_LINKS, controllerUsers.user.links.post);
+    routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_LINKS, controllerUsers.user.links.put);
+    routeUsers.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_LINKS, controllerUsers.user.links.delete);
     //Link Tag Routes
-    routeUsers.get('/:id' + PATH_LINK_TAGS, controllerUsers.user.linkTags.get);
-    routeUsers.post('/:id' + PATH_LINK_TAGS, controllerUsers.user.linkTags.post);
-    routeUsers.put('/:id' + PATH_LINK_TAGS, controllerUsers.user.linkTags.put);
-    routeUsers.delete('/:id' + PATH_LINK_TAGS, controllerUsers.user.linkTags.delete);
+    routeUsers.get(PATH_INDEX + ':' + PARAM_ID_USER + PATH_LINK_TAGS, controllerUsers.user.linkTags.get);
+    routeUsers.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_LINK_TAGS, controllerUsers.user.linkTags.post);
+    routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_LINK_TAGS, controllerUsers.user.linkTags.put);
+    routeUsers.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_LINK_TAGS, controllerUsers.user.linkTags.delete);
     //Operating System Routes
-    routeUsers.get('/:id' + PATH_OPERATING_SYSTEMS, controllerUsers.user.operatingSystems.get);
-    routeUsers.post('/:id' + PATH_OPERATING_SYSTEMS, controllerUsers.user.operatingSystems.post);
-    routeUsers.put('/:id' + PATH_OPERATING_SYSTEMS, controllerUsers.user.operatingSystems.put);
-    routeUsers.delete('/:id' + PATH_OPERATING_SYSTEMS, controllerUsers.user.operatingSystems.delete);
+    routeUsers.get(PATH_INDEX + ':' + PARAM_ID_USER + PATH_OPERATING_SYSTEMS, controllerUsers.user.operatingSystems.get);
+    routeUsers.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_OPERATING_SYSTEMS, controllerUsers.user.operatingSystems.post);
+    routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_OPERATING_SYSTEMS, controllerUsers.user.operatingSystems.put);
+    routeUsers.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_OPERATING_SYSTEMS, controllerUsers.user.operatingSystems.delete);
     //Profile Routes
-    routeUsers.get('/:id' + PATH_PROFILES, controllerUsers.user.profiles.get);
-    routeUsers.post('/:id' + PATH_PROFILES, controllerUsers.user.profiles.post);
-    routeUsers.put('/:id' + PATH_PROFILES, controllerUsers.user.profiles.put);
-    routeUsers.delete('/:id' + PATH_PROFILES, controllerUsers.user.profiles.delete);
+    routeUsers.get(PATH_INDEX + ':' + PARAM_ID_USER + PATH_PROFILES, controllerUsers.user.profiles.get);
+    routeUsers.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_PROFILES, controllerUsers.user.profiles.post);
+    routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_PROFILES, controllerUsers.user.profiles.put);
+    routeUsers.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_PROFILES, controllerUsers.user.profiles.delete);
     //Programming Language Routes
-    routeUsers.get('/:id' + PATH_PROGRAMMING_LANGUAGES, controllerUsers.user.programmingLanguages.get);
-    routeUsers.post('/:id' + PATH_PROGRAMMING_LANGUAGES, controllerUsers.user.programmingLanguages.post);
-    routeUsers.put('/:id' + PATH_PROGRAMMING_LANGUAGES, controllerUsers.user.programmingLanguages.put);
-    routeUsers.delete('/:id' + PATH_PROGRAMMING_LANGUAGES, controllerUsers.user.programmingLanguages.delete);
+    routeUsers.get(PATH_INDEX + ':' + PARAM_ID_USER + PATH_PROGRAMMING_LANGUAGES, controllerUsers.user.programmingLanguages.get);
+    routeUsers.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_PROGRAMMING_LANGUAGES, controllerUsers.user.programmingLanguages.post);
+    routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_PROGRAMMING_LANGUAGES, controllerUsers.user.programmingLanguages.put);
+    routeUsers.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_PROGRAMMING_LANGUAGES, controllerUsers.user.programmingLanguages.delete);
     //Project Routes
-    routeUsers.get('/:id' + PATH_PROJECTS, controllerUsers.user.projects.get);
-    routeUsers.post('/:id' + PATH_PROJECTS, controllerUsers.user.projects.post);
-    routeUsers.put('/:id' + PATH_PROJECTS, controllerUsers.user.projects.put);
-    routeUsers.delete('/:id' + PATH_PROJECTS, controllerUsers.user.projects.delete);
+    routeUsers.get(PATH_INDEX + ':' + PARAM_ID_USER + PATH_PROJECTS, controllerUsers.user.projects.get);
+    routeUsers.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_PROJECTS, controllerUsers.user.projects.post);
+    routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_PROJECTS, controllerUsers.user.projects.put);
+    routeUsers.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_PROJECTS, controllerUsers.user.projects.delete);
     //Project Tag Routes
-    routeUsers.get('/:id' + PATH_PROJECT_TAGS, controllerUsers.user.projectTags.get);
-    routeUsers.post('/:id' + PATH_PROJECT_TAGS, controllerUsers.user.projectTags.post);
-    routeUsers.put('/:id' + PATH_PROJECT_TAGS, controllerUsers.user.projectTags.put);
-    routeUsers.delete('/:id' + PATH_PROJECT_TAGS, controllerUsers.user.projectTags.delete);
+    routeUsers.get(PATH_INDEX + ':' + PARAM_ID_USER + PATH_PROJECT_TAGS, controllerUsers.user.projectTags.get);
+    routeUsers.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_PROJECT_TAGS, controllerUsers.user.projectTags.post);
+    routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_PROJECT_TAGS, controllerUsers.user.projectTags.put);
+    routeUsers.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_PROJECT_TAGS, controllerUsers.user.projectTags.delete);
     //Software Framework Routes
-    routeUsers.get('/:id' + PATH_SOFTWARE_FRAMEWORKS, controllerUsers.user.softwareFrameworks.get);
-    routeUsers.post('/:id' + PATH_SOFTWARE_FRAMEWORKS, controllerUsers.user.softwareFrameworks.post);
-    routeUsers.put('/:id' + PATH_SOFTWARE_FRAMEWORKS, controllerUsers.user.softwareFrameworks.put);
-    routeUsers.delete('/:id' + PATH_SOFTWARE_FRAMEWORKS, controllerUsers.user.softwareFrameworks.delete);
+    routeUsers.get(PATH_INDEX + ':' + PARAM_ID_USER + PATH_SOFTWARE_FRAMEWORKS, controllerUsers.user.softwareFrameworks.get);
+    routeUsers.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_SOFTWARE_FRAMEWORKS, controllerUsers.user.softwareFrameworks.post);
+    routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_SOFTWARE_FRAMEWORKS, controllerUsers.user.softwareFrameworks.put);
+    routeUsers.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_SOFTWARE_FRAMEWORKS, controllerUsers.user.softwareFrameworks.delete);
     //Software Routes
-    routeUsers.get('/:id' + PATH_SOFTWARES, controllerUsers.user.softwares.get);
-    routeUsers.post('/:id' + PATH_SOFTWARES, controllerUsers.user.softwares.post);
-    routeUsers.put('/:id' + PATH_SOFTWARES, controllerUsers.user.softwares.put);
-    routeUsers.delete('/:id' + PATH_SOFTWARES, controllerUsers.user.softwares.delete);
+    routeUsers.get(PATH_INDEX + ':' + PARAM_ID_USER + PATH_SOFTWARES, controllerUsers.user.softwares.get);
+    routeUsers.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_SOFTWARES, controllerUsers.user.softwares.post);
+    routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_SOFTWARES, controllerUsers.user.softwares.put);
+    routeUsers.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_SOFTWARES, controllerUsers.user.softwares.delete);
     //Software Tag Routes
-    routeUsers.get('/:id' + PATH_SOFTWARE_TAGS, controllerUsers.user.softwareTags.get);
-    routeUsers.post('/:id' + PATH_SOFTWARE_TAGS, controllerUsers.user.softwareTags.post);
-    routeUsers.put('/:id' + PATH_SOFTWARE_TAGS, controllerUsers.user.softwareTags.put);
-    routeUsers.delete('/:id' + PATH_SOFTWARE_TAGS, controllerUsers.user.softwareTags.delete);
+    routeUsers.get(PATH_INDEX + ':' + PARAM_ID_USER + PATH_SOFTWARE_TAGS, controllerUsers.user.softwareTags.get);
+    routeUsers.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_SOFTWARE_TAGS, controllerUsers.user.softwareTags.post);
+    routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_SOFTWARE_TAGS, controllerUsers.user.softwareTags.put);
+    routeUsers.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_SOFTWARE_TAGS, controllerUsers.user.softwareTags.delete);
 };

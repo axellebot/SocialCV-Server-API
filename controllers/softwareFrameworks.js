@@ -1,6 +1,10 @@
+"use strict";
+
 var getPagination = require("../helpers").getPagination;
 
 const SoftwareFramework = require('../models/softwareFramework.schema');
+
+const PARAM_ID = global.constants.PARAM.PARAM_ID_SOFTWARE_FRAMEWORK;
 
 /* SoftwareFrameworks page. */
 exports.softwareFrameworks = {};
@@ -33,7 +37,7 @@ exports.softwareFrameworks.delete = function (req, res, next) {
 exports.softwareFramework = {};
 exports.softwareFramework.get = function (req, res, next) {
     SoftwareFramework
-        .findById(req.params.id)
+        .findById(req.params[PARAM_ID])
         .exec(function (err, softwareFramework) {
             if (err) return next(err);
             res.json({data: softwareFramework});

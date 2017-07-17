@@ -1,6 +1,10 @@
+"use strict";
+
 var getPagination = require("../helpers").getPagination;
 
 const ProjectTag = require('../models/projectTag.schema');
+
+const PARAM_ID = global.constants.PARAM.PARAM_ID_PROJECT_TAG;
 
 /* ProjectTags page. */
 exports.projectTags = {};
@@ -34,7 +38,7 @@ exports.projectTags.delete = function (req, res, next) {
 exports.projectTag = {};
 exports.projectTag.get = function (req, res, next) {
     ProjectTag
-        .findById(req.params.id)
+        .findById(req.params[PARAM_ID])
         .exec(function (err, ProjectTag) {
             if (err) return next(err);
             res.json({data: ProjectTag});

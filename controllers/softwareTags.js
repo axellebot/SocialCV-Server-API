@@ -1,6 +1,10 @@
-var getPagination = require("../helpers").getPagination;
+"use strict";
+
+var getPagination = require('../helpers').getPagination;
 
 const SoftwareTag = require('../models/softwareTag.schema');
+
+const PARAM_ID = global.constants.PARAM.PARAM_ID_SOFTWARE_TAG;
 
 /* SoftwareTags page. */
 exports.softwareTags = {};
@@ -34,7 +38,7 @@ exports.softwareTags.delete = function (req, res, next) {
 exports.softwareTag = {};
 exports.softwareTag.get = function (req, res, next) {
     SoftwareTag
-        .findById(req.params.id)
+        .findById(req.params[PARAM_ID])
         .exec(function (err, SoftwareTag) {
             if (err) return next(err);
             res.json({data: SoftwareTag});

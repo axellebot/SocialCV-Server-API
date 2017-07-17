@@ -1,3 +1,5 @@
+"use strict";
+
 const ROLE_MEMBER = global.constants.ROLE_MEMBER,
     ROLE_ADMIN = global.constants.ROLE_ADMIN;
 

@@ -1,5 +1,7 @@
+"use strict";
+
 global.config = require("./config");
-global.constants = require("./constants.json");
+global.constants = require("./constants");
 
 var express = require('express');
 var path = require('path');

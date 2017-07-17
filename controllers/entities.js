@@ -1,6 +1,10 @@
+"use strict";
+
 var getPagination = require("../helpers").getPagination;
 
 const Entity = require('../models/entity.schema');
+
+const PARAM_ID = global.constants.PARAM.PARAM_ID_ENTITY;
 
 /* Entities page. */
 exports.entities = {};
@@ -34,7 +38,7 @@ exports.entities.delete = function (req, res, next) {
 exports.entity = {};
 exports.entity.get = function (req, res, next) {
     Entity
-        .findById(req.params.id)
+        .findById(req.params[PARAM_ID])
         .exec(function (err, entity) {
             if (err) return next(err);
             res.json({data: entity});

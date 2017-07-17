@@ -1,6 +1,10 @@
+"use strict";
+
 var getPagination = require("../helpers").getPagination;
 
 const Language = require('../models/language.schema');
+
+const PARAM_ID = global.constants.PARAM.PARAM_ID_LANGUAGE;
 
 /* Languages page. */
 exports.languages = {};
@@ -33,7 +37,7 @@ exports.languages.delete = function (req, res, next) {
 exports.language = {};
 exports.language.get = function (req, res, next) {
     Language
-        .findById(req.params.id)
+        .findById(req.params[PARAM_ID])
         .exec(function (err, language) {
             if (err) return next(err);
             res.json({data: language});

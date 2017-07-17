@@ -1,6 +1,10 @@
+"use strict";
+
 var getPagination = require("../helpers").getPagination;
 
 const Interest = require('../models/interest.schema');
+
+const PARAM_ID = global.constants.PARAM.PARAM_ID_INTEREST;
 
 /* Interests page. */
 exports.interests = {};
@@ -33,7 +37,7 @@ exports.interests.delete = function (req, res, next) {
 exports.interest = {};
 exports.interest.get = function (req, res, next) {
     Interest
-        .findById(req.params.id)
+        .findById(req.params[PARAM_ID])
         .exec(function (err, interest) {
             if (err) return next(err);
             res.json({data: interest});

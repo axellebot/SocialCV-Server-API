@@ -1,3 +1,5 @@
+"use strict";
+
 var mongoose = require("mongoose");
 //Fixing promises
 mongoose.Promise = global.Promise;
