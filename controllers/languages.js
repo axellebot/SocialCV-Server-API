@@ -10,8 +10,8 @@ exports.languages.get = function (req, res, next) {
     //TODO : Languages - Handle options
     Language
         .find({})
-        .limit(req.pagination.limit)
-        .skip(req.pagination.skip)
+        .limit(req.options.pagination.limit)
+        .skip(req.options.pagination.skip)
         .exec(function (err, languages) {
             if (err) return next(err);
             res.json({data: languages});

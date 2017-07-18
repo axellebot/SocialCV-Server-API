@@ -10,8 +10,8 @@ exports.programmingLanguages.get = function (req, res, next) {
     //TODO : ProgrammingLanguages - Handle options
     ProgrammingLanguage
         .find({})
-        .limit(req.pagination.limit)
-        .skip(req.pagination.skip)
+        .limit(req.options.pagination.limit)
+        .skip(req.options.pagination.skip)
         .exec(function (err, programmingLanguages) {
             if (err) return next(err);
             res.json({data: programmingLanguages});

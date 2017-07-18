@@ -10,8 +10,8 @@ exports.links.get = function (req, res, next) {
     //TODO : Links - Handle options
     Link
         .find({})
-        .limit(req.pagination.limit)
-        .skip(req.pagination.skip)
+        .limit(req.options.pagination.limit)
+        .skip(req.options.pagination.skip)
         .exec(function (err, links) {
             if (err) return next(err);
             res.json({data: links});

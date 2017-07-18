@@ -10,8 +10,8 @@ exports.interests.get = function (req, res, next) {
     //TODO : Interests - Handle options
     Interest
         .find({})
-        .limit(req.pagination.limit)
-        .skip(req.pagination.skip)
+        .limit(req.options.pagination.limit)
+        .skip(req.options.pagination.skip)
         .exec(function (err, interests) {
             if (err) return next(err);
             res.json({data: interests});

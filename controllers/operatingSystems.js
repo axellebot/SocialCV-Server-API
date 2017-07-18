@@ -10,8 +10,8 @@ exports.operatingSystems.get = function (req, res, next) {
     //TODO : OperatingSystems - Handle options
     OperatingSystem
         .find({})
-        .limit(req.pagination.limit)
-        .skip(req.pagination.skip)
+        .limit(req.options.pagination.limit)
+        .skip(req.options.pagination.skip)
         .exec(function (err, operatingSystems) {
             if (err) return next(err);
             res.json({data: operatingSystems});

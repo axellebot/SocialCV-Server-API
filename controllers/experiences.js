@@ -10,8 +10,8 @@ exports.experiences.get = function (req, res, next) {
     //TODO : Experiences - Handle options
     Experience
         .find({})
-        .limit(req.pagination.limit)
-        .skip(req.pagination.skip)
+        .limit(req.options.pagination.limit)
+        .skip(req.options.pagination.skip)
         .exec(function (err, experiences) {
             if (err) return next(err);
             res.json({data: experiences});

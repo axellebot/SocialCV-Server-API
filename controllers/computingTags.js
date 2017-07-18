@@ -10,8 +10,8 @@ exports.computingTags.get = function (req, res, next) {
     //TODO : ComputingTags - Handle options
     ComputingTag
         .find({})
-        .limit(req.pagination.limit)
-        .skip(req.pagination.skip)
+        .limit(req.options.pagination.limit)
+        .skip(req.options.pagination.skip)
         .exec(function (err, computingTags) {
             if (err) return next(err);
             res.json({data: computingTags});

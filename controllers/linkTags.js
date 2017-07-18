@@ -11,8 +11,8 @@ exports.linkTags.get = function (req, res, next) {
     //TODO : LinkTags - Handle options
     LinkTag
         .find({})
-        .limit(req.pagination.limit)
-        .skip(req.pagination.skip)
+        .limit(req.options.pagination.limit)
+        .skip(req.options.pagination.skip)
         .exec(function (err, linkTags) {
             if (err) return next(err);
             res.json({data: linkTags});

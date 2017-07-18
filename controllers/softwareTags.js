@@ -10,8 +10,8 @@ exports.softwareTags.get = function (req, res, next) {
     //TODO : SoftwareTags - Handle options
     SoftwareTag
         .find({})
-        .limit(req.pagination.limit)
-        .skip(req.pagination.skip)
+        .limit(req.options.pagination.limit)
+        .skip(req.options.pagination.skip)
         .exec(function (err, SoftwareTags) {
             if (err) return next(err);
             res.json({data: SoftwareTags});

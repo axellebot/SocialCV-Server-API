@@ -10,8 +10,8 @@ exports.users.get = function (req, res, next) {
     //TODO : users - Handle options
     User
         .find({})
-        .limit(req.pagination.limit)
-        .skip(req.pagination.skip)
+        .limit(req.options.pagination.limit)
+        .skip(req.options.pagination.skip)
         .exec(function (err, users) {
             if (err) return next(err);
             res.json({data: users});

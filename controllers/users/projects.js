@@ -9,8 +9,8 @@ exports.get = function (req, res, next) {
     //TODO : Projects - Handle options
     Project
         .find({user: req.params[PARAM_ID]})
-        .limit(req.pagination.limit)
-        .skip(req.pagination.skip)
+        .limit(req.options.pagination.limit)
+        .skip(req.options.pagination.skip)
         .exec(function (err, projects) {
             if (err) return next(err);
             res.json({data: projects});

@@ -10,8 +10,8 @@ exports.softwares.get = function (req, res, next) {
     //TODO : Softwares - Handle options
     Software
         .find({})
-        .limit(req.pagination.limit)
-        .skip(req.pagination.skip)
+        .limit(req.options.pagination.limit)
+        .skip(req.options.pagination.skip)
         .exec(function (err, softwares) {
             if (err) return next(err);
             res.json({data: softwares});

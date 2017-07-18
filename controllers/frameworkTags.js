@@ -10,8 +10,8 @@ exports.frameworkTags.get = function (req, res, next) {
     //TODO : FrameworkTags - Handle options
     FrameworkTag
         .find({})
-        .limit(req.pagination.limit)
-        .skip(req.pagination.skip)
+        .limit(req.options.pagination.limit)
+        .skip(req.options.pagination.skip)
         .exec(function (err, FrameworkTags) {
             if (err) return next(err);
             res.json({data: FrameworkTags});
