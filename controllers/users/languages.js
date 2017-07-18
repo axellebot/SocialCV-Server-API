@@ -1,7 +1,5 @@
 "use strict";
 
-var getPagination = require("../../helpers").getPagination;
-
 const Language = require('../../models/language.schema');
 
 const PARAM_ID = global.constants.PARAM.PARAM_ID_USER;
@@ -9,11 +7,10 @@ const PARAM_ID = global.constants.PARAM.PARAM_ID_USER;
 /* Languages page. */
 exports.get = function (req, res, next) {
     //TODO : Languages - Handle options
-    var pagination = getPagination(req);
     Language
         .find({user: req.params[PARAM_ID]})
-        .limit(pagination.limit)
-        .skip(pagination.skip)
+        .limit(req.pagination.limit)
+        .skip(req.pagination.skip)
         .exec(function (err, languages) {
             if (err) return next(err);
             res.json({data: languages});

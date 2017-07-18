@@ -1,7 +1,5 @@
 "use strict";
 
-var getPagination = require("../helpers").getPagination;
-
 const Profile = require('../models/profile.schema');
 
 const PARAM_ID = global.constants.PARAM.PARAM_ID_PROFILE;
@@ -10,11 +8,10 @@ const PARAM_ID = global.constants.PARAM.PARAM_ID_PROFILE;
 exports.profiles = {};
 exports.profiles.get = function (req, res, next) {
     //TODO : Profiles - Handle options
-    var pagination = getPagination(req);
     Profile
         .find({})
-        .limit(pagination.limit)
-        .skip(pagination.skip)
+        .limit(req.pagination.limit)
+        .skip(req.pagination.skip)
         .exec(function (err, profiles) {
             if (err) return next(err);
             res.json({data: profiles});

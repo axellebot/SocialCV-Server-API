@@ -1,18 +1,16 @@
 "use strict";
 
-var getPagination = require("../../helpers").getPagination;
-
 const SoftwareFramework = require('../../models/softwareFramework.schema');
+
 const PARAM_ID = global.constants.PARAM.PARAM_ID_USER;
 
 /* SoftwareFrameworks page. */
 exports.get = function (req, res, next) {
     //TODO : SoftwareFrameworks - Handle options
-    var pagination = getPagination(req);
     SoftwareFramework
         .find({user: req.params[PARAM_ID]})
-        .limit(pagination.limit)
-        .skip(pagination.skip)
+        .limit(req.pagination.limit)
+        .skip(req.pagination.skip)
         .exec(function (err, softwareFrameworks) {
             if (err) return next(err);
             res.json({data: softwareFrameworks});

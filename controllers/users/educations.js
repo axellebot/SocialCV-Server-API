@@ -1,7 +1,5 @@
 "use strict";
 
-var getPagination = require("../../helpers").getPagination;
-
 const Education = require('../../models/education.schema');
 
 const PARAM_ID = global.constants.PARAM.PARAM_ID_USER;
@@ -9,12 +7,10 @@ const PARAM_ID = global.constants.PARAM.PARAM_ID_USER;
 /* Educations page. */
 exports.get = function (req, res, next) {
     //TODO : Educations - Handle options
-    var pagination = getPagination(req);
-
     Education
         .find({user: req.params[PARAM_ID]})
-        .limit(pagination.limit)
-        .skip(pagination.skip)
+        .limit(req.pagination.limit)
+        .skip(req.pagination.skip)
         .exec(function (err, educations) {
             if (err) return next(err);
             res.json({data: educations});

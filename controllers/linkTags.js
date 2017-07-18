@@ -1,7 +1,5 @@
 "use strict";
 
-var getPagination = require("../helpers").getPagination;
-
 const LinkTag = require('../models/linkTag.schema');
 
 const PARAM_ID = global.constants.PARAM.PARAM_ID_LINK_TAG;
@@ -11,11 +9,10 @@ exports.linkTags = {};
 
 exports.linkTags.get = function (req, res, next) {
     //TODO : LinkTags - Handle options
-    var pagination = getPagination(req);
     LinkTag
         .find({})
-        .limit(pagination.limit)
-        .skip(pagination.skip)
+        .limit(req.pagination.limit)
+        .skip(req.pagination.skip)
         .exec(function (err, linkTags) {
             if (err) return next(err);
             res.json({data: linkTags});

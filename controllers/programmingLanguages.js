@@ -1,7 +1,5 @@
 "use strict";
 
-var getPagination = require("../helpers").getPagination;
-
 const ProgrammingLanguage = require('../models/programmingLanguage.schema');
 
 const PARAM_ID = global.constants.PARAM.PARAM_ID_PROGRAMMING_LANGUAGE;
@@ -10,11 +8,10 @@ const PARAM_ID = global.constants.PARAM.PARAM_ID_PROGRAMMING_LANGUAGE;
 exports.programmingLanguages = {};
 exports.programmingLanguages.get = function (req, res, next) {
     //TODO : ProgrammingLanguages - Handle options
-    var pagination = getPagination(req);
     ProgrammingLanguage
         .find({})
-        .limit(pagination.limit)
-        .skip(pagination.skip)
+        .limit(req.pagination.limit)
+        .skip(req.pagination.skip)
         .exec(function (err, programmingLanguages) {
             if (err) return next(err);
             res.json({data: programmingLanguages});

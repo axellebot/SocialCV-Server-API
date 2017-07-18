@@ -1,7 +1,5 @@
 "use strict";
 
-var getPagination = require("../helpers").getPagination;
-
 const Link = require('../models/link.schema');
 
 const PARAM_ID = global.constants.PARAM.PARAM_ID_LINK;
@@ -10,11 +8,10 @@ const PARAM_ID = global.constants.PARAM.PARAM_ID_LINK;
 exports.links = {};
 exports.links.get = function (req, res, next) {
     //TODO : Links - Handle options
-    var pagination = getPagination(req);
     Link
         .find({})
-        .limit(pagination.limit)
-        .skip(pagination.skip)
+        .limit(req.pagination.limit)
+        .skip(req.pagination.skip)
         .exec(function (err, links) {
             if (err) return next(err);
             res.json({data: links});

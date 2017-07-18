@@ -1,7 +1,5 @@
 "use strict";
 
-var getPagination = require("../helpers").getPagination;
-
 const Framework = require('../models/framework.schema');
 
 const PARAM_ID = global.constants.PARAM.PARAM_ID_FRAMEWORK;
@@ -10,11 +8,10 @@ const PARAM_ID = global.constants.PARAM.PARAM_ID_FRAMEWORK;
 exports.frameworks = {};
 exports.frameworks.get = function (req, res, next) {
     //TODO : Frameworks - Handle options
-    var pagination = getPagination(req);
     Framework
         .find({})
-        .limit(pagination.limit)
-        .skip(pagination.skip)
+        .limit(req.pagination.limit)
+        .skip(req.pagination.skip)
         .exec(function (err, frameworks) {
             if (err) return next(err);
             res.json({data: frameworks});

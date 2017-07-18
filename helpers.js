@@ -6,23 +6,6 @@ const ROLE_MEMBER = global.constants.ROLE_MEMBER,
 const uuidv4 = require('uuid/v4'),
     bcrypt = require('bcrypt');
 
-/**
- * @param req
- * @return  A JSON object.
- */
-exports.getPagination = function (req) {
-    var options = {};
-    if (req.query.page && req.query.limit) {
-        const page = req.query.page, limit = req.query.limit;
-
-        if (page > 0 && limit > 0) {
-            options.skip = (page - 1) * limit;
-            options.limit = limit * 1;
-        }
-    }
-    return options;
-};
-
 // Set user info from request
 exports.setUserInfo = function setUserInfo(user) {
     const getUserInfo = {

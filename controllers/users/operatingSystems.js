@@ -1,7 +1,5 @@
 "use strict";
 
-var getPagination = require("../../helpers").getPagination;
-
 const OperatingSystem = require('../../models/operatingSystem.schema');
 
 const PARAM_ID = global.constants.PARAM.PARAM_ID_USER;
@@ -9,11 +7,10 @@ const PARAM_ID = global.constants.PARAM.PARAM_ID_USER;
 /* OperatingSystems page. */
 exports.get = function (req, res, next) {
     //TODO : OperatingSystems - Handle options
-    var pagination = getPagination(req);
     OperatingSystem
         .find({user: req.params[PARAM_ID]})
-        .limit(pagination.limit)
-        .skip(pagination.skip)
+        .limit(req.pagination.limit)
+        .skip(req.pagination.skip)
         .exec(function (err, operatingSystems) {
             if (err) return next(err);
             res.json({data: operatingSystems});

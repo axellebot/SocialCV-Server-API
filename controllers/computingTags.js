@@ -1,7 +1,5 @@
 "use strict";
 
-var getPagination = require("../helpers").getPagination;
-
 const ComputingTag = require('../models/computingTag.schema');
 
 const PARAM_ID = global.constants.PARAM.PARAM_ID_COMPUTING_TAG;
@@ -10,12 +8,10 @@ const PARAM_ID = global.constants.PARAM.PARAM_ID_COMPUTING_TAG;
 exports.computingTags = {};
 exports.computingTags.get = function (req, res, next) {
     //TODO : ComputingTags - Handle options
-    var pagination = getPagination(req);
-
     ComputingTag
         .find({})
-        .limit(pagination.limit)
-        .skip(pagination.skip)
+        .limit(req.pagination.limit)
+        .skip(req.pagination.skip)
         .exec(function (err, computingTags) {
             if (err) return next(err);
             res.json({data: computingTags});

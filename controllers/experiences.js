@@ -1,7 +1,5 @@
 "use strict";
 
-var getPagination = require("../helpers").getPagination;
-
 const Experience = require('../models/experience.schema');
 
 const PARAM_ID = global.constants.PARAM.PARAM_ID_EXPERIENCE;
@@ -10,11 +8,10 @@ const PARAM_ID = global.constants.PARAM.PARAM_ID_EXPERIENCE;
 exports.experiences = {};
 exports.experiences.get = function (req, res, next) {
     //TODO : Experiences - Handle options
-    var pagination = getPagination(req);
     Experience
         .find({})
-        .limit(pagination.limit)
-        .skip(pagination.skip)
+        .limit(req.pagination.limit)
+        .skip(req.pagination.skip)
         .exec(function (err, experiences) {
             if (err) return next(err);
             res.json({data: experiences});

@@ -1,7 +1,5 @@
 "use strict";
 
-var getPagination = require("../helpers").getPagination;
-
 const Interest = require('../models/interest.schema');
 
 const PARAM_ID = global.constants.PARAM.PARAM_ID_INTEREST;
@@ -10,11 +8,10 @@ const PARAM_ID = global.constants.PARAM.PARAM_ID_INTEREST;
 exports.interests = {};
 exports.interests.get = function (req, res, next) {
     //TODO : Interests - Handle options
-    var pagination = getPagination(req);
     Interest
         .find({})
-        .limit(pagination.limit)
-        .skip(pagination.skip)
+        .limit(req.pagination.limit)
+        .skip(req.pagination.skip)
         .exec(function (err, interests) {
             if (err) return next(err);
             res.json({data: interests});

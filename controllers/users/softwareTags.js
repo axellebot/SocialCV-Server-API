@@ -1,7 +1,5 @@
 "use strict";
 
-var getPagination = require("../../helpers").getPagination;
-
 const SoftwareTag = require('../../models/softwareTag.schema');
 
 const PARAM_ID = global.constants.PARAM.PARAM_ID_USER;
@@ -9,12 +7,10 @@ const PARAM_ID = global.constants.PARAM.PARAM_ID_USER;
 /* SoftwareTags page. */
 exports.get = function (req, res, next) {
     //TODO : SoftwareTags - Handle options
-    var pagination = getPagination(req);
-
     SoftwareTag
         .find({user: req.params[PARAM_ID]})
-        .limit(pagination.limit)
-        .skip(pagination.skip)
+        .limit(req.pagination.limit)
+        .skip(req.pagination.skip)
         .exec(function (err, SoftwareTags) {
             if (err) return next(err);
             res.json({data: SoftwareTags});

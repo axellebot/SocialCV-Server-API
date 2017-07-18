@@ -1,7 +1,5 @@
 "use strict";
 
-var getPagination = require("../../helpers").getPagination;
-
 const Entity = require('../../models/entity.schema');
 
 const PARAM_ID = global.constants.PARAM.PARAM_ID_USER;
@@ -9,12 +7,10 @@ const PARAM_ID = global.constants.PARAM.PARAM_ID_USER;
 /* Entities page. */
 exports.get = function (req, res, next) {
     //TODO : Entities - Handle options
-    var pagination = getPagination(req);
-
     Entity
         .find({user: req.params[PARAM_ID]})
-        .limit(pagination.limit)
-        .skip(pagination.skip)
+        .limit(req.pagination.limit)
+        .skip(req.pagination.skip)
         .exec(function (err, entities) {
             if (err) return next(err);
             res.json({data: entities});

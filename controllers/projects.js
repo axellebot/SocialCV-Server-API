@@ -1,7 +1,5 @@
 "use strict";
 
-var getPagination = require("../helpers").getPagination;
-
 const Project = require('../models/project.schema');
 
 const PARAM_ID = global.constants.PARAM.PARAM_ID_PROJECT;
@@ -10,11 +8,10 @@ const PARAM_ID = global.constants.PARAM.PARAM_ID_PROJECT;
 exports.projects = {};
 exports.projects.get = function (req, res, next) {
     //TODO : Projects - Handle options
-    var pagination = getPagination(req);
     Project
         .find({})
-        .limit(pagination.limit)
-        .skip(pagination.skip)
+        .limit(req.pagination.limit)
+        .skip(req.pagination.skip)
         .exec(function (err, projects) {
             if (err) return next(err);
             res.json({data: projects});
