@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * Handle config thanks to the NODE_ENV var
  * @namespace handle config

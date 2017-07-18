@@ -1,16 +1,19 @@
-var getPagination = require("../helpers").getPagination;
+"use strict";
+
+var getOptionRemove = require("../helpers").getOptionRemove;
 
 const OperatingSystem = require('../models/operatingSystem.schema');
+
+const PARAM_ID = global.constants.PARAM.PARAM_ID_OPERATING_SYSTEM;
 
 /* OperatingSystems page. */
 exports.operatingSystems = {};
 exports.operatingSystems.get = function (req, res, next) {
     //TODO : OperatingSystems - Handle options
-    var pagination = getPagination(req);
     OperatingSystem
         .find({})
-        .limit(pagination.limit)
-        .skip(pagination.skip)
+        .limit(req.options.pagination.limit)
+        .skip(req.options.pagination.skip)
         .exec(function (err, operatingSystems) {
             if (err) return next(err);
             res.json({data: operatingSystems});
@@ -25,15 +28,19 @@ exports.operatingSystems.put = function (req, res, next) {
     res.status(404).send('Bulk update of operatingSystems');
 };
 exports.operatingSystems.delete = function (req, res, next) {
-    //TODO : OperatingSystems - Remove all operatingSystems
-    res.status(404).send('Remove all operatingSystems');
+    OperatingSystem
+        .remove()
+        .exec(function (err, removed) {
+            if (err) return next(err);
+            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+        });
 };
 
 /* OperatingSystem page. */
 exports.operatingSystem = {};
 exports.operatingSystem.get = function (req, res, next) {
     OperatingSystem
-        .findById(req.params.id)
+        .findById(req.params[PARAM_ID])
         .exec(function (err, operatingSystem) {
             if (err) return next(err);
             res.json({data: operatingSystem});
@@ -47,6 +54,11 @@ exports.operatingSystem.put = function (req, res, next) {
     res.status(404).send('Update details of operatingSystems');
 };
 exports.operatingSystem.delete = function (req, res, next) {
-    //TODO : OperatingSystem - Remove operatingSystem
-    res.status(404).send('Remove operatingSystem');
+    var optionRemove = getOptionRemove(req.params[PARAM_ID], req.decoded);
+    OperatingSystem
+        .remove(optionRemove)
+        .exec(function (err, removed) {
+            if (err) return next(err);
+            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+        });
 };

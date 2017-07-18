@@ -1,16 +1,19 @@
-var getPagination = require("../helpers").getPagination;
+"use strict";
+
+var getOptionRemove = require("../helpers").getOptionRemove;
 
 const Language = require('../models/language.schema');
+
+const PARAM_ID = global.constants.PARAM.PARAM_ID_LANGUAGE;
 
 /* Languages page. */
 exports.languages = {};
 exports.languages.get = function (req, res, next) {
     //TODO : Languages - Handle options
-    var pagination = getPagination(req);
     Language
         .find({})
-        .limit(pagination.limit)
-        .skip(pagination.skip)
+        .limit(req.options.pagination.limit)
+        .skip(req.options.pagination.skip)
         .exec(function (err, languages) {
             if (err) return next(err);
             res.json({data: languages});
@@ -25,15 +28,19 @@ exports.languages.put = function (req, res, next) {
     res.status(404).send('Bulk update of languages');
 };
 exports.languages.delete = function (req, res, next) {
-    //TODO : Languages - Remove all languages
-    res.status(404).send('Remove all languages');
+    Language
+        .remove()
+        .exec(function (err, removed) {
+            if (err) return next(err);
+            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+        });
 };
 
 /* Language page. */
 exports.language = {};
 exports.language.get = function (req, res, next) {
     Language
-        .findById(req.params.id)
+        .findById(req.params[PARAM_ID])
         .exec(function (err, language) {
             if (err) return next(err);
             res.json({data: language});
@@ -47,6 +54,11 @@ exports.language.put = function (req, res, next) {
     res.status(404).send('Update details of languages');
 };
 exports.language.delete = function (req, res, next) {
-    //TODO : Language - Remove language
-    res.status(404).send('Remove language');
+    var optionRemove = getOptionRemove(req.params[PARAM_ID], req.decoded);
+    Language
+        .remove(optionRemove)
+        .exec(function (err, removed) {
+            if (err) return next(err);
+            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+        });
 };

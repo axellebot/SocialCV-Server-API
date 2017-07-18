@@ -1,16 +1,19 @@
-var getPagination = require("../helpers").getPagination;
+"use strict";
+
+var getOptionRemove = require("../helpers").getOptionRemove;
 
 const ProgrammingLanguage = require('../models/programmingLanguage.schema');
+
+const PARAM_ID = global.constants.PARAM.PARAM_ID_PROGRAMMING_LANGUAGE;
 
 /* ProgrammingLanguages page. */
 exports.programmingLanguages = {};
 exports.programmingLanguages.get = function (req, res, next) {
     //TODO : ProgrammingLanguages - Handle options
-    var pagination = getPagination(req);
     ProgrammingLanguage
         .find({})
-        .limit(pagination.limit)
-        .skip(pagination.skip)
+        .limit(req.options.pagination.limit)
+        .skip(req.options.pagination.skip)
         .exec(function (err, programmingLanguages) {
             if (err) return next(err);
             res.json({data: programmingLanguages});
@@ -25,15 +28,19 @@ exports.programmingLanguages.put = function (req, res, next) {
     res.status(404).send('Bulk update of programmingLanguages');
 };
 exports.programmingLanguages.delete = function (req, res, next) {
-    //TODO : ProgrammingLanguages - Remove all programmingLanguages
-    res.status(404).send('Remove all programmingLanguages');
+    ProgrammingLanguage
+        .remove()
+        .exec(function (err, removed) {
+            if (err) return next(err);
+            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+        });
 };
 
 /* ProgrammingLanguage page. */
 exports.programmingLanguage = {};
 exports.programmingLanguage.get = function (req, res, next) {
     ProgrammingLanguage
-        .findById(req.params.id)
+        .findById(req.params[PARAM_ID])
         .exec(function (err, programmingLanguage) {
             if (err) return next(err);
             res.json({data: programmingLanguage});
@@ -47,6 +54,11 @@ exports.programmingLanguage.put = function (req, res, next) {
     res.status(404).send('Update details of programmingLanguages');
 };
 exports.programmingLanguage.delete = function (req, res, next) {
-    //TODO : ProgrammingLanguage - Remove programmingLanguage
-    res.status(404).send('Remove programmingLanguage');
+    var optionRemove = getOptionRemove(req.params[PARAM_ID], req.decoded);
+    ProgrammingLanguage
+        .remove(optionRemove)
+        .exec(function (err, removed) {
+            if (err) return next(err);
+            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+        });
 };

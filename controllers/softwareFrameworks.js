@@ -1,16 +1,19 @@
-var getPagination = require("../helpers").getPagination;
+"use strict";
+
+var getOptionRemove = require("../helpers").getOptionRemove;
 
 const SoftwareFramework = require('../models/softwareFramework.schema');
+
+const PARAM_ID = global.constants.PARAM.PARAM_ID_SOFTWARE_FRAMEWORK;
 
 /* SoftwareFrameworks page. */
 exports.softwareFrameworks = {};
 exports.softwareFrameworks.get = function (req, res, next) {
     //TODO : SoftwareFrameworks - Handle options
-    var pagination = getPagination(req);
     SoftwareFramework
         .find({})
-        .limit(pagination.limit)
-        .skip(pagination.skip)
+        .limit(req.options.pagination.limit)
+        .skip(req.options.pagination.skip)
         .exec(function (err, softwareFrameworks) {
             if (err) return next(err);
             res.json({data: softwareFrameworks});
@@ -25,15 +28,19 @@ exports.softwareFrameworks.put = function (req, res, next) {
     res.status(404).send('Bulk update of softwareFrameworks');
 };
 exports.softwareFrameworks.delete = function (req, res, next) {
-    //TODO : SoftwareFrameworks - Remove all softwareFrameworks
-    res.status(404).send('Remove all softwareFrameworks');
+    SoftwareFramework
+        .remove()
+        .exec(function (err, removed) {
+            if (err) return next(err);
+            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+        });
 };
 
 /* SoftwareFramework page. */
 exports.softwareFramework = {};
 exports.softwareFramework.get = function (req, res, next) {
     SoftwareFramework
-        .findById(req.params.id)
+        .findById(req.params[PARAM_ID])
         .exec(function (err, softwareFramework) {
             if (err) return next(err);
             res.json({data: softwareFramework});
@@ -47,6 +54,11 @@ exports.softwareFramework.put = function (req, res, next) {
     res.status(404).send('Update details of softwareFrameworks');
 };
 exports.softwareFramework.delete = function (req, res, next) {
-    //TODO : SoftwareFramework - Remove softwareFramework
-    res.status(404).send('Remove softwareFramework');
+    var optionRemove = getOptionRemove(req.params[PARAM_ID], req.decoded);
+    SoftwareFramework
+        .remove(optionRemove)
+        .exec(function (err, removed) {
+            if (err) return next(err);
+            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+        });
 };

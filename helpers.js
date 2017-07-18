@@ -1,38 +1,24 @@
-const ROLE_MEMBER = global.constants.ROLE_MEMBER,
-    ROLE_ADMIN = global.constants.ROLE_ADMIN;
+"use strict";
 
-const uuidv4 = require('uuid/v4'),
+const
+    ROLE_MEMBER = global.constants.ROLE.ROLE_MEMBER,
+    ROLE_ADMIN = global.constants.ROLE.ROLE_ADMIN;
+
+const
+    uuidv4 = require('uuid/v4'),
     bcrypt = require('bcrypt');
 
-/**
- * @param req
- * @return  A JSON object.
- */
-exports.getPagination = function (req) {
-    var options = {};
-    if (req.query.page && req.query.limit) {
-        const page = req.query.page, limit = req.query.limit;
-
-        if (page > 0 && limit > 0) {
-            options.skip = (page - 1) * limit;
-            options.limit = limit * 1;
-        }
-    }
-    return options;
-};
-
 // Set user info from request
-exports.setUserInfo = function setUserInfo(user) {
+module.exports.setUserInfo = function setUserInfo(user) {
     const getUserInfo = {
         _id: user._id,
         email: user.email,
         role: user.role
     };
-
     return getUserInfo;
 };
 
-exports.getRole = function getRoleLevel(checkRole) {
+module.exports.getRole = function getRoleLevel(checkRole) {
     var role;
 
     switch (checkRole) {
@@ -43,12 +29,12 @@ exports.getRole = function getRoleLevel(checkRole) {
             role = 1;
             break;
         default:
-            role = 1;
+            role = -1;
     }
     return role;
 };
 
-exports.saltPassword = function (next) {
+module.exports.saltPassword = function (next) {
 
     var user = this;
 
@@ -69,13 +55,26 @@ exports.saltPassword = function (next) {
     });
 };
 
-exports.verifyPassword = function (candidatePassword, cb) {
+module.exports.verifyPassword = function (candidatePassword, cb) {
     bcrypt.compare(candidatePassword, this.password, function (err, isMatch) {
         if (err) return cb(err);
         cb(null, isMatch);
     });
 };
 
-exports.uuid = function () {
+module.exports.uuid = function () {
     return uuidv4
+};
+
+module.exports.getOptionRemove = function (entityId, loggedUser) {
+    console.log(loggedUser);
+    switch (loggedUser.role) {
+        case ROLE_MEMBER :
+            return {_id: entityId, user: loggedUser._id};
+        case ROLE_ADMIN:
+            return {_id: entityId};
+        default:
+            //return wrong id to avoid delting data
+            return {_id: -1};
+    }
 };

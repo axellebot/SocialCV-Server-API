@@ -1,3 +1,5 @@
+"use strict";
+
 var mongoose = require('../mongoose');
 
 const ROLE_ADMIN = require('../constants').ROLE_ADMIN;

@@ -1,16 +1,19 @@
-var getPagination = require("../helpers").getPagination;
+"use strict";
+
+var getOptionRemove = require("../helpers").getOptionRemove;
 
 const Profile = require('../models/profile.schema');
+
+const PARAM_ID = global.constants.PARAM.PARAM_ID_PROFILE;
 
 /* Profiles page. */
 exports.profiles = {};
 exports.profiles.get = function (req, res, next) {
     //TODO : Profiles - Handle options
-    var pagination = getPagination(req);
     Profile
         .find({})
-        .limit(pagination.limit)
-        .skip(pagination.skip)
+        .limit(req.options.pagination.limit)
+        .skip(req.options.pagination.skip)
         .exec(function (err, profiles) {
             if (err) return next(err);
             res.json({data: profiles});
@@ -25,15 +28,19 @@ exports.profiles.put = function (req, res, next) {
     res.status(404).send('Bulk update of profiles');
 };
 exports.profiles.delete = function (req, res, next) {
-    //TODO : Profiles - Remove all profiles
-    res.status(404).send('Remove all profiles');
+    Profile
+        .remove()
+        .exec(function (err, removed) {
+            if (err) return next(err);
+            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+        });
 };
 
 /* Profile page. */
 exports.profile = {};
 exports.profile.get = function (req, res, next) {
     Profile
-        .findById(req.params.id)
+        .findById(req.params[PARAM_ID])
         .exec(function (err, profile) {
             if (err) return next(err);
             res.json({data: profile});
@@ -47,6 +54,11 @@ exports.profile.put = function (req, res, next) {
     res.status(404).send('Update details of profiles');
 };
 exports.profile.delete = function (req, res, next) {
-    //TODO : Profile - Remove profile
-    res.status(404).send('Remove profile');
+    var optionRemove = getOptionRemove(req.params[PARAM_ID], req.decoded);
+    Profile
+        .remove(optionRemove)
+        .exec(function (err, removed) {
+            if (err) return next(err);
+            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+        });
 };
