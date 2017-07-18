@@ -1,9 +1,11 @@
 "use strict";
 
-const ROLE_MEMBER = global.constants.ROLE_MEMBER,
-    ROLE_ADMIN = global.constants.ROLE_ADMIN;
+const
+    ROLE_MEMBER = global.constants.ROLE.ROLE_MEMBER,
+    ROLE_ADMIN = global.constants.ROLE.ROLE_ADMIN;
 
-const uuidv4 = require('uuid/v4'),
+const
+    uuidv4 = require('uuid/v4'),
     bcrypt = require('bcrypt');
 
 // Set user info from request
@@ -13,7 +15,6 @@ exports.setUserInfo = function setUserInfo(user) {
         email: user.email,
         role: user.role
     };
-
     return getUserInfo;
 };
 
@@ -28,7 +29,7 @@ exports.getRole = function getRoleLevel(checkRole) {
             role = 1;
             break;
         default:
-            role = 1;
+            role = -1;
     }
     return role;
 };
