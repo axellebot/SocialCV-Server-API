@@ -9,7 +9,7 @@ const
     bcrypt = require('bcrypt');
 
 // Set user info from request
-exports.setUserInfo = function setUserInfo(user) {
+module.exports.setUserInfo = function setUserInfo(user) {
     const getUserInfo = {
         _id: user._id,
         email: user.email,
@@ -18,7 +18,7 @@ exports.setUserInfo = function setUserInfo(user) {
     return getUserInfo;
 };
 
-exports.getRole = function getRoleLevel(checkRole) {
+module.exports.getRole = function getRoleLevel(checkRole) {
     var role;
 
     switch (checkRole) {
@@ -34,7 +34,7 @@ exports.getRole = function getRoleLevel(checkRole) {
     return role;
 };
 
-exports.saltPassword = function (next) {
+module.exports.saltPassword = function (next) {
 
     var user = this;
 
@@ -55,13 +55,26 @@ exports.saltPassword = function (next) {
     });
 };
 
-exports.verifyPassword = function (candidatePassword, cb) {
+module.exports.verifyPassword = function (candidatePassword, cb) {
     bcrypt.compare(candidatePassword, this.password, function (err, isMatch) {
         if (err) return cb(err);
         cb(null, isMatch);
     });
 };
 
-exports.uuid = function () {
+module.exports.uuid = function () {
     return uuidv4
+};
+
+module.exports.getOptionRemove = function (entityId, loggedUser) {
+    console.log(loggedUser);
+    switch (loggedUser.role) {
+        case ROLE_MEMBER :
+            return {_id: entityId, user: loggedUser._id};
+        case ROLE_ADMIN:
+            return {_id: entityId};
+        default:
+            //return wrong id to avoid delting data
+            return {_id: -1};
+    }
 };

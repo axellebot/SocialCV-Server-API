@@ -25,6 +25,10 @@ exports.put = function (req, res, next) {
     res.status(404).send('Bulk update of computingTags for user : ' + req.params[PARAM_ID]);
 };
 exports.delete = function (req, res, next) {
-    //TODO : ComputingTags - Remove all computingTags for user
-    res.status(404).send('Remove all computingTags for user : '+req.params[PARAM_ID]);
+    ComputingTag
+        .remove({user: req.params[PARAM_ID]})
+        .exec(function (err, removed) {
+            if (err) return next(err);
+            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+        });
 };

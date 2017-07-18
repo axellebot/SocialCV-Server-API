@@ -25,6 +25,10 @@ exports.put = function (req, res, next) {
     res.status(404).send('Bulk update of entities for user : ' + req.params[PARAM_ID]);
 };
 exports.delete = function (req, res, next) {
-    //TODO : Entities - Remove all entities for user
-    res.status(404).send('Remove all entities for user : ' + req.params[PARAM_ID]);
+    Entity
+        .remove({user: req.params[PARAM_ID]})
+        .exec(function (err, removed) {
+            if (err) return next(err);
+            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+        });
 };

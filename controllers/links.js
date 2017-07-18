@@ -1,5 +1,7 @@
 "use strict";
 
+var getOptionRemove = require("../helpers").getOptionRemove;
+
 const Link = require('../models/link.schema');
 
 const PARAM_ID = global.constants.PARAM.PARAM_ID_LINK;
@@ -26,8 +28,12 @@ exports.links.put = function (req, res, next) {
     res.status(404).send('Bulk update of links');
 };
 exports.links.delete = function (req, res, next) {
-    //TODO : Links - Remove all links
-    res.status(404).send('Remove all links');
+    Link
+        .remove()
+        .exec(function (err, removed) {
+            if (err) return next(err);
+            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+        });
 };
 
 /* Link page. */
@@ -48,6 +54,11 @@ exports.link.put = function (req, res, next) {
     res.status(404).send('Update details of links');
 };
 exports.link.delete = function (req, res, next) {
-    //TODO : Link - Remove link
-    res.status(404).send('Remove link');
+    var optionRemove = getOptionRemove(req.params[PARAM_ID], req.decoded);
+    Link
+        .remove(optionRemove)
+        .exec(function (err, removed) {
+            if (err) return next(err);
+            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+        });
 };

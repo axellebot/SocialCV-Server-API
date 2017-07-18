@@ -1,5 +1,7 @@
 "use strict";
 
+var getOptionRemove = require("../../helpers").getOptionRemove;
+
 const User = require('../../models/user.schema');
 
 const PARAM_ID = global.constants.PARAM.PARAM_ID_USER;
@@ -26,8 +28,12 @@ exports.users.put = function (req, res, next) {
     res.status(404).send('Bulk update of users');
 };
 exports.users.delete = function (req, res, next) {
-    //TODO : users - Remove all users
-    res.status(404).send('Remove all users');
+    User
+        .remove()
+        .exec(function (err, removed) {
+            if (err) return next(err);
+            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+        });
 };
 
 /* user page. */
@@ -48,8 +54,14 @@ exports.user.put = function (req, res, next) {
     res.status(404).send('Update details of user');
 };
 exports.user.delete = function (req, res, next) {
-    //TODO : user - Remove user
-    res.status(404).send('Remove user');
+    var optionRemove = getOptionRemove(req.params[PARAM_ID], req.decoded);
+
+    User
+        .remove(optionRemove)
+        .exec(function (err, removed) {
+            if (err) return next(err);
+            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+        });
 };
 
 exports.user.computingTags = require('./computingTags');

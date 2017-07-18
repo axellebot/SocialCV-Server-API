@@ -1,8 +1,13 @@
 "use strict";
 
 var jwt = require('jsonwebtoken');
-var getRole = require("../helpers").getRole;
+var getRole = require("../../helpers").getRole;
 
+/**
+ * @param req
+ * @param res
+ * @param next
+ */
 module.exports = function (req, res, next) {
     var token = req.body.token || req.query.token || req.headers['x-access-token'];
 

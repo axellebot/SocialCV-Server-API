@@ -1,5 +1,7 @@
 "use strict";
 
+var getOptionRemove = require("../helpers").getOptionRemove;
+
 const LinkTag = require('../models/linkTag.schema');
 
 const PARAM_ID = global.constants.PARAM.PARAM_ID_LINK_TAG;
@@ -27,8 +29,12 @@ exports.linkTags.put = function (req, res, next) {
     res.status(404).send('Bulk update of links');
 };
 exports.linkTags.delete = function (req, res, next) {
-    //TODO : LinkTags - Remove all links
-    res.status(404).send('Remove all links');
+    LinkTag
+        .remove()
+        .exec(function (err, removed) {
+            if (err) return next(err);
+            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+        });
 };
 
 /* LinkTag page. */
@@ -49,6 +55,11 @@ exports.linkTag.put = function (req, res, next) {
     res.status(404).send('Update details of links');
 };
 exports.linkTag.delete = function (req, res, next) {
-    //TODO : LinkTag - Remove link
-    res.status(404).send('Remove link');
+    var optionRemove = getOptionRemove(req.params[PARAM_ID], req.decoded);
+    LinkTag
+        .remove(optionRemove)
+        .exec(function (err, removed) {
+            if (err) return next(err);
+            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+        });
 };

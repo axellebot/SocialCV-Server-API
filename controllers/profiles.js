@@ -1,5 +1,7 @@
 "use strict";
 
+var getOptionRemove = require("../helpers").getOptionRemove;
+
 const Profile = require('../models/profile.schema');
 
 const PARAM_ID = global.constants.PARAM.PARAM_ID_PROFILE;
@@ -26,8 +28,12 @@ exports.profiles.put = function (req, res, next) {
     res.status(404).send('Bulk update of profiles');
 };
 exports.profiles.delete = function (req, res, next) {
-    //TODO : Profiles - Remove all profiles
-    res.status(404).send('Remove all profiles');
+    Profile
+        .remove()
+        .exec(function (err, removed) {
+            if (err) return next(err);
+            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+        });
 };
 
 /* Profile page. */
@@ -48,6 +54,11 @@ exports.profile.put = function (req, res, next) {
     res.status(404).send('Update details of profiles');
 };
 exports.profile.delete = function (req, res, next) {
-    //TODO : Profile - Remove profile
-    res.status(404).send('Remove profile');
+    var optionRemove = getOptionRemove(req.params[PARAM_ID], req.decoded);
+    Profile
+        .remove(optionRemove)
+        .exec(function (err, removed) {
+            if (err) return next(err);
+            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+        });
 };

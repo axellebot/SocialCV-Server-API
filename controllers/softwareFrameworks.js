@@ -1,5 +1,7 @@
 "use strict";
 
+var getOptionRemove = require("../helpers").getOptionRemove;
+
 const SoftwareFramework = require('../models/softwareFramework.schema');
 
 const PARAM_ID = global.constants.PARAM.PARAM_ID_SOFTWARE_FRAMEWORK;
@@ -26,8 +28,12 @@ exports.softwareFrameworks.put = function (req, res, next) {
     res.status(404).send('Bulk update of softwareFrameworks');
 };
 exports.softwareFrameworks.delete = function (req, res, next) {
-    //TODO : SoftwareFrameworks - Remove all softwareFrameworks
-    res.status(404).send('Remove all softwareFrameworks');
+    SoftwareFramework
+        .remove()
+        .exec(function (err, removed) {
+            if (err) return next(err);
+            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+        });
 };
 
 /* SoftwareFramework page. */
@@ -48,6 +54,11 @@ exports.softwareFramework.put = function (req, res, next) {
     res.status(404).send('Update details of softwareFrameworks');
 };
 exports.softwareFramework.delete = function (req, res, next) {
-    //TODO : SoftwareFramework - Remove softwareFramework
-    res.status(404).send('Remove softwareFramework');
+    var optionRemove = getOptionRemove(req.params[PARAM_ID], req.decoded);
+    SoftwareFramework
+        .remove(optionRemove)
+        .exec(function (err, removed) {
+            if (err) return next(err);
+            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+        });
 };

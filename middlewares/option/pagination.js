@@ -2,7 +2,8 @@
 
 /**
  * @param req
- * @return  A JSON object.
+ * @param res
+ * @param next
  */
 module.exports = function (req, res, next) {
     if (!req.options) req.options = {};

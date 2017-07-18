@@ -1,5 +1,7 @@
 "use strict";
 
+var getOptionRemove = require("../helpers").getOptionRemove;
+
 const Framework = require('../models/framework.schema');
 
 const PARAM_ID = global.constants.PARAM.PARAM_ID_FRAMEWORK;
@@ -26,8 +28,12 @@ exports.frameworks.put = function (req, res, next) {
     res.status(404).send('Bulk update of frameworks');
 };
 exports.frameworks.delete = function (req, res, next) {
-    //TODO : Frameworks - Remove all frameworks
-    res.status(404).send('Remove all frameworks');
+    Framework
+        .remove()
+        .exec(function (err, removed) {
+            if (err) return next(err);
+            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+        });
 };
 
 /* Framework page. */
@@ -48,6 +54,11 @@ exports.framework.put = function (req, res, next) {
     res.status(404).send('Update details of frameworks');
 };
 exports.framework.delete = function (req, res, next) {
-    //TODO : Framework - Remove framework
-    res.status(404).send('Remove framework');
+    var optionRemove = getOptionRemove(req.params[PARAM_ID], req.decoded);
+    Framework
+        .remove(optionRemove)
+        .exec(function (err, removed) {
+            if (err) return next(err);
+            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+        });
 };

@@ -1,5 +1,7 @@
 "use strict";
 
+var getOptionRemove = require("../helpers").getOptionRemove;
+
 const Software = require('../models/software.schema');
 
 const PARAM_ID = global.constants.PARAM.PARAM_ID_SOFTWARE;
@@ -26,8 +28,12 @@ exports.softwares.put = function (req, res, next) {
     res.status(404).send('Bulk update of softwares');
 };
 exports.softwares.delete = function (req, res, next) {
-    //TODO : Softwares - Remove all softwares
-    res.status(404).send('Remove all softwares');
+    Software
+        .remove()
+        .exec(function (err, removed) {
+            if (err) return next(err);
+            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+        });
 };
 
 /* Software page. */
@@ -48,6 +54,11 @@ exports.software.put = function (req, res, next) {
     res.status(404).send('Update details of softwares');
 };
 exports.software.delete = function (req, res, next) {
-    //TODO : Software - Remove software
-    res.status(404).send('Remove software');
+    var optionRemove = getOptionRemove(req.params[PARAM_ID], req.decoded);
+    Software
+        .remove(optionRemove)
+        .exec(function (err, removed) {
+            if (err) return next(err);
+            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+        });
 };
