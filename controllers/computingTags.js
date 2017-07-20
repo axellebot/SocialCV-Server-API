@@ -4,7 +4,7 @@ var getOptionRemove = require("../helpers").getOptionRemove;
 
 const ComputingTag = require('../models/computingTag.schema');
 
-const PARAM_ID = global.constants.PARAM.PARAM_ID_COMPUTING_TAG;
+const PARAM_ID = PARAM.PARAM_ID_COMPUTING_TAG;
 
 /* ComputingTags page. */
 exports.computingTags = {};
@@ -15,23 +15,23 @@ exports.computingTags.get = function (req, res, next) {
         .limit(req.options.pagination.limit)
         .skip(req.options.pagination.skip)
         .exec(function (err, computingTags) {
-            if (err) return next(err);
+            if (err) return next(new DatabaseFindError());
             res.json({data: computingTags});
         });
 };
 exports.computingTags.post = function (req, res, next) {
     //TODO : ComputingTags - Create computingTag
-    res.status(404).send('Create a new ComputingTag');
+    return next(new NotImplementedError("Create a new computingTag"));
 };
 exports.computingTags.put = function (req, res, next) {
     //TODO : ComputingTags - Add Bulk update
-    res.status(404).send('Bulk update of computingTags');
+    return next(new NotImplementedError("Bulk update of computingTags"));
 };
 exports.computingTags.delete = function (req, res, next) {
     ComputingTag
         .remove()
         .exec(function (err, removed) {
-            if (err) return next(err);
+            if (err) return next(new DatabaseRemoveError());
             return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };
@@ -42,23 +42,26 @@ exports.computingTag.get = function (req, res, next) {
     ComputingTag
         .findById(req.params[PARAM_ID])
         .exec(function (err, computingTag) {
-            if (err) return next(err);
+            if (err) return next(new DatabaseFindError());
             res.json({data: computingTag});
         });
 };
+
 exports.computingTag.post = function (req, res, next) {
-    res.sendStatus(403);
+    return next(new NotFoundError());
 };
+
 exports.computingTag.put = function (req, res, next) {
     //TODO : ComputingTag - Update computingTag
-    res.status(404).send('Update details of computingTag');
+    return next(new NotImplementedError("Update details of computingTag " + req.params[PARAM_ID]));
 };
+
 exports.computingTag.delete = function (req, res, next) {
     var optionRemove = getOptionRemove(req.params[PARAM_ID], req.decoded);
     ComputingTag
         .remove(optionRemove)
         .exec(function (err, removed) {
-            if (err) return next(err);
+            if (err) return next(new DatabaseRemoveError());
             return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };

@@ -1,10 +1,11 @@
 "use strict";
 
-var getOptionRemove = require("../../helpers").getOptionRemove;
+var getOptionRemove = require("../../helpers").getOptionRemove,
+    userCanAccessUserData = require("../../helpers").userCanAccessUserData;
 
 const User = require('../../models/user.schema');
 
-const PARAM_ID = global.constants.PARAM.PARAM_ID_USER;
+const PARAM_ID = PARAM.PARAM_ID_USER;
 
 /* users page. */
 exports.users = {};
@@ -15,23 +16,26 @@ exports.users.get = function (req, res, next) {
         .limit(req.options.pagination.limit)
         .skip(req.options.pagination.skip)
         .exec(function (err, users) {
-            if (err) return next(err);
+            if (err) return next(new DatabaseFindError());
             res.json({data: users});
         });
 };
+
 exports.users.post = function (req, res, next) {
     //TODO : users - Create user
-    res.status(404).send('Create a new user');
+    return next(new NotImplementedError("Create a new user"));
 };
+
 exports.users.put = function (req, res, next) {
     //TODO : users - Add Bulk update
-    res.status(404).send('Bulk update of users');
+    return next(new NotImplementedError("Bulk update of users"));
 };
+
 exports.users.delete = function (req, res, next) {
     User
         .remove()
         .exec(function (err, removed) {
-            if (err) return next(err);
+            if (err) return next(new DatabaseRemoveError());
             return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };
@@ -42,24 +46,34 @@ exports.user.get = function (req, res, next) {
     User
         .findById(req.params[PARAM_ID])
         .exec(function (err, user) {
-            if (err) return next(err);
+            if (err) return next(new DatabaseFindError());
             res.json({data: user});
         });
 };
+
 exports.user.post = function (req, res, next) {
-    res.sendStatus(403);
+    return next(new NotFoundError());
 };
+
 exports.user.put = function (req, res, next) {
+    if (!userCanAccessUserData(req.decoded, req.params[PARAM_ID])) {
+        return next(new MissingPrivilegeError());
+    }
     //TODO : user - Update user
-    res.status(404).send('Update details of user');
+    return next(new NotImplementedError("Update details of user"));
 };
+
 exports.user.delete = function (req, res, next) {
+    if (!userCanAccessUserData(req.decoded, req.params[PARAM_ID])) {
+        return next(new MissingPrivilegeError());
+    }
+
     var optionRemove = getOptionRemove(req.params[PARAM_ID], req.decoded);
 
     User
         .remove(optionRemove)
         .exec(function (err, removed) {
-            if (err) return next(err);
+            if (err) return next(new DatabaseRemoveError());
             return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };

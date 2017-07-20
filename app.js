@@ -1,7 +1,12 @@
 "use strict";
 
 global.config = require("./config");
-global.constants = require("./constants");
+
+//assign constants
+require("./constants");
+
+//assign errors to global
+require("./errors");
 
 var express = require('express');
 var path = require('path');
@@ -31,22 +36,20 @@ router(app);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
-    var err = new Error('Not Found');
-    err.status = 404;
-    next(err);
+    next(new NotFoundError());
 });
 
 // error handler
 app.use(function (err, req, res, next) {
+
     // set locals, only providing error in development
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') === 'development' ? err : {};
+    res
+        .status(err.status || 500)
+        .json({error: true, message: err.message || MESSAGE.MESSAGE_ERROR_APP});
 
-    // render the error page
-    res.status(err.status || 500);
-    res.render('error');
     next();
 });
-
 
 module.exports = app;

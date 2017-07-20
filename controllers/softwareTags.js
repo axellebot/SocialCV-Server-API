@@ -4,7 +4,7 @@ var getOptionRemove = require("../helpers").getOptionRemove;
 
 const SoftwareTag = require('../models/softwareTag.schema');
 
-const PARAM_ID = global.constants.PARAM.PARAM_ID_SOFTWARE_TAG;
+const PARAM_ID = PARAM.PARAM_ID_SOFTWARE_TAG;
 
 /* SoftwareTags page. */
 exports.softwareTags = {};
@@ -15,23 +15,26 @@ exports.softwareTags.get = function (req, res, next) {
         .limit(req.options.pagination.limit)
         .skip(req.options.pagination.skip)
         .exec(function (err, SoftwareTags) {
-            if (err) return next(err);
+            if (err) return next(new DatabaseFindError());
             res.json({data: SoftwareTags});
         });
 };
+
 exports.softwareTags.post = function (req, res, next) {
     //TODO : SoftwareTags - Create softwareTag
-    res.status(404).send('Create a new SoftwareTag');
+    return next(new NotImplementedError("Create a new softwareTag"));
 };
+
 exports.softwareTags.put = function (req, res, next) {
     //TODO : SoftwareTags - Add Bulk update
-    res.status(404).send('Bulk update of SoftwareTags');
+    return next(new NotImplementedError("Bulk update of SoftwareTags"));
 };
+
 exports.softwareTags.delete = function (req, res, next) {
     SoftwareTag
         .remove()
         .exec(function (err, removed) {
-            if (err) return next(err);
+            if (err) return next(new DatabaseRemoveError());
             return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };
@@ -42,23 +45,26 @@ exports.softwareTag.get = function (req, res, next) {
     SoftwareTag
         .findById(req.params[PARAM_ID])
         .exec(function (err, SoftwareTag) {
-            if (err) return next(err);
+            if (err) return next(new DatabaseFindError());
             res.json({data: SoftwareTag});
         });
 };
+
 exports.softwareTag.post = function (req, res, next) {
-    res.sendStatus(403);
+    return next(new NotFoundError());
 };
+
 exports.softwareTag.put = function (req, res, next) {
     //TODO : SoftwareTag - Update softwareTag
-    res.status(404).send('Update details of softwareTag');
+    return next(new NotImplementedError("Update details of softwareTag " + req.params[PARAM_ID]));
 };
+
 exports.softwareTag.delete = function (req, res, next) {
     var optionRemove = getOptionRemove(req.params[PARAM_ID], req.decoded);
     SoftwareTag
         .remove(optionRemove)
         .exec(function (err, removed) {
-            if (err) return next(err);
+            if (err) return next(new DatabaseRemoveError());
             return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };

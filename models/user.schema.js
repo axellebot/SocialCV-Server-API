@@ -10,7 +10,7 @@ var verifyPassword = require('../helpers').verifyPassword;
 var Schema = mongoose.Schema;
 
 const uuid = require("../helpers").uuid;
-const COLLECTION_NAME = global.constants.COLLECTION.COLLECTION_USER;
+const COLLECTION_NAME = COLLECTION.COLLECTION_USER;
 
 //= ===============================
 // User Schema

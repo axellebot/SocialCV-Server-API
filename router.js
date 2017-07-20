@@ -3,59 +3,58 @@
 const express = require('express');
 
 const requireRole = require('./middlewares/require/role');
-const requireUserOwner = require('./middlewares/require/userOwner');
 const optionPagination = require('./middlewares/option/pagination');
 
 // Roles
 const
-    ROLE_MEMBER = global.constants.ROLE.ROLE_MEMBER,
-    ROLE_ADMIN = global.constants.ROLE.ROLE_ADMIN;
+    ROLE_MEMBER = ROLE.ROLE_MEMBER,
+    ROLE_ADMIN = ROLE.ROLE_ADMIN;
 
 // Route Paths
-const PATH_INDEX = global.constants.PATH.PATH_INDEX,
-    PATH_AUTHENTICATION = global.constants.PATH.PATH_AUTHENTICATION,
-    PATH_REGISTER = global.constants.PATH.PATH_REGISTER,
-    PATH_LOGIN = global.constants.PATH.PATH_LOGIN,
-    PATH_COMPUTING_TAGS = global.constants.PATH.PATH_COMPUTING_TAGS,
-    PATH_EDUCATIONS = global.constants.PATH.PATH_EDUCATIONS,
-    PATH_ENTITIES = global.constants.PATH.PATH_ENTITIES,
-    PATH_EXPERIENCES = global.constants.PATH.PATH_EXPERIENCES,
-    PATH_FRAMEWORKS = global.constants.PATH.PATH_FRAMEWORKS,
-    PATH_FRAMEWORK_TAGS = global.constants.PATH.PATH_FRAMEWORK_TAGS,
-    PATH_INTERESTS = global.constants.PATH.PATH_INTERESTS,
-    PATH_LANGUAGES = global.constants.PATH.PATH_LANGUAGES,
-    PATH_LINKS = global.constants.PATH.PATH_LINKS,
-    PATH_LINK_TAGS = global.constants.PATH.PATH_LINK_TAGS,
-    PATH_OPERATING_SYSTEMS = global.constants.PATH.PATH_OPERATING_SYSTEMS,
-    PATH_PROFILES = global.constants.PATH.PATH_PROFILES,
-    PATH_PROGRAMMING_LANGUAGES = global.constants.PATH.PATH_PROGRAMMING_LANGUAGES,
-    PATH_PROJECTS = global.constants.PATH.PATH_PROJECTS,
-    PATH_PROJECT_TAGS = global.constants.PATH.PATH_PROJECT_TAGS,
-    PATH_SOFTWARE_FRAMEWORKS = global.constants.PATH.PATH_SOFTWARE_FRAMEWORKS,
-    PATH_SOFTWARES = global.constants.PATH.PATH_SOFTWARES,
-    PATH_SOFTWARE_TAGS = global.constants.PATH.PATH_SOFTWARE_TAGS,
-    PATH_USERS = global.constants.PATH.PATH_USERS;
+const PATH_INDEX = PATH.PATH_INDEX,
+    PATH_AUTHENTICATION = PATH.PATH_AUTHENTICATION,
+    PATH_REGISTER = PATH.PATH_REGISTER,
+    PATH_LOGIN = PATH.PATH_LOGIN,
+    PATH_COMPUTING_TAGS = PATH.PATH_COMPUTING_TAGS,
+    PATH_EDUCATIONS = PATH.PATH_EDUCATIONS,
+    PATH_ENTITIES = PATH.PATH_ENTITIES,
+    PATH_EXPERIENCES = PATH.PATH_EXPERIENCES,
+    PATH_FRAMEWORKS = PATH.PATH_FRAMEWORKS,
+    PATH_FRAMEWORK_TAGS = PATH.PATH_FRAMEWORK_TAGS,
+    PATH_INTERESTS = PATH.PATH_INTERESTS,
+    PATH_LANGUAGES = PATH.PATH_LANGUAGES,
+    PATH_LINKS = PATH.PATH_LINKS,
+    PATH_LINK_TAGS = PATH.PATH_LINK_TAGS,
+    PATH_OPERATING_SYSTEMS = PATH.PATH_OPERATING_SYSTEMS,
+    PATH_PROFILES = PATH.PATH_PROFILES,
+    PATH_PROGRAMMING_LANGUAGES = PATH.PATH_PROGRAMMING_LANGUAGES,
+    PATH_PROJECTS = PATH.PATH_PROJECTS,
+    PATH_PROJECT_TAGS = PATH.PATH_PROJECT_TAGS,
+    PATH_SOFTWARE_FRAMEWORKS = PATH.PATH_SOFTWARE_FRAMEWORKS,
+    PATH_SOFTWARES = PATH.PATH_SOFTWARES,
+    PATH_SOFTWARE_TAGS = PATH.PATH_SOFTWARE_TAGS,
+    PATH_USERS = PATH.PATH_USERS;
 
 // Parametre Ids
-const PARAM_ID_COMPUTING_TAG = global.constants.PARAM.PARAM_ID_COMPUTING_TAG,
-    PARAM_ID_EDUCATION = global.constants.PARAM.PARAM_ID_EDUCATION,
-    PARAM_ID_ENTITY = global.constants.PARAM.PARAM_ID_ENTITY,
-    PARAM_ID_EXPERIENCE = global.constants.PARAM.PARAM_ID_EXPERIENCE,
-    PARAM_ID_FRAMEWORK = global.constants.PARAM.PARAM_ID_FRAMEWORK,
-    PARAM_ID_FRAMEWORK_TAG = global.constants.PARAM.PARAM_ID_FRAMEWORK_TAG,
-    PARAM_ID_INTEREST = global.constants.PARAM.PARAM_ID_INTEREST,
-    PARAM_ID_LANGUAGE = global.constants.PARAM.PARAM_ID_LANGUAGE,
-    PARAM_ID_LINK = global.constants.PARAM.PARAM_ID_LINK,
-    PARAM_ID_LINK_TAG = global.constants.PARAM.PARAM_ID_LINK_TAG,
-    PARAM_ID_OPERATING_SYSTEM = global.constants.PARAM.PARAM_ID_OPERATING_SYSTEM,
-    PARAM_ID_PROFILE = global.constants.PARAM.PARAM_ID_PROFILE,
-    PARAM_ID_PROGRAMMING_LANGUAGE = global.constants.PARAM.PARAM_ID_PROGRAMMING_LANGUAGE,
-    PARAM_ID_PROJECT = global.constants.PARAM.PARAM_ID_PROJECT,
-    PARAM_ID_PROJECT_TAG = global.constants.PARAM.PARAM_ID_PROJECT_TAG,
-    PARAM_ID_SOFTWARE_FRAMEWORK = global.constants.PARAM.PARAM_ID_SOFTWARE_FRAMEWORK,
-    PARAM_ID_SOFTWARE = global.constants.PARAM.PARAM_ID_SOFTWARE,
-    PARAM_ID_SOFTWARE_TAG = global.constants.PARAM.PARAM_ID_SOFTWARE_TAG,
-    PARAM_ID_USER = global.constants.PARAM.PARAM_ID_USER;
+const PARAM_ID_COMPUTING_TAG = PARAM.PARAM_ID_COMPUTING_TAG,
+    PARAM_ID_EDUCATION = PARAM.PARAM_ID_EDUCATION,
+    PARAM_ID_ENTITY = PARAM.PARAM_ID_ENTITY,
+    PARAM_ID_EXPERIENCE = PARAM.PARAM_ID_EXPERIENCE,
+    PARAM_ID_FRAMEWORK = PARAM.PARAM_ID_FRAMEWORK,
+    PARAM_ID_FRAMEWORK_TAG = PARAM.PARAM_ID_FRAMEWORK_TAG,
+    PARAM_ID_INTEREST = PARAM.PARAM_ID_INTEREST,
+    PARAM_ID_LANGUAGE = PARAM.PARAM_ID_LANGUAGE,
+    PARAM_ID_LINK = PARAM.PARAM_ID_LINK,
+    PARAM_ID_LINK_TAG = PARAM.PARAM_ID_LINK_TAG,
+    PARAM_ID_OPERATING_SYSTEM = PARAM.PARAM_ID_OPERATING_SYSTEM,
+    PARAM_ID_PROFILE = PARAM.PARAM_ID_PROFILE,
+    PARAM_ID_PROGRAMMING_LANGUAGE = PARAM.PARAM_ID_PROGRAMMING_LANGUAGE,
+    PARAM_ID_PROJECT = PARAM.PARAM_ID_PROJECT,
+    PARAM_ID_PROJECT_TAG = PARAM.PARAM_ID_PROJECT_TAG,
+    PARAM_ID_SOFTWARE_FRAMEWORK = PARAM.PARAM_ID_SOFTWARE_FRAMEWORK,
+    PARAM_ID_SOFTWARE = PARAM.PARAM_ID_SOFTWARE,
+    PARAM_ID_SOFTWARE_TAG = PARAM.PARAM_ID_SOFTWARE_TAG,
+    PARAM_ID_USER = PARAM.PARAM_ID_USER;
 
 // Controllers
 const
@@ -405,116 +404,116 @@ module.exports = function (app) {
     routeUsers.post(PATH_INDEX, requireRole(ROLE_ADMIN), controllerUsers.users.post);
     routeUsers.put(PATH_INDEX, requireRole(ROLE_ADMIN), controllerUsers.users.put);
     routeUsers.delete(PATH_INDEX, requireRole(ROLE_ADMIN), controllerUsers.users.delete);
-    routeUsers.get(PATH_INDEX + ':' + PARAM_ID_USER, requireUserOwner, controllerUsers.user.get);
-    routeUsers.post(PATH_INDEX + ':' + PARAM_ID_USER, requireUserOwner, controllerUsers.user.post);
-    routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER, requireUserOwner, controllerUsers.user.put);
-    routeUsers.delete(PATH_INDEX + ':' + PARAM_ID_USER, requireUserOwner, controllerUsers.user.delete);
+    routeUsers.get(PATH_INDEX + ':' + PARAM_ID_USER, requireRole(ROLE_MEMBER), controllerUsers.user.get);
+    routeUsers.post(PATH_INDEX + ':' + PARAM_ID_USER, requireRole(ROLE_MEMBER), controllerUsers.user.post);
+    routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER, requireRole(ROLE_MEMBER), controllerUsers.user.put);
+    routeUsers.delete(PATH_INDEX + ':' + PARAM_ID_USER, requireRole(ROLE_MEMBER), controllerUsers.user.delete);
 
     //Computing Tag Routes
     routeUsers.get(PATH_INDEX + ':' + PARAM_ID_USER + PATH_COMPUTING_TAGS, optionPagination, controllerUsers.user.computingTags.get);
-    routeUsers.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_COMPUTING_TAGS, requireUserOwner, controllerUsers.user.computingTags.post);
-    routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_COMPUTING_TAGS, requireUserOwner, controllerUsers.user.computingTags.put);
-    routeUsers.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_COMPUTING_TAGS, requireUserOwner, controllerUsers.user.computingTags.delete);
+    routeUsers.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_COMPUTING_TAGS, requireRole(ROLE_MEMBER), controllerUsers.user.computingTags.post);
+    routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_COMPUTING_TAGS, requireRole(ROLE_MEMBER), controllerUsers.user.computingTags.put);
+    routeUsers.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_COMPUTING_TAGS, requireRole(ROLE_MEMBER), controllerUsers.user.computingTags.delete);
 
     //Education Routes
     routeUsers.get(PATH_INDEX + ':' + PARAM_ID_USER + PATH_EDUCATIONS, optionPagination, controllerUsers.user.educations.get);
-    routeUsers.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_EDUCATIONS, requireUserOwner, controllerUsers.user.educations.post);
-    routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_EDUCATIONS, requireUserOwner, controllerUsers.user.educations.put);
-    routeUsers.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_EDUCATIONS, requireUserOwner, controllerUsers.user.educations.delete);
+    routeUsers.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_EDUCATIONS, requireRole(ROLE_MEMBER), controllerUsers.user.educations.post);
+    routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_EDUCATIONS, requireRole(ROLE_MEMBER), controllerUsers.user.educations.put);
+    routeUsers.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_EDUCATIONS, requireRole(ROLE_MEMBER), controllerUsers.user.educations.delete);
 
     //Entity Routes
     routeUsers.get(PATH_INDEX + ':' + PARAM_ID_USER + PATH_ENTITIES, optionPagination, controllerUsers.user.entities.get);
-    routeUsers.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_ENTITIES, requireUserOwner, controllerUsers.user.entities.post);
-    routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_ENTITIES, requireUserOwner, controllerUsers.user.entities.put);
-    routeUsers.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_ENTITIES, requireUserOwner, controllerUsers.user.entities.delete);
+    routeUsers.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_ENTITIES, requireRole(ROLE_MEMBER), controllerUsers.user.entities.post);
+    routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_ENTITIES, requireRole(ROLE_MEMBER), controllerUsers.user.entities.put);
+    routeUsers.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_ENTITIES, requireRole(ROLE_MEMBER), controllerUsers.user.entities.delete);
 
     //Experience Routes
     routeUsers.get(PATH_INDEX + ':' + PARAM_ID_USER + PATH_EXPERIENCES, optionPagination, controllerUsers.user.experiences.get);
-    routeUsers.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_EXPERIENCES, requireUserOwner, controllerUsers.user.experiences.post);
-    routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_EXPERIENCES, requireUserOwner, controllerUsers.user.experiences.put);
-    routeUsers.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_EXPERIENCES, requireUserOwner, controllerUsers.user.experiences.delete);
+    routeUsers.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_EXPERIENCES, requireRole(ROLE_MEMBER), controllerUsers.user.experiences.post);
+    routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_EXPERIENCES, requireRole(ROLE_MEMBER), controllerUsers.user.experiences.put);
+    routeUsers.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_EXPERIENCES, requireRole(ROLE_MEMBER), controllerUsers.user.experiences.delete);
 
     //Framework Routes
     routeUsers.get(PATH_INDEX + ':' + PARAM_ID_USER + PATH_FRAMEWORKS, optionPagination, controllerUsers.user.frameworks.get);
-    routeUsers.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_FRAMEWORKS, requireUserOwner, controllerUsers.user.frameworks.post);
-    routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_FRAMEWORKS, requireUserOwner, controllerUsers.user.frameworks.put);
-    routeUsers.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_FRAMEWORKS, requireUserOwner, controllerUsers.user.frameworks.delete);
+    routeUsers.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_FRAMEWORKS, requireRole(ROLE_MEMBER), controllerUsers.user.frameworks.post);
+    routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_FRAMEWORKS, requireRole(ROLE_MEMBER), controllerUsers.user.frameworks.put);
+    routeUsers.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_FRAMEWORKS, requireRole(ROLE_MEMBER), controllerUsers.user.frameworks.delete);
 
     //Framework Tag Routes
     routeUsers.get(PATH_INDEX + ':' + PARAM_ID_USER + PATH_FRAMEWORK_TAGS, optionPagination, controllerUsers.user.frameworkTags.get);
-    routeUsers.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_FRAMEWORK_TAGS, requireUserOwner, controllerUsers.user.frameworkTags.post);
-    routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_FRAMEWORK_TAGS, requireUserOwner, controllerUsers.user.frameworkTags.put);
-    routeUsers.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_FRAMEWORK_TAGS, requireUserOwner, controllerUsers.user.frameworkTags.delete);
+    routeUsers.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_FRAMEWORK_TAGS, requireRole(ROLE_MEMBER), controllerUsers.user.frameworkTags.post);
+    routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_FRAMEWORK_TAGS, requireRole(ROLE_MEMBER), controllerUsers.user.frameworkTags.put);
+    routeUsers.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_FRAMEWORK_TAGS, requireRole(ROLE_MEMBER), controllerUsers.user.frameworkTags.delete);
 
     //Interest Routes
     routeUsers.get(PATH_INDEX + ':' + PARAM_ID_USER + PATH_INTERESTS, optionPagination, controllerUsers.user.interests.get);
-    routeUsers.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_INTERESTS, requireUserOwner, controllerUsers.user.interests.post);
-    routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_INTERESTS, requireUserOwner, controllerUsers.user.interests.put);
-    routeUsers.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_INTERESTS, requireUserOwner, controllerUsers.user.interests.delete);
+    routeUsers.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_INTERESTS, requireRole(ROLE_MEMBER), controllerUsers.user.interests.post);
+    routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_INTERESTS, requireRole(ROLE_MEMBER), controllerUsers.user.interests.put);
+    routeUsers.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_INTERESTS, requireRole(ROLE_MEMBER), controllerUsers.user.interests.delete);
 
     //Language Routes
     routeUsers.get(PATH_INDEX + ':' + PARAM_ID_USER + PATH_LANGUAGES, optionPagination, controllerUsers.user.languages.get);
-    routeUsers.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_LANGUAGES, requireUserOwner, controllerUsers.user.languages.post);
-    routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_LANGUAGES, requireUserOwner, controllerUsers.user.languages.put);
-    routeUsers.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_LANGUAGES, requireUserOwner, controllerUsers.user.languages.delete);
+    routeUsers.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_LANGUAGES, requireRole(ROLE_MEMBER), controllerUsers.user.languages.post);
+    routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_LANGUAGES, requireRole(ROLE_MEMBER), controllerUsers.user.languages.put);
+    routeUsers.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_LANGUAGES, requireRole(ROLE_MEMBER), controllerUsers.user.languages.delete);
 
     //Links Routes
     routeUsers.get(PATH_INDEX + ':' + PARAM_ID_USER + PATH_LINKS, optionPagination, controllerUsers.user.links.get);
-    routeUsers.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_LINKS, requireUserOwner, controllerUsers.user.links.post);
-    routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_LINKS, requireUserOwner, controllerUsers.user.links.put);
-    routeUsers.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_LINKS, requireUserOwner, controllerUsers.user.links.delete);
+    routeUsers.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_LINKS, requireRole(ROLE_MEMBER), controllerUsers.user.links.post);
+    routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_LINKS, requireRole(ROLE_MEMBER), controllerUsers.user.links.put);
+    routeUsers.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_LINKS, requireRole(ROLE_MEMBER), controllerUsers.user.links.delete);
 
     //Link Tag Routes
     routeUsers.get(PATH_INDEX + ':' + PARAM_ID_USER + PATH_LINK_TAGS, optionPagination, controllerUsers.user.linkTags.get);
-    routeUsers.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_LINK_TAGS, requireUserOwner, controllerUsers.user.linkTags.post);
-    routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_LINK_TAGS, requireUserOwner, controllerUsers.user.linkTags.put);
-    routeUsers.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_LINK_TAGS, requireUserOwner, controllerUsers.user.linkTags.delete);
+    routeUsers.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_LINK_TAGS, requireRole(ROLE_MEMBER), controllerUsers.user.linkTags.post);
+    routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_LINK_TAGS, requireRole(ROLE_MEMBER), controllerUsers.user.linkTags.put);
+    routeUsers.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_LINK_TAGS, requireRole(ROLE_MEMBER), controllerUsers.user.linkTags.delete);
 
     //Operating System Routes
     routeUsers.get(PATH_INDEX + ':' + PARAM_ID_USER + PATH_OPERATING_SYSTEMS, optionPagination, controllerUsers.user.operatingSystems.get);
-    routeUsers.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_OPERATING_SYSTEMS, requireUserOwner, controllerUsers.user.operatingSystems.post);
-    routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_OPERATING_SYSTEMS, requireUserOwner, controllerUsers.user.operatingSystems.put);
-    routeUsers.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_OPERATING_SYSTEMS, requireUserOwner, controllerUsers.user.operatingSystems.delete);
+    routeUsers.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_OPERATING_SYSTEMS, requireRole(ROLE_MEMBER), controllerUsers.user.operatingSystems.post);
+    routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_OPERATING_SYSTEMS, requireRole(ROLE_MEMBER), controllerUsers.user.operatingSystems.put);
+    routeUsers.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_OPERATING_SYSTEMS, requireRole(ROLE_MEMBER), controllerUsers.user.operatingSystems.delete);
 
     //Profile Routes
     routeUsers.get(PATH_INDEX + ':' + PARAM_ID_USER + PATH_PROFILES, optionPagination, controllerUsers.user.profiles.get);
-    routeUsers.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_PROFILES, requireUserOwner, controllerUsers.user.profiles.post);
-    routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_PROFILES, requireUserOwner, controllerUsers.user.profiles.put);
-    routeUsers.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_PROFILES, requireUserOwner, controllerUsers.user.profiles.delete);
+    routeUsers.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_PROFILES, requireRole(ROLE_MEMBER), controllerUsers.user.profiles.post);
+    routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_PROFILES, requireRole(ROLE_MEMBER), controllerUsers.user.profiles.put);
+    routeUsers.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_PROFILES, requireRole(ROLE_MEMBER), controllerUsers.user.profiles.delete);
 
     //Programming Language Routes
     routeUsers.get(PATH_INDEX + ':' + PARAM_ID_USER + PATH_PROGRAMMING_LANGUAGES, optionPagination, controllerUsers.user.programmingLanguages.get);
-    routeUsers.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_PROGRAMMING_LANGUAGES, requireUserOwner, controllerUsers.user.programmingLanguages.post);
-    routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_PROGRAMMING_LANGUAGES, requireUserOwner, controllerUsers.user.programmingLanguages.put);
-    routeUsers.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_PROGRAMMING_LANGUAGES, requireUserOwner, controllerUsers.user.programmingLanguages.delete);
+    routeUsers.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_PROGRAMMING_LANGUAGES, requireRole(ROLE_MEMBER), controllerUsers.user.programmingLanguages.post);
+    routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_PROGRAMMING_LANGUAGES, requireRole(ROLE_MEMBER), controllerUsers.user.programmingLanguages.put);
+    routeUsers.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_PROGRAMMING_LANGUAGES, requireRole(ROLE_MEMBER), controllerUsers.user.programmingLanguages.delete);
 
     //Project Routes
     routeUsers.get(PATH_INDEX + ':' + PARAM_ID_USER + PATH_PROJECTS, optionPagination, controllerUsers.user.projects.get);
-    routeUsers.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_PROJECTS, requireUserOwner, controllerUsers.user.projects.post);
-    routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_PROJECTS, requireUserOwner, controllerUsers.user.projects.put);
-    routeUsers.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_PROJECTS, requireUserOwner, controllerUsers.user.projects.delete);
+    routeUsers.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_PROJECTS, requireRole(ROLE_MEMBER), controllerUsers.user.projects.post);
+    routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_PROJECTS, requireRole(ROLE_MEMBER), controllerUsers.user.projects.put);
+    routeUsers.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_PROJECTS, requireRole(ROLE_MEMBER), controllerUsers.user.projects.delete);
 
     //Project Tag Routes
     routeUsers.get(PATH_INDEX + ':' + PARAM_ID_USER + PATH_PROJECT_TAGS, optionPagination, controllerUsers.user.projectTags.get);
-    routeUsers.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_PROJECT_TAGS, requireUserOwner, controllerUsers.user.projectTags.post);
-    routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_PROJECT_TAGS, requireUserOwner, controllerUsers.user.projectTags.put);
-    routeUsers.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_PROJECT_TAGS, requireUserOwner, controllerUsers.user.projectTags.delete);
+    routeUsers.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_PROJECT_TAGS, requireRole(ROLE_MEMBER), controllerUsers.user.projectTags.post);
+    routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_PROJECT_TAGS, requireRole(ROLE_MEMBER), controllerUsers.user.projectTags.put);
+    routeUsers.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_PROJECT_TAGS, requireRole(ROLE_MEMBER), controllerUsers.user.projectTags.delete);
 
     //Software Framework Routes
     routeUsers.get(PATH_INDEX + ':' + PARAM_ID_USER + PATH_SOFTWARE_FRAMEWORKS, optionPagination, controllerUsers.user.softwareFrameworks.get);
-    routeUsers.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_SOFTWARE_FRAMEWORKS, requireUserOwner, controllerUsers.user.softwareFrameworks.post);
-    routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_SOFTWARE_FRAMEWORKS, requireUserOwner, controllerUsers.user.softwareFrameworks.put);
-    routeUsers.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_SOFTWARE_FRAMEWORKS, requireUserOwner, controllerUsers.user.softwareFrameworks.delete);
+    routeUsers.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_SOFTWARE_FRAMEWORKS, requireRole(ROLE_MEMBER), controllerUsers.user.softwareFrameworks.post);
+    routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_SOFTWARE_FRAMEWORKS, requireRole(ROLE_MEMBER), controllerUsers.user.softwareFrameworks.put);
+    routeUsers.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_SOFTWARE_FRAMEWORKS, requireRole(ROLE_MEMBER), controllerUsers.user.softwareFrameworks.delete);
 
     //Software Routes
     routeUsers.get(PATH_INDEX + ':' + PARAM_ID_USER + PATH_SOFTWARES, optionPagination, controllerUsers.user.softwares.get);
-    routeUsers.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_SOFTWARES, requireUserOwner, controllerUsers.user.softwares.post);
-    routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_SOFTWARES, requireUserOwner, controllerUsers.user.softwares.put);
-    routeUsers.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_SOFTWARES, requireUserOwner, controllerUsers.user.softwares.delete);
+    routeUsers.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_SOFTWARES, requireRole(ROLE_MEMBER), controllerUsers.user.softwares.post);
+    routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_SOFTWARES, requireRole(ROLE_MEMBER), controllerUsers.user.softwares.put);
+    routeUsers.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_SOFTWARES, requireRole(ROLE_MEMBER), controllerUsers.user.softwares.delete);
 
     //Software Tag Routes
     routeUsers.get(PATH_INDEX + ':' + PARAM_ID_USER + PATH_SOFTWARE_TAGS, optionPagination, controllerUsers.user.softwareTags.get);
-    routeUsers.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_SOFTWARE_TAGS, requireUserOwner, controllerUsers.user.softwareTags.post);
-    routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_SOFTWARE_TAGS, requireUserOwner, controllerUsers.user.softwareTags.put);
-    routeUsers.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_SOFTWARE_TAGS, requireUserOwner, controllerUsers.user.softwareTags.delete);
+    routeUsers.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_SOFTWARE_TAGS, requireRole(ROLE_MEMBER), controllerUsers.user.softwareTags.post);
+    routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_SOFTWARE_TAGS, requireRole(ROLE_MEMBER), controllerUsers.user.softwareTags.put);
+    routeUsers.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_SOFTWARE_TAGS, requireRole(ROLE_MEMBER), controllerUsers.user.softwareTags.delete);
 };
