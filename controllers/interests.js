@@ -4,7 +4,7 @@ var getOptionRemove = require("../helpers").getOptionRemove;
 
 const Interest = require('../models/interest.schema');
 
-const PARAM_ID = global.constants.PARAM.PARAM_ID_INTEREST;
+const PARAM_ID = PARAM.PARAM_ID_INTEREST;
 
 /* Interests page. */
 exports.interests = {};

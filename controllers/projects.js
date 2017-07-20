@@ -4,7 +4,7 @@ var getOptionRemove = require("../helpers").getOptionRemove;
 
 const Project = require('../models/project.schema');
 
-const PARAM_ID = global.constants.PARAM.PARAM_ID_PROJECT;
+const PARAM_ID = PARAM.PARAM_ID_PROJECT;
 
 /* Projects page. */
 exports.projects = {};

@@ -4,7 +4,7 @@ var userCanAccessUserData = require("../../helpers").userCanAccessUserData;
 
 const Interest = require('../../models/interest.schema');
 
-const PARAM_ID = global.constants.PARAM.PARAM_ID_USER;
+const PARAM_ID = PARAM.PARAM_ID_USER;
 
 /* Interests page. */
 exports.get = function (req, res, next) {

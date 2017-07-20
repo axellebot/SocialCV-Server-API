@@ -1,8 +1,8 @@
 "use strict";
 
 const
-    ROLE_MEMBER = global.constants.ROLE.ROLE_MEMBER,
-    ROLE_ADMIN = global.constants.ROLE.ROLE_ADMIN;
+    ROLE_MEMBER = ROLE.ROLE_MEMBER,
+    ROLE_ADMIN = ROLE.ROLE_ADMIN;
 
 const
     uuidv4 = require('uuid/v4'),

@@ -5,7 +5,7 @@ module.exports = class extends Error {
         super();
         Error.captureStackTrace(this, this.constructor);
         this.name = this.constructor.name;
-        this.message = message || global.constants.MESSAGE.MESSAGE_ERROR_APP;
+        this.message = message || MESSAGE.MESSAGE_ERROR_APP;
         this.status = status || 500;
     }
 };

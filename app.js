@@ -1,7 +1,11 @@
 "use strict";
 
 global.config = require("./config");
-global.constants = require("./constants");
+
+//assign constants
+require("./constants");
+
+//assign errors to global
 require("./errors");
 
 var express = require('express');
@@ -43,7 +47,7 @@ app.use(function (err, req, res, next) {
     res.locals.error = req.app.get('env') === 'development' ? err : {};
     res
         .status(err.status || 500)
-        .json({error: true, message: err.message || global.constants.MESSAGE.MESSAGE_ERROR_APP});
+        .json({error: true, message: err.message || MESSAGE.MESSAGE_ERROR_APP});
 
     next();
 });

@@ -4,7 +4,7 @@ var getOptionRemove = require("../helpers").getOptionRemove;
 
 const SoftwareFramework = require('../models/softwareFramework.schema');
 
-const PARAM_ID = global.constants.PARAM.PARAM_ID_SOFTWARE_FRAMEWORK;
+const PARAM_ID = PARAM.PARAM_ID_SOFTWARE_FRAMEWORK;
 
 /* SoftwareFrameworks page. */
 exports.softwareFrameworks = {};

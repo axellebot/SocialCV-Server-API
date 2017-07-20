@@ -4,7 +4,7 @@ var getOptionRemove = require("../helpers").getOptionRemove;
 
 const Link = require('../models/link.schema');
 
-const PARAM_ID = global.constants.PARAM.PARAM_ID_LINK;
+const PARAM_ID = PARAM.PARAM_ID_LINK;
 
 /* Links page. */
 exports.links = {};

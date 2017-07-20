@@ -4,7 +4,7 @@ var getOptionRemove = require("../helpers").getOptionRemove;
 
 const Language = require('../models/language.schema');
 
-const PARAM_ID = global.constants.PARAM.PARAM_ID_LANGUAGE;
+const PARAM_ID = PARAM.PARAM_ID_LANGUAGE;
 
 /* Languages page. */
 exports.languages = {};

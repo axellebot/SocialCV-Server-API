@@ -4,7 +4,7 @@ var getOptionRemove = require("../helpers").getOptionRemove;
 
 const ComputingTag = require('../models/computingTag.schema');
 
-const PARAM_ID = global.constants.PARAM.PARAM_ID_COMPUTING_TAG;
+const PARAM_ID = PARAM.PARAM_ID_COMPUTING_TAG;
 
 /* ComputingTags page. */
 exports.computingTags = {};

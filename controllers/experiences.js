@@ -4,7 +4,7 @@ var getOptionRemove = require("../helpers").getOptionRemove;
 
 const Experience = require('../models/experience.schema');
 
-const PARAM_ID = global.constants.PARAM.PARAM_ID_EXPERIENCE;
+const PARAM_ID = PARAM.PARAM_ID_EXPERIENCE;
 
 /* Experiences page. */
 exports.experiences = {};

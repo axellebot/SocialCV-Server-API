@@ -4,7 +4,7 @@ var getOptionRemove = require("../helpers").getOptionRemove;
 
 const Education = require('../models/education.schema');
 
-const PARAM_ID = global.constants.PARAM.PARAM_ID_EDUCATION;
+const PARAM_ID = PARAM.PARAM_ID_EDUCATION;
 
 /* Educations page. */
 exports.educations = {};

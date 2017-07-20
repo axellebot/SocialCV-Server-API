@@ -4,7 +4,7 @@ var getOptionRemove = require("../helpers").getOptionRemove;
 
 const Software = require('../models/software.schema');
 
-const PARAM_ID = global.constants.PARAM.PARAM_ID_SOFTWARE;
+const PARAM_ID = PARAM.PARAM_ID_SOFTWARE;
 
 /* Softwares page. */
 exports.softwares = {};

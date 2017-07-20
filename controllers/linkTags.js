@@ -4,7 +4,7 @@ var getOptionRemove = require("../helpers").getOptionRemove;
 
 const LinkTag = require('../models/linkTag.schema');
 
-const PARAM_ID = global.constants.PARAM.PARAM_ID_LINK_TAG;
+const PARAM_ID = PARAM.PARAM_ID_LINK_TAG;
 
 /* Links page. */
 exports.linkTags = {};

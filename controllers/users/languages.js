@@ -4,7 +4,7 @@ var userCanAccessUserData = require("../../helpers").userCanAccessUserData;
 
 const Language = require('../../models/language.schema');
 
-const PARAM_ID = global.constants.PARAM.PARAM_ID_USER;
+const PARAM_ID = PARAM.PARAM_ID_USER;
 
 /* Languages page. */
 exports.get = function (req, res, next) {

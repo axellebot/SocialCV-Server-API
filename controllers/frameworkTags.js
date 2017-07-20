@@ -4,7 +4,7 @@ var getOptionRemove = require("../helpers").getOptionRemove;
 
 const FrameworkTag = require('../models/frameworkTag.schema');
 
-const PARAM_ID = global.constants.PARAM.PARAM_ID_FRAMEWORK_TAG;
+const PARAM_ID = PARAM.PARAM_ID_FRAMEWORK_TAG;
 
 /* FrameworkTags page. */
 exports.frameworkTags = {};

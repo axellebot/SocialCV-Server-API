@@ -4,7 +4,7 @@ var getOptionRemove = require("../helpers").getOptionRemove;
 
 const Entity = require('../models/entity.schema');
 
-const PARAM_ID = global.constants.PARAM.PARAM_ID_ENTITY;
+const PARAM_ID = PARAM.PARAM_ID_ENTITY;
 
 /* Entities page. */
 exports.entities = {};
