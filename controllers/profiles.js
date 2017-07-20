@@ -15,23 +15,26 @@ exports.profiles.get = function (req, res, next) {
         .limit(req.options.pagination.limit)
         .skip(req.options.pagination.skip)
         .exec(function (err, profiles) {
-            if (err) return next(err);
+            if (err) return next(new DatabaseFindError());
             res.json({data: profiles});
         });
 };
+
 exports.profiles.post = function (req, res, next) {
     //TODO : Profiles - Create profile
-    res.status(404).send('Create a new Profile');
+    return next(new NotImplementedError("Create a new profile"));
 };
+
 exports.profiles.put = function (req, res, next) {
     //TODO : Profiles - Add Bulk update
-    res.status(404).send('Bulk update of profiles');
+    return next(new NotImplementedError("Bulk update of profiles"));
 };
+
 exports.profiles.delete = function (req, res, next) {
     Profile
         .remove()
         .exec(function (err, removed) {
-            if (err) return next(err);
+            if (err) return next(new DatabaseRemoveError());
             return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };
@@ -42,23 +45,26 @@ exports.profile.get = function (req, res, next) {
     Profile
         .findById(req.params[PARAM_ID])
         .exec(function (err, profile) {
-            if (err) return next(err);
+            if (err) return next(new DatabaseFindError());
             res.json({data: profile});
         });
 };
+
 exports.profile.post = function (req, res, next) {
-    res.sendStatus(403);
+    return next(new NotFoundError());
 };
+
 exports.profile.put = function (req, res, next) {
     //TODO : Profile - Update profile
-    res.status(404).send('Update details of profiles');
+    return next(new NotImplementedError("Update details of profile " + req.params[PARAM_ID]));
 };
+
 exports.profile.delete = function (req, res, next) {
     var optionRemove = getOptionRemove(req.params[PARAM_ID], req.decoded);
     Profile
         .remove(optionRemove)
         .exec(function (err, removed) {
-            if (err) return next(err);
+            if (err) return next(new DatabaseRemoveError());
             return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };

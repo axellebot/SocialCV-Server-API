@@ -71,5 +71,23 @@ module.exports = {
         PARAM_ID_SOFTWARE: "SoftwareId",
         PARAM_ID_SOFTWARE_TAG: "SoftwareTagId",
         PARAM_ID_USER: "UserId"
+    },
+    MESSAGE: {
+        MESSAGE_ERROR_APP: "Error",
+        MESSAGE_ERROR_DATABASE_SAVE: "Database save action error",
+        MESSAGE_ERROR_DATABASE_REMOVE: "Database remove action error",
+        MESSAGE_ERROR_DATABASE_FIND: "Database find action error",
+        MESSAGE_ERROR_ACCESS_RESTRICTED: "Access Restricted",
+        MESSAGE_ERROR_MISSING_PRIVILEGE: "Not enough privileges",
+        MESSAGE_ERROR_MISSING_EMAIL_ADDRESS: "Missing email address.",
+        MESSAGE_ERROR_MISSING_FULL_NAME: "Missing full name.",
+        MESSAGE_ERROR_MISSING_PASSWORD: "Missing password.",
+        MESSAGE_ERROR_EMAIL_ADDRESS_ALREADY_EXIST: "E-mail already in use.",
+        MESSAGE_ERROR_PROVIDING_TOKEN: "Can't provide token.",
+        MESSAGE_ERROR_FAILED_AUTHENTICATION_TOKEN: "Failed to authenticate token",
+        MESSAGE_ERROR_USER_NOT_FOUND: "User not found",
+        MESSAGE_ERROR_WRONG_PASSWORD: "Wrong password",
+        MESSAGE_ERROR_NOT_FOUND: "Not found",
+        MESSAGE_ERROR_NOT_IMPLEMENTED: "Feature not implemented yet."
     }
 };

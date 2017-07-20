@@ -15,23 +15,26 @@ exports.frameworkTags.get = function (req, res, next) {
         .limit(req.options.pagination.limit)
         .skip(req.options.pagination.skip)
         .exec(function (err, FrameworkTags) {
-            if (err) return next(err);
+            if (err) return next(new DatabaseFindError());
             res.json({data: FrameworkTags});
         });
 };
+
 exports.frameworkTags.post = function (req, res, next) {
     //TODO : FrameworkTags - Create frameworkTag
-    res.status(404).send('Create a new FrameworkTag');
+    return next(new NotImplementedError("Create a new frameworkTag"));
 };
+
 exports.frameworkTags.put = function (req, res, next) {
     //TODO : FrameworkTags - Add Bulk update
-    res.status(404).send('Bulk update of frameworkTags');
+    return next(new NotImplementedError("Bulk update of frameworkTags"));
 };
+
 exports.frameworkTags.delete = function (req, res, next) {
     FrameworkTag
         .remove()
         .exec(function (err, removed) {
-            if (err) return next(err);
+            if (err) return next(new DatabaseRemoveError());
             return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };
@@ -42,23 +45,26 @@ exports.frameworkTag.get = function (req, res, next) {
     FrameworkTag
         .findById(req.params[PARAM_ID])
         .exec(function (err, FrameworkTag) {
-            if (err) return next(err);
+            if (err) return next(new DatabaseFindError());
             res.json({data: FrameworkTag});
         });
 };
+
 exports.frameworkTag.post = function (req, res, next) {
-    res.sendStatus(403);
+    return next(new NotFoundError());
 };
+
 exports.frameworkTag.put = function (req, res, next) {
     //TODO : FrameworkTag - Update frameworkTag
-    res.status(404).send('Update details of frameworkTags');
+    return next(new NotImplementedError("Update details of frameworkTags " + req.params[PARAM_ID]));
 };
+
 exports.frameworkTag.delete = function (req, res, next) {
     var optionRemove = getOptionRemove(req.params[PARAM_ID], req.decoded);
     FrameworkTag
         .remove(optionRemove)
         .exec(function (err, removed) {
-            if (err) return next(err);
+            if (err) return next(new DatabaseRemoveError());
             return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };

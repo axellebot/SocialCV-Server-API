@@ -9,7 +9,7 @@ const
     bcrypt = require('bcrypt');
 
 // Set user info from request
-module.exports.setUserInfo = function setUserInfo(user) {
+module.exports.setUserInfo = function (user) {
     const getUserInfo = {
         _id: user._id,
         email: user.email,
@@ -18,7 +18,7 @@ module.exports.setUserInfo = function setUserInfo(user) {
     return getUserInfo;
 };
 
-module.exports.getRole = function getRoleLevel(checkRole) {
+function getRole(checkRole) {
     var role;
 
     switch (checkRole) {
@@ -33,6 +33,7 @@ module.exports.getRole = function getRoleLevel(checkRole) {
     }
     return role;
 };
+module.exports.getRole = getRole;
 
 module.exports.saltPassword = function (next) {
 
@@ -42,12 +43,12 @@ module.exports.saltPassword = function (next) {
     if (!user.isModified('password')) return next();
 
     // generate a salt
-    bcrypt.genSalt(global.config.saltWorkFactor, function (err, salt) {
-        if (err) return next(err);
+    bcrypt.genSalt(config.saltWorkFactor, function (err, salt) {
+        if (err) return next(new Error(err));
 
         // hash the password using our new salt
         bcrypt.hash(user.password, salt, function (err, hash) {
-            if (err) return next(err);
+            if (err) return next(new Error(err));
             // override the cleartext password with the hashed one
             user.password = hash;
             next();
@@ -77,4 +78,17 @@ module.exports.getOptionRemove = function (entityId, loggedUser) {
             //return wrong id to avoid delting data
             return {_id: -1};
     }
+};
+
+/**
+ *
+ * @param user String
+ * @param ownerId String
+ * @returns {boolean}
+ */
+module.exports.userCanAccessUserData = function (user, ownerId) {
+    if (getRole(user.role) >= getRole(ROLE_ADMIN)) {
+        return true;
+    }
+    return (ownerId == user._id);
 };

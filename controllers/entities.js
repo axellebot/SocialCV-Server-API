@@ -15,23 +15,26 @@ exports.entities.get = function (req, res, next) {
         .limit(req.options.pagination.limit)
         .skip(req.options.pagination.skip)
         .exec(function (err, entities) {
-            if (err) return next(err);
+            if (err) return next(new DatabaseFindError());
             res.json({data: entities});
         });
 };
+
 exports.entities.post = function (req, res, next) {
     //TODO : Entities - Create entity
-    res.status(404).send('Create a new Entity');
+    return next(new NotImplementedError("Create a new entity"));
 };
+
 exports.entities.put = function (req, res, next) {
     //TODO : Entities - Add Bulk update
-    res.status(404).send('Bulk update of entities');
+    return next(new NotImplementedError("Bulk update of entities"));
 };
+
 exports.entities.delete = function (req, res, next) {
     Entity
         .remove()
         .exec(function (err, removed) {
-            if (err) return next(err);
+            if (err) return next(new DatabaseRemoveError());
             return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };
@@ -42,24 +45,26 @@ exports.entity.get = function (req, res, next) {
     Entity
         .findById(req.params[PARAM_ID])
         .exec(function (err, entity) {
-            if (err) return next(err);
+            if (err) return next(new DatabaseFindError());
             res.json({data: entity});
         });
 };
+
 exports.entity.post = function (req, res, next) {
-    res.sendStatus(403);
+    return next(new NotFoundError());
 };
+
 exports.entity.put = function (req, res, next) {
     //TODO : Entity - Update entity
-    res.status(404).send('Update details of entity');
+    return next(new NotImplementedError("Update details of entity "+ req.params[PARAM_ID]));
 };
+
 exports.entity.delete = function (req, res, next) {
     var optionRemove = getOptionRemove(req.params[PARAM_ID], req.decoded);
-    console.log(optionRemove);
     Entity
         .remove(optionRemove)
         .exec(function (err, removed) {
-            if (err) return next(err);
+            if (err) return next(new DatabaseRemoveError());
             return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };
