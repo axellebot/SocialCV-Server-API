@@ -14,7 +14,7 @@ module.exports.setUserInfo = function (user) {
     return getUserInfo;
 };
 
-function getRole(checkRole) {
+function getRoleRank(checkRole) {
     var role;
 
     switch (checkRole) {
@@ -29,7 +29,7 @@ function getRole(checkRole) {
     }
     return role;
 };
-module.exports.getRole = getRole;
+module.exports.getRoleRank = getRoleRank;
 
 module.exports.saltPassword = function (next) {
 
@@ -88,8 +88,9 @@ module.exports.getOptionRemove = function (entityId, loggedUser) {
  * @returns {boolean}
  */
 module.exports.userCanAccessUserData = function (user, ownerId) {
-    if (getRole(user.role) >= getRole(ROLE_ADMIN)) {
+    if (getRoleRank(user.role) >= getRoleRank(ROLE_ADMIN)) {
         return true;
     }
     return (ownerId == user._id);
+};
 };

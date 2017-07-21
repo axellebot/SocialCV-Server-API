@@ -1,6 +1,6 @@
 "use strict";
 
-var getRole = require("../../helpers").getRole;
+var getRoleRank = require("../../helpers").getRoleRank;
 
 const requireAuthentication = require('./authentication');
 
@@ -13,7 +13,7 @@ module.exports = function (requiredRole) {
     return [
         requireAuthentication,
         function (req, res, next) {
-            if (getRole(req.decoded.role) >= getRole(requiredRole)) return next();
+            if (getRoleRank(req.decoded.role) >= getRoleRank(requiredRole)) return next();
             return next(new MissingPrivilegeError());
         }];
 };
