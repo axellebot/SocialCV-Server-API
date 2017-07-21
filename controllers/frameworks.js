@@ -55,15 +55,15 @@ exports.framework.post = function (req, res, next) {
 
 exports.framework.put = function (req, res, next) {
     //TODO : Framework - Update framework
-    return next(new NotImplementedError("Update details of frameworks "+ req.params[PARAM_ID_FRAMEWORK]));
+    return next(new NotImplementedError("Update details of frameworks " + req.params[PARAM_ID_FRAMEWORK]));
 };
 
 exports.framework.delete = function (req, res, next) {
     var optionRemove = getOptionRemove(req.params[PARAM_ID_FRAMEWORK], req.decoded);
     Framework
-        .remove(optionRemove)
-        .exec(function (err, removed) {
+        .findOneAndRemove(optionRemove, function (err, framework) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            if (!framework) return next(new NotFoundError(MODEL_NAME_FRAMEWORK));
+            return res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_DELETED, data: framework});
         });
 };

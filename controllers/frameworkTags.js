@@ -61,9 +61,9 @@ exports.frameworkTag.put = function (req, res, next) {
 exports.frameworkTag.delete = function (req, res, next) {
     var optionRemove = getOptionRemove(req.params[PARAM_ID_FRAMEWORK_TAG], req.decoded);
     FrameworkTag
-        .remove(optionRemove)
-        .exec(function (err, removed) {
+        .findOneAndRemove(optionRemove, function (err, frameworkTag) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            if (!frameworkTag) return next(new NotFoundError(MODEL_NAME_FRAMEWORK_TAG));
+            return res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_DELETED, data: frameworkTag});
         });
 };

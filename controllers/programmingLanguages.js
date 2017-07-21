@@ -58,9 +58,12 @@ exports.programmingLanguage.put = function (req, res, next) {
 exports.programmingLanguage.delete = function (req, res, next) {
     var optionRemove = getOptionRemove(req.params[PARAM_ID_PROGRAMMING_LANGUAGE], req.decoded);
     ProgrammingLanguage
-        .remove(optionRemove)
-        .exec(function (err, removed) {
+        .findOneAndRemove(optionRemove, function (err, programmingLanguage) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            if (!programmingLanguage) return next(new NotFoundError(MODEL_NAME_PROGRAMMING_LANGUAGE));
+            return res.status(HTTP_STATUS_OK).json({
+                message: MESSAGE_SUCCESS_RESOURCE_DELETED,
+                data: programmingLanguage
+            });
         });
 };

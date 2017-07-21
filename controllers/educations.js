@@ -56,11 +56,10 @@ exports.education.put = function (req, res, next) {
 };
 exports.education.delete = function (req, res, next) {
     var optionRemove = getOptionRemove(req.params[PARAM_ID_EDUCATION], req.decoded);
-
     Education
-        .remove(optionRemove)
-        .exec(function (err, removed) {
+        .findOneAndRemove(optionRemove, function (err, education) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            if (!education) return next(new NotFoundError(MODEL_NAME_EDUCATION));
+            return res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_DELETED, data: education});
         });
 };

@@ -61,9 +61,9 @@ exports.projectTag.put = function (req, res, next) {
 exports.projectTag.delete = function (req, res, next) {
     var optionRemove = getOptionRemove(req.params[PARAM_ID_PROJECT_TAG], req.decoded);
     ProjectTag
-        .remove(optionRemove)
-        .exec(function (err, removed) {
+        .findOneAndRemove(optionRemove, function (err, project) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            if (!project) return next(new NotFoundError(MODEL_NAME_PROJECT_TAG));
+            return res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_DELETED, data: project});
         });
 };

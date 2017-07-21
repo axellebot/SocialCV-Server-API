@@ -61,9 +61,9 @@ exports.softwareTag.put = function (req, res, next) {
 exports.softwareTag.delete = function (req, res, next) {
     var optionRemove = getOptionRemove(req.params[PARAM_ID_SOFTWARE_TAG], req.decoded);
     SoftwareTag
-        .remove(optionRemove)
-        .exec(function (err, removed) {
+        .findOneAndRemove(optionRemove, function (err, softwareTag) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            if (!softwareTag) return next(new NotFoundError(MODEL_NAME_SOFTWARE_TAG));
+            return res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_DELETED, data: softwareTag});
         });
 };

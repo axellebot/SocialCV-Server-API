@@ -61,9 +61,9 @@ exports.language.put = function (req, res, next) {
 exports.language.delete = function (req, res, next) {
     var optionRemove = getOptionRemove(req.params[PARAM_ID_LANGUAGE], req.decoded);
     Language
-        .remove(optionRemove)
-        .exec(function (err, removed) {
+        .findOneAndRemove(optionRemove, function (err, language) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            if (!language) return next(new NotFoundError(MODEL_NAME_LANGUAGE));
+            return res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_DELETED, data: language});
         });
 };

@@ -55,15 +55,15 @@ exports.experience.post = function (req, res, next) {
 
 exports.experience.put = function (req, res, next) {
     //TODO : Experience - Update experience
-    return next(new NotImplementedError("Update details of experience "+ req.params[PARAM_ID_EXPERIENCE]));
+    return next(new NotImplementedError("Update details of experience " + req.params[PARAM_ID_EXPERIENCE]));
 };
 
 exports.experience.delete = function (req, res, next) {
     var optionRemove = getOptionRemove(req.params[PARAM_ID_EXPERIENCE], req.decoded);
     Experience
-        .remove(optionRemove)
-        .exec(function (err, removed) {
+        .findOneAndRemove(optionRemove, function (err, experience) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            if (!experience) return next(new NotFoundError(MODEL_NAME_EXPERIENCE));
+            return res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_DELETED, data: experience});
         });
 };

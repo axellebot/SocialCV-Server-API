@@ -61,9 +61,9 @@ exports.interest.put = function (req, res, next) {
 exports.interest.delete = function (req, res, next) {
     var optionRemove = getOptionRemove(req.params[PARAM_ID_INTEREST], req.decoded);
     Interest
-        .remove(optionRemove)
-        .exec(function (err, removed) {
+        .findOneAndRemove(optionRemove, function (err, interest) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            if (!interest) return next(new NotFoundError(MODEL_NAME_INTEREST));
+            return res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_DELETED, data: interest});
         });
 };

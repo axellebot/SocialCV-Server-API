@@ -60,9 +60,9 @@ exports.linkTag.put = function (req, res, next) {
 exports.linkTag.delete = function (req, res, next) {
     var optionRemove = getOptionRemove(req.params[PARAM_ID_LINK_TAG], req.decoded);
     LinkTag
-        .remove(optionRemove)
-        .exec(function (err, removed) {
+        .findOneAndRemove(optionRemove, function (err, linkTah) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            if (!linkTah) return next(new NotFoundError(MODEL_NAME_LINK_TAG));
+            return res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_DELETED, data: linkTah});
         });
 };

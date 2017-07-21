@@ -61,9 +61,9 @@ exports.software.put = function (req, res, next) {
 exports.software.delete = function (req, res, next) {
     var optionRemove = getOptionRemove(req.params[PARAM_ID_SOFTWARE], req.decoded);
     Software
-        .remove(optionRemove)
-        .exec(function (err, removed) {
+        .findOneAndRemove(optionRemove, function (err, software) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            if (!software) return next(new NotFoundError(MODEL_NAME_SOFTWARE));
+            return res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_DELETED, data: software});
         });
 };
