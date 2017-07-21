@@ -14,7 +14,7 @@ const uuid = require("../helpers").uuid;
 //= ===============================
 
 var UserSchema = new Schema({
-    _id: {type: String, default: uuid},
+    _id: {type: String, default: uuid()},
     email: {
         type: String,
         lowercase: true,

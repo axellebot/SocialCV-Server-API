@@ -6,7 +6,7 @@ var Schema = mongoose.Schema;
 const uuid = require("../helpers").uuid;
 
 var ProgrammingLanguageSchema = new Schema({
-    _id: {type: String, default: uuid},
+    _id: {type: String, default: uuid()},
     label: String,
     user: {type: String, ref: MODEL_NAME_USER}
 }, {

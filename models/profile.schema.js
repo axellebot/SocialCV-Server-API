@@ -6,7 +6,7 @@ var Schema = mongoose.Schema;
 const uuid = require("../helpers").uuid;
 
 var ProfileSchema = new Schema({
-    _id: {type: String, default: uuid},
+    _id: {type: String, default: uuid()},
     firstName: String,
     lastName: String,
     address: String,
