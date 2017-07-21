@@ -4,8 +4,6 @@ var getOptionRemove = require("../helpers").getOptionRemove;
 
 const Language = require('../models/language.schema');
 
-const PARAM_ID = PARAM.PARAM_ID_LANGUAGE;
-
 /* Languages page. */
 exports.languages = {};
 exports.languages.get = function (req, res, next) {
@@ -43,7 +41,7 @@ exports.languages.delete = function (req, res, next) {
 exports.language = {};
 exports.language.get = function (req, res, next) {
     Language
-        .findById(req.params[PARAM_ID])
+        .findById(req.params[PARAM_ID_LANGUAGE])
         .exec(function (err, language) {
             if (err) return next(new DatabaseFindError());
             res.json({data: language});
@@ -56,11 +54,11 @@ exports.language.post = function (req, res, next) {
 
 exports.language.put = function (req, res, next) {
     //TODO : Language - Update language
-    return next(new NotImplementedError("Update details of language " + req.params[PARAM_ID]));
+    return next(new NotImplementedError("Update details of language " + req.params[PARAM_ID_LANGUAGE]));
 };
 
 exports.language.delete = function (req, res, next) {
-    var optionRemove = getOptionRemove(req.params[PARAM_ID], req.decoded);
+    var optionRemove = getOptionRemove(req.params[PARAM_ID_LANGUAGE], req.decoded);
     Language
         .remove(optionRemove)
         .exec(function (err, removed) {

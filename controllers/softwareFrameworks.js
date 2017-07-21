@@ -4,8 +4,6 @@ var getOptionRemove = require("../helpers").getOptionRemove;
 
 const SoftwareFramework = require('../models/softwareFramework.schema');
 
-const PARAM_ID = PARAM.PARAM_ID_SOFTWARE_FRAMEWORK;
-
 /* SoftwareFrameworks page. */
 exports.softwareFrameworks = {};
 exports.softwareFrameworks.get = function (req, res, next) {
@@ -43,7 +41,7 @@ exports.softwareFrameworks.delete = function (req, res, next) {
 exports.softwareFramework = {};
 exports.softwareFramework.get = function (req, res, next) {
     SoftwareFramework
-        .findById(req.params[PARAM_ID])
+        .findById(req.params[PARAM_ID_SOFTWARE_FRAMEWORK])
         .exec(function (err, softwareFramework) {
             if (err) return next(new DatabaseFindError());
             res.json({data: softwareFramework});
@@ -56,11 +54,11 @@ exports.softwareFramework.post = function (req, res, next) {
 
 exports.softwareFramework.put = function (req, res, next) {
     //TODO : SoftwareFramework - Update softwareFramework
-    return next(new NotImplementedError("Update details of softwareFramework " + req.params[PARAM_ID]));
+    return next(new NotImplementedError("Update details of softwareFramework " + req.params[PARAM_ID_SOFTWARE_FRAMEWORK]));
 };
 
 exports.softwareFramework.delete = function (req, res, next) {
-    var optionRemove = getOptionRemove(req.params[PARAM_ID], req.decoded);
+    var optionRemove = getOptionRemove(req.params[PARAM_ID_SOFTWARE_FRAMEWORK], req.decoded);
     SoftwareFramework
         .remove(optionRemove)
         .exec(function (err, removed) {

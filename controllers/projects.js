@@ -4,8 +4,6 @@ var getOptionRemove = require("../helpers").getOptionRemove;
 
 const Project = require('../models/project.schema');
 
-const PARAM_ID = PARAM.PARAM_ID_PROJECT;
-
 /* Projects page. */
 exports.projects = {};
 exports.projects.get = function (req, res, next) {
@@ -43,7 +41,7 @@ exports.projects.delete = function (req, res, next) {
 exports.project = {};
 exports.project.get = function (req, res, next) {
     Project
-        .findById(req.params[PARAM_ID])
+        .findById(req.params[PARAM_ID_PROJECT])
         .exec(function (err, project) {
             if (err) return next(new DatabaseFindError());
             res.json({data: project});
@@ -56,11 +54,11 @@ exports.project.post = function (req, res, next) {
 
 exports.project.put = function (req, res, next) {
     //TODO : Project - Update project
-    return next(new NotImplementedError("Update details of project " + req.params[PARAM_ID]));
+    return next(new NotImplementedError("Update details of project " + req.params[PARAM_ID_PROJECT]));
 };
 
 exports.project.delete = function (req, res, next) {
-    var optionRemove = getOptionRemove(req.params[PARAM_ID], req.decoded);
+    var optionRemove = getOptionRemove(req.params[PARAM_ID_PROJECT], req.decoded);
     Project
         .remove(optionRemove)
         .exec(function (err, removed) {

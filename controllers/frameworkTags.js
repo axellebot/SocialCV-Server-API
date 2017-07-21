@@ -4,8 +4,6 @@ var getOptionRemove = require("../helpers").getOptionRemove;
 
 const FrameworkTag = require('../models/frameworkTag.schema');
 
-const PARAM_ID = PARAM.PARAM_ID_FRAMEWORK_TAG;
-
 /* FrameworkTags page. */
 exports.frameworkTags = {};
 exports.frameworkTags.get = function (req, res, next) {
@@ -43,7 +41,7 @@ exports.frameworkTags.delete = function (req, res, next) {
 exports.frameworkTag = {};
 exports.frameworkTag.get = function (req, res, next) {
     FrameworkTag
-        .findById(req.params[PARAM_ID])
+        .findById(req.params[PARAM_ID_FRAMEWORK_TAG])
         .exec(function (err, FrameworkTag) {
             if (err) return next(new DatabaseFindError());
             res.json({data: FrameworkTag});
@@ -56,11 +54,11 @@ exports.frameworkTag.post = function (req, res, next) {
 
 exports.frameworkTag.put = function (req, res, next) {
     //TODO : FrameworkTag - Update frameworkTag
-    return next(new NotImplementedError("Update details of frameworkTags " + req.params[PARAM_ID]));
+    return next(new NotImplementedError("Update details of frameworkTags " + req.params[PARAM_ID_FRAMEWORK_TAG]));
 };
 
 exports.frameworkTag.delete = function (req, res, next) {
-    var optionRemove = getOptionRemove(req.params[PARAM_ID], req.decoded);
+    var optionRemove = getOptionRemove(req.params[PARAM_ID_FRAMEWORK_TAG], req.decoded);
     FrameworkTag
         .remove(optionRemove)
         .exec(function (err, removed) {

@@ -4,8 +4,6 @@ var getOptionRemove = require("../helpers").getOptionRemove;
 
 const ComputingTag = require('../models/computingTag.schema');
 
-const PARAM_ID = PARAM.PARAM_ID_COMPUTING_TAG;
-
 /* ComputingTags page. */
 exports.computingTags = {};
 exports.computingTags.get = function (req, res, next) {
@@ -40,7 +38,7 @@ exports.computingTags.delete = function (req, res, next) {
 exports.computingTag = {};
 exports.computingTag.get = function (req, res, next) {
     ComputingTag
-        .findById(req.params[PARAM_ID])
+        .findById(req.params[PARAM_ID_COMPUTING_TAG])
         .exec(function (err, computingTag) {
             if (err) return next(new DatabaseFindError());
             res.json({data: computingTag});
@@ -53,11 +51,11 @@ exports.computingTag.post = function (req, res, next) {
 
 exports.computingTag.put = function (req, res, next) {
     //TODO : ComputingTag - Update computingTag
-    return next(new NotImplementedError("Update details of computingTag " + req.params[PARAM_ID]));
+    return next(new NotImplementedError("Update details of computingTag " + req.params[PARAM_ID_COMPUTING_TAG]));
 };
 
 exports.computingTag.delete = function (req, res, next) {
-    var optionRemove = getOptionRemove(req.params[PARAM_ID], req.decoded);
+    var optionRemove = getOptionRemove(req.params[PARAM_ID_COMPUTING_TAG], req.decoded);
     ComputingTag
         .remove(optionRemove)
         .exec(function (err, removed) {

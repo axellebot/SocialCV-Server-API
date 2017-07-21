@@ -4,8 +4,6 @@ var getOptionRemove = require("../helpers").getOptionRemove;
 
 const Experience = require('../models/experience.schema');
 
-const PARAM_ID = PARAM.PARAM_ID_EXPERIENCE;
-
 /* Experiences page. */
 exports.experiences = {};
 exports.experiences.get = function (req, res, next) {
@@ -43,7 +41,7 @@ exports.experiences.delete = function (req, res, next) {
 exports.experience = {};
 exports.experience.get = function (req, res, next) {
     Experience
-        .findById(req.params[PARAM_ID])
+        .findById(req.params[PARAM_ID_EXPERIENCE])
         .exec(function (err, experience) {
             if (err) return next(new DatabaseFindError());
             res.json({data: experience});
@@ -56,11 +54,11 @@ exports.experience.post = function (req, res, next) {
 
 exports.experience.put = function (req, res, next) {
     //TODO : Experience - Update experience
-    return next(new NotImplementedError("Update details of experience "+ req.params[PARAM_ID]));
+    return next(new NotImplementedError("Update details of experience "+ req.params[PARAM_ID_EXPERIENCE]));
 };
 
 exports.experience.delete = function (req, res, next) {
-    var optionRemove = getOptionRemove(req.params[PARAM_ID], req.decoded);
+    var optionRemove = getOptionRemove(req.params[PARAM_ID_EXPERIENCE], req.decoded);
     Experience
         .remove(optionRemove)
         .exec(function (err, removed) {

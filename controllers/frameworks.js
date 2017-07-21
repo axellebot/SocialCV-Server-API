@@ -4,8 +4,6 @@ var getOptionRemove = require("../helpers").getOptionRemove;
 
 const Framework = require('../models/framework.schema');
 
-const PARAM_ID = PARAM.PARAM_ID_FRAMEWORK;
-
 /* Frameworks page. */
 exports.frameworks = {};
 exports.frameworks.get = function (req, res, next) {
@@ -43,7 +41,7 @@ exports.frameworks.delete = function (req, res, next) {
 exports.framework = {};
 exports.framework.get = function (req, res, next) {
     Framework
-        .findById(req.params[PARAM_ID])
+        .findById(req.params[PARAM_ID_FRAMEWORK])
         .exec(function (err, framework) {
             if (err) return next(new DatabaseFindError());
             res.json({data: framework});
@@ -56,11 +54,11 @@ exports.framework.post = function (req, res, next) {
 
 exports.framework.put = function (req, res, next) {
     //TODO : Framework - Update framework
-    return next(new NotImplementedError("Update details of frameworks "+ req.params[PARAM_ID]));
+    return next(new NotImplementedError("Update details of frameworks "+ req.params[PARAM_ID_FRAMEWORK]));
 };
 
 exports.framework.delete = function (req, res, next) {
-    var optionRemove = getOptionRemove(req.params[PARAM_ID], req.decoded);
+    var optionRemove = getOptionRemove(req.params[PARAM_ID_FRAMEWORK], req.decoded);
     Framework
         .remove(optionRemove)
         .exec(function (err, removed) {

@@ -1,10 +1,6 @@
 "use strict";
 
 const
-    ROLE_MEMBER = ROLE.ROLE_MEMBER,
-    ROLE_ADMIN = ROLE.ROLE_ADMIN;
-
-const
     uuidv4 = require('uuid/v4'),
     bcrypt = require('bcrypt');
 
@@ -67,8 +63,13 @@ module.exports.uuid = function () {
     return uuidv4
 };
 
+/**
+ *
+ * @param entityId
+ * @param loggedUser
+ * @returns {*}
+ */
 module.exports.getOptionRemove = function (entityId, loggedUser) {
-    console.log(loggedUser);
     switch (loggedUser.role) {
         case ROLE_MEMBER :
             return {_id: entityId, user: loggedUser._id};

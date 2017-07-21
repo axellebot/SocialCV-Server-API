@@ -4,8 +4,6 @@ var getOptionRemove = require("../helpers").getOptionRemove;
 
 const Education = require('../models/education.schema');
 
-const PARAM_ID = PARAM.PARAM_ID_EDUCATION;
-
 /* Educations page. */
 exports.educations = {};
 exports.educations.get = function (req, res, next) {
@@ -21,7 +19,6 @@ exports.educations.get = function (req, res, next) {
 };
 exports.educations.post = function (req, res, next) {
     //TODO : Educations - Create education
-    console.log("test");
     return next(new NotImplementedError('Create a new education'));
 };
 
@@ -43,7 +40,7 @@ exports.educations.delete = function (req, res, next) {
 exports.education = {};
 exports.education.get = function (req, res, next) {
     Education
-        .findById(req.params[PARAM_ID])
+        .findById(req.params[PARAM_ID_EDUCATION])
         .exec(function (err, education) {
             if (err) return next(new DatabaseFindError());
             res.json({data: education});
@@ -54,10 +51,10 @@ exports.education.post = function (req, res, next) {
 };
 exports.education.put = function (req, res, next) {
     //TODO : Education - Update education
-    return next(new NotImplementedError("Update details of education " + req.params[PARAM_ID]));
+    return next(new NotImplementedError("Update details of education " + req.params[PARAM_ID_EDUCATION]));
 };
 exports.education.delete = function (req, res, next) {
-    var optionRemove = getOptionRemove(req.params[PARAM_ID], req.decoded);
+    var optionRemove = getOptionRemove(req.params[PARAM_ID_EDUCATION], req.decoded);
 
     Education
         .remove(optionRemove)

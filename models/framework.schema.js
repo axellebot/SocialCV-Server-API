@@ -4,16 +4,15 @@ var mongoose = require('../mongoose');
 var Schema = mongoose.Schema;
 
 const uuid = require("../helpers").uuid;
-const COLLECTION_NAME = COLLECTION.COLLECTION_FRAMEWORK;
 
 var FrameworkSchema = new Schema({
     _id: {type: String, default: uuid},
     label: String,
     language: String,
-    tags: [{type: String, ref: COLLECTION.COLLECTION_FRAMEWORK_TAG}],
-    user: {type: String, ref: COLLECTION.COLLECTION_USER}
+    tags: [{type: String, ref: MODEL_NAME_FRAMEWORK_TAG}],
+    user: {type: String, ref: MODEL_NAME_USER}
 }, {
     timestamps: true
 });
 
-module.exports = mongoose.model(COLLECTION_NAME, FrameworkSchema);
+module.exports = mongoose.model(MODEL_NAME_FRAMEWORK, FrameworkSchema,COLLECTION_NAME_FRAMEWORK);

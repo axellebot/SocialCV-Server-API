@@ -5,8 +5,6 @@ var getOptionRemove = require("../../helpers").getOptionRemove,
 
 const User = require('../../models/user.schema');
 
-const PARAM_ID = PARAM.PARAM_ID_USER;
-
 /* users page. */
 exports.users = {};
 exports.users.get = function (req, res, next) {
@@ -44,7 +42,7 @@ exports.users.delete = function (req, res, next) {
 exports.user = {};
 exports.user.get = function (req, res, next) {
     User
-        .findById(req.params[PARAM_ID])
+        .findById(req.params[PARAM_ID_USER])
         .exec(function (err, user) {
             if (err) return next(new DatabaseFindError());
             res.json({data: user});
@@ -56,7 +54,7 @@ exports.user.post = function (req, res, next) {
 };
 
 exports.user.put = function (req, res, next) {
-    if (!userCanAccessUserData(req.decoded, req.params[PARAM_ID])) {
+    if (!userCanAccessUserData(req.decoded, req.params[PARAM_ID_USER])) {
         return next(new MissingPrivilegeError());
     }
     //TODO : user - Update user
@@ -64,11 +62,11 @@ exports.user.put = function (req, res, next) {
 };
 
 exports.user.delete = function (req, res, next) {
-    if (!userCanAccessUserData(req.decoded, req.params[PARAM_ID])) {
+    if (!userCanAccessUserData(req.decoded, req.params[PARAM_ID_USER])) {
         return next(new MissingPrivilegeError());
     }
 
-    var optionRemove = getOptionRemove(req.params[PARAM_ID], req.decoded);
+    var optionRemove = getOptionRemove(req.params[PARAM_ID_USER], req.decoded);
 
     User
         .remove(optionRemove)

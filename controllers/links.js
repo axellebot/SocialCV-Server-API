@@ -4,8 +4,6 @@ var getOptionRemove = require("../helpers").getOptionRemove;
 
 const Link = require('../models/link.schema');
 
-const PARAM_ID = PARAM.PARAM_ID_LINK;
-
 /* Links page. */
 exports.links = {};
 exports.links.get = function (req, res, next) {
@@ -43,7 +41,7 @@ exports.links.delete = function (req, res, next) {
 exports.link = {};
 exports.link.get = function (req, res, next) {
     Link
-        .findById(req.params[PARAM_ID])
+        .findById(req.params[PARAM_ID_LINK])
         .exec(function (err, link) {
             if (err) return next(new DatabaseFindError());
             res.json({data: link});
@@ -56,11 +54,11 @@ exports.link.post = function (req, res, next) {
 
 exports.link.put = function (req, res, next) {
     //TODO : Link - Update link
-    return next(new NotImplementedError("Update details of link " + req.params[PARAM_ID]));
+    return next(new NotImplementedError("Update details of link " + req.params[PARAM_ID_LINK]));
 };
 
 exports.link.delete = function (req, res, next) {
-    var optionRemove = getOptionRemove(req.params[PARAM_ID], req.decoded);
+    var optionRemove = getOptionRemove(req.params[PARAM_ID_LINK], req.decoded);
     Link
         .remove(optionRemove)
         .exec(function (err, removed) {

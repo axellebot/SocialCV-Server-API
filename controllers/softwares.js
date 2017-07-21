@@ -4,8 +4,6 @@ var getOptionRemove = require("../helpers").getOptionRemove;
 
 const Software = require('../models/software.schema');
 
-const PARAM_ID = PARAM.PARAM_ID_SOFTWARE;
-
 /* Softwares page. */
 exports.softwares = {};
 exports.softwares.get = function (req, res, next) {
@@ -43,7 +41,7 @@ exports.softwares.delete = function (req, res, next) {
 exports.software = {};
 exports.software.get = function (req, res, next) {
     Software
-        .findById(req.params[PARAM_ID])
+        .findById(req.params[PARAM_ID_SOFTWARE])
         .exec(function (err, software) {
             if (err) return next(new DatabaseFindError());
             res.json({data: software});
@@ -56,11 +54,11 @@ exports.software.post = function (req, res, next) {
 
 exports.software.put = function (req, res, next) {
     //TODO : Software - Update software
-    return next(new NotImplementedError("Update details of software " + req.params[PARAM_ID]));
+    return next(new NotImplementedError("Update details of software " + req.params[PARAM_ID_SOFTWARE]));
 };
 
 exports.software.delete = function (req, res, next) {
-    var optionRemove = getOptionRemove(req.params[PARAM_ID], req.decoded);
+    var optionRemove = getOptionRemove(req.params[PARAM_ID_SOFTWARE], req.decoded);
     Software
         .remove(optionRemove)
         .exec(function (err, removed) {

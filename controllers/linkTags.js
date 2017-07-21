@@ -4,8 +4,6 @@ var getOptionRemove = require("../helpers").getOptionRemove;
 
 const LinkTag = require('../models/linkTag.schema');
 
-const PARAM_ID = PARAM.PARAM_ID_LINK_TAG;
-
 /* Links page. */
 exports.linkTags = {};
 
@@ -42,7 +40,7 @@ exports.linkTags.delete = function (req, res, next) {
 exports.linkTag = {};
 exports.linkTag.get = function (req, res, next) {
     LinkTag
-        .findById(req.params[PARAM_ID])
+        .findById(req.params[PARAM_ID_LINK_TAG])
         .exec(function (err, linkTag) {
             if (err) return next(new DatabaseFindError());
             res.json({data: linkTag});
@@ -55,11 +53,11 @@ exports.linkTag.post = function (req, res, next) {
 
 exports.linkTag.put = function (req, res, next) {
     //TODO : LinkTag - Update link
-    return next(new NotImplementedError("Update details of linkTag " + req.params[PARAM_ID]));
+    return next(new NotImplementedError("Update details of linkTag " + req.params[PARAM_ID_LINK_TAG]));
 };
 
 exports.linkTag.delete = function (req, res, next) {
-    var optionRemove = getOptionRemove(req.params[PARAM_ID], req.decoded);
+    var optionRemove = getOptionRemove(req.params[PARAM_ID_LINK_TAG], req.decoded);
     LinkTag
         .remove(optionRemove)
         .exec(function (err, removed) {

@@ -4,8 +4,6 @@ var getOptionRemove = require("../helpers").getOptionRemove;
 
 const OperatingSystem = require('../models/operatingSystem.schema');
 
-const PARAM_ID = PARAM.PARAM_ID_OPERATING_SYSTEM;
-
 /* OperatingSystems page. */
 exports.operatingSystems = {};
 exports.operatingSystems.get = function (req, res, next) {
@@ -43,7 +41,7 @@ exports.operatingSystems.delete = function (req, res, next) {
 exports.operatingSystem = {};
 exports.operatingSystem.get = function (req, res, next) {
     OperatingSystem
-        .findById(req.params[PARAM_ID])
+        .findById(req.params[PARAM_ID_OPERATING_SYSTEM])
         .exec(function (err, operatingSystem) {
             if (err) return next(new DatabaseFindError());
             res.json({data: operatingSystem});
@@ -56,11 +54,11 @@ exports.operatingSystem.post = function (req, res, next) {
 
 exports.operatingSystem.put = function (req, res, next) {
     //TODO : OperatingSystem - Update operatingSystem
-    return next(new NotImplementedError("Update details of operatingSystem " + req.params[PARAM_ID]));
+    return next(new NotImplementedError("Update details of operatingSystem " + req.params[PARAM_ID_OPERATING_SYSTEM]));
 };
 
 exports.operatingSystem.delete = function (req, res, next) {
-    var optionRemove = getOptionRemove(req.params[PARAM_ID], req.decoded);
+    var optionRemove = getOptionRemove(req.params[PARAM_ID_OPERATING_SYSTEM], req.decoded);
     OperatingSystem
         .remove(optionRemove)
         .exec(function (err, removed) {

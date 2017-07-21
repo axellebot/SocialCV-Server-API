@@ -4,8 +4,6 @@ var getOptionRemove = require("../helpers").getOptionRemove;
 
 const ProjectTag = require('../models/projectTag.schema');
 
-const PARAM_ID = PARAM.PARAM_ID_PROJECT_TAG;
-
 /* ProjectTags page. */
 exports.projectTags = {};
 exports.projectTags.get = function (req, res, next) {
@@ -43,7 +41,7 @@ exports.projectTags.delete = function (req, res, next) {
 exports.projectTag = {};
 exports.projectTag.get = function (req, res, next) {
     ProjectTag
-        .findById(req.params[PARAM_ID])
+        .findById(req.params[PARAM_ID_PROJECT_TAG])
         .exec(function (err, ProjectTag) {
             if (err) return next(new DatabaseFindError());
             res.json({data: ProjectTag});
@@ -56,11 +54,11 @@ exports.projectTag.post = function (req, res, next) {
 
 exports.projectTag.put = function (req, res, next) {
     //TODO : ProjectTag - Update projectTag
-    return next(new NotImplementedError("Update details of projectTag " + req.params[PARAM_ID]));
+    return next(new NotImplementedError("Update details of projectTag " + req.params[PARAM_ID_PROJECT_TAG]));
 };
 
 exports.projectTag.delete = function (req, res, next) {
-    var optionRemove = getOptionRemove(req.params[PARAM_ID], req.decoded);
+    var optionRemove = getOptionRemove(req.params[PARAM_ID_PROJECT_TAG], req.decoded);
     ProjectTag
         .remove(optionRemove)
         .exec(function (err, removed) {

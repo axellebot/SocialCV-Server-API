@@ -4,8 +4,6 @@ var getOptionRemove = require("../helpers").getOptionRemove;
 
 const Profile = require('../models/profile.schema');
 
-const PARAM_ID = PARAM.PARAM_ID_PROFILE;
-
 /* Profiles page. */
 exports.profiles = {};
 exports.profiles.get = function (req, res, next) {
@@ -43,7 +41,7 @@ exports.profiles.delete = function (req, res, next) {
 exports.profile = {};
 exports.profile.get = function (req, res, next) {
     Profile
-        .findById(req.params[PARAM_ID])
+        .findById(req.params[PARAM_ID_PROFILE])
         .exec(function (err, profile) {
             if (err) return next(new DatabaseFindError());
             res.json({data: profile});
@@ -56,11 +54,11 @@ exports.profile.post = function (req, res, next) {
 
 exports.profile.put = function (req, res, next) {
     //TODO : Profile - Update profile
-    return next(new NotImplementedError("Update details of profile " + req.params[PARAM_ID]));
+    return next(new NotImplementedError("Update details of profile " + req.params[PARAM_ID_PROFILE]));
 };
 
 exports.profile.delete = function (req, res, next) {
-    var optionRemove = getOptionRemove(req.params[PARAM_ID], req.decoded);
+    var optionRemove = getOptionRemove(req.params[PARAM_ID_PROFILE], req.decoded);
     Profile
         .remove(optionRemove)
         .exec(function (err, removed) {

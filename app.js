@@ -4,7 +4,6 @@ global.config = require("./config");
 
 //assign constants
 require("./constants");
-
 //assign errors to global
 require("./errors");
 
@@ -47,7 +46,7 @@ app.use(function (err, req, res, next) {
     res.locals.error = req.app.get('env') === 'development' ? err : {};
     res
         .status(err.status || 500)
-        .json({error: true, message: err.message || MESSAGE.MESSAGE_ERROR_APP});
+        .json({error: true, message: err.message || MESSAGE_ERROR_APP});
 
     next();
 });

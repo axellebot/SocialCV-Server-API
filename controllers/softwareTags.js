@@ -4,8 +4,6 @@ var getOptionRemove = require("../helpers").getOptionRemove;
 
 const SoftwareTag = require('../models/softwareTag.schema');
 
-const PARAM_ID = PARAM.PARAM_ID_SOFTWARE_TAG;
-
 /* SoftwareTags page. */
 exports.softwareTags = {};
 exports.softwareTags.get = function (req, res, next) {
@@ -43,7 +41,7 @@ exports.softwareTags.delete = function (req, res, next) {
 exports.softwareTag = {};
 exports.softwareTag.get = function (req, res, next) {
     SoftwareTag
-        .findById(req.params[PARAM_ID])
+        .findById(req.params[PARAM_ID_SOFTWARE_TAG])
         .exec(function (err, SoftwareTag) {
             if (err) return next(new DatabaseFindError());
             res.json({data: SoftwareTag});
@@ -56,11 +54,11 @@ exports.softwareTag.post = function (req, res, next) {
 
 exports.softwareTag.put = function (req, res, next) {
     //TODO : SoftwareTag - Update softwareTag
-    return next(new NotImplementedError("Update details of softwareTag " + req.params[PARAM_ID]));
+    return next(new NotImplementedError("Update details of softwareTag " + req.params[PARAM_ID_SOFTWARE_TAG]));
 };
 
 exports.softwareTag.delete = function (req, res, next) {
-    var optionRemove = getOptionRemove(req.params[PARAM_ID], req.decoded);
+    var optionRemove = getOptionRemove(req.params[PARAM_ID_SOFTWARE_TAG], req.decoded);
     SoftwareTag
         .remove(optionRemove)
         .exec(function (err, removed) {
