@@ -44,7 +44,7 @@ exports.experience.get = function (req, res, next) {
         .findById(req.params[PARAM_ID_EXPERIENCE])
         .exec(function (err, experience) {
             if (err) return next(new DatabaseFindError());
-            if (!experience) return next(new NotFoundError("Experience not found."));
+            if (!experience) return next(new NotFoundError(MODEL_NAME_EXPERIENCE));
             res.status(HTTP_STATUS_OK).json({data: experience});
         });
 };

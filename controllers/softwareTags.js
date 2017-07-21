@@ -44,7 +44,7 @@ exports.softwareTag.get = function (req, res, next) {
         .findById(req.params[PARAM_ID_SOFTWARE_TAG])
         .exec(function (err, softwareTag) {
             if (err) return next(new DatabaseFindError());
-            if (!softwareTag) return next(new NotFoundError("SoftwareTag not found."));
+            if (!softwareTag) return next(new NotFoundError(MODEL_NAME_FRAMEWORK_TAG));
             res.status(HTTP_STATUS_OK).json({data: softwareTag});
         });
 };

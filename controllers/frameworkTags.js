@@ -44,7 +44,7 @@ exports.frameworkTag.get = function (req, res, next) {
         .findById(req.params[PARAM_ID_FRAMEWORK_TAG])
         .exec(function (err, frameworkTag) {
             if (err) return next(new DatabaseFindError());
-            if (!frameworkTag) return next(new NotFoundError("FrameworkTag not found."));
+            if (!frameworkTag) return next(new NotFoundError(MODEL_NAME_FRAMEWORK_TAG));
             res.status(HTTP_STATUS_OK).json({data: frameworkTag});
         });
 };

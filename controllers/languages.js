@@ -44,7 +44,7 @@ exports.language.get = function (req, res, next) {
         .findById(req.params[PARAM_ID_LANGUAGE])
         .exec(function (err, language) {
             if (err) return next(new DatabaseFindError());
-            if (!language) return next(new NotFoundError("Language not found."));
+            if (!language) return next(new NotFoundError(MODEL_NAME_LANGUAGE));
             res.status(HTTP_STATUS_OK).json({data: language});
         });
 };

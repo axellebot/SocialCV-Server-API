@@ -44,7 +44,7 @@ exports.projectTag.get = function (req, res, next) {
         .findById(req.params[PARAM_ID_PROJECT_TAG])
         .exec(function (err, projectTag) {
             if (err) return next(new DatabaseFindError());
-            if (!projectTag) return next(new NotFoundError("ProjectTag not found."));
+            if (!projectTag) return next(new NotFoundError(MODEL_NAME_PROJECT_TAG));
             res.status(HTTP_STATUS_OK).json({data: projectTag});
         });
 };

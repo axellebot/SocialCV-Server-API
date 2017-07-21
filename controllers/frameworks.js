@@ -44,7 +44,7 @@ exports.framework.get = function (req, res, next) {
         .findById(req.params[PARAM_ID_FRAMEWORK])
         .exec(function (err, framework) {
             if (err) return next(new DatabaseFindError());
-            if (!framework) return next(new NotFoundError("Framework not found."));
+            if (!framework) return next(new NotFoundError(MODEL_NAME_FRAMEWORK));
             res.status(HTTP_STATUS_OK).json({data: framework});
         });
 };

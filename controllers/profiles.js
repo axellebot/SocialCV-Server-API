@@ -44,7 +44,7 @@ exports.profile.get = function (req, res, next) {
         .findById(req.params[PARAM_ID_PROFILE])
         .exec(function (err, profile) {
             if (err) return next(new DatabaseFindError());
-            if (!profile) return next(new NotFoundError("Profile not found."));
+            if (!profile) return next(new NotFoundError(MODEL_NAME_PROFILE));
             res.status(HTTP_STATUS_OK).json({data: profile});
         });
 };

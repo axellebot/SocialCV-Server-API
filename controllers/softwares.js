@@ -44,7 +44,7 @@ exports.software.get = function (req, res, next) {
         .findById(req.params[PARAM_ID_SOFTWARE])
         .exec(function (err, software) {
             if (err) return next(new DatabaseFindError());
-            if (!software) return next(new NotFoundError("Software not found."));
+            if (!software) return next(new NotFoundError(MODEL_NAME_SOFTWARE));
             res.status(HTTP_STATUS_OK).json({data: software});
         });
 };

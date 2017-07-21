@@ -44,7 +44,7 @@ exports.operatingSystem.get = function (req, res, next) {
         .findById(req.params[PARAM_ID_OPERATING_SYSTEM])
         .exec(function (err, operatingSystem) {
             if (err) return next(new DatabaseFindError());
-            if (!operatingSystem) return next(new NotFoundError("OperatingSystem not found."));
+            if (!operatingSystem) return next(new NotFoundError(MODEL_NAME_OPERATING_SYSTEM));
             res.status(HTTP_STATUS_OK).json({data: operatingSystem});
         });
 };

@@ -45,8 +45,8 @@ exports.user.get = function (req, res, next) {
         .findById(req.params[PARAM_ID_USER])
         .exec(function (err, user) {
             if (err) return next(new DatabaseFindError());
-            if (!user) return next(new NotFoundError("User not found."));
-            res.json({data: user});
+            if (!user) return next(new NotFoundError(MODEL_NAME_USER));
+            res.status(HTTP_STATUS_OK).json({data: user});
         });
 };
 

@@ -41,7 +41,7 @@ exports.computingTag.get = function (req, res, next) {
         .findById(req.params[PARAM_ID_COMPUTING_TAG])
         .exec(function (err, computingTag) {
             if (err) return next(new DatabaseFindError());
-            if (!computingTag) return next(new NotFoundError("ComputingTag not found."));
+            if (!computingTag) return next(new NotFoundError(MODEL_NAME_COMPUTING_TAG));
             res.status(HTTP_STATUS_OK).json({data: computingTag});
         });
 };

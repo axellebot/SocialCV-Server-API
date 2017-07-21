@@ -44,7 +44,7 @@ exports.project.get = function (req, res, next) {
         .findById(req.params[PARAM_ID_PROJECT])
         .exec(function (err, project) {
             if (err) return next(new DatabaseFindError());
-            if (!project) return next(new NotFoundError("Project not found."));
+            if (!project) return next(new NotFoundError(MODEL_NAME_PROJECT));
             res.status(HTTP_STATUS_OK).json({data: project});
         });
 };

@@ -44,7 +44,7 @@ exports.interest.get = function (req, res, next) {
         .findById(req.params[PARAM_ID_INTEREST])
         .exec(function (err, interest) {
             if (err) return next(new DatabaseFindError());
-            if (!interest) return next(new NotFoundError("Interest not found."));
+            if (!interest) return next(new NotFoundError(MODEL_NAME_INTEREST));
             res.status(HTTP_STATUS_OK).json({data: interest});
         });
 };

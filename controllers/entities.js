@@ -44,7 +44,7 @@ exports.entity.get = function (req, res, next) {
         .findById(req.params[PARAM_ID_ENTITY])
         .exec(function (err, entity) {
             if (err) return next(new DatabaseFindError());
-            if (!entity) return next(new NotFoundError("Entity not found."));
+            if (!entity) return next(new NotFoundError(MODEL_NAME_ENTITY));
             res.status(HTTP_STATUS_OK).json({data: entity});
         });
 };

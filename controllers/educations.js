@@ -43,7 +43,7 @@ exports.education.get = function (req, res, next) {
         .findById(req.params[PARAM_ID_EDUCATION])
         .exec(function (err, education) {
             if (err) return next(new DatabaseFindError());
-            if (!education) return next(new NotFoundError("Éducation not found."));
+            if (!education) return next(new NotFoundError(MODEL_NAME_EDUCATION));
             res.status(HTTP_STATUS_OK).json({data: education});
         });
 };

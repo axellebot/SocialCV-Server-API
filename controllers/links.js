@@ -44,7 +44,7 @@ exports.link.get = function (req, res, next) {
         .findById(req.params[PARAM_ID_LINK])
         .exec(function (err, link) {
             if (err) return next(new DatabaseFindError());
-            if (!link) return next(new NotFoundError("Link not found."));
+            if (!link) return next(new NotFoundError(MODEL_NAME_LINK));
             res.status(HTTP_STATUS_OK).json({data: link});
         });
 };

@@ -43,7 +43,7 @@ exports.linkTag.get = function (req, res, next) {
         .findById(req.params[PARAM_ID_LINK_TAG])
         .exec(function (err, linkTag) {
             if (err) return next(new DatabaseFindError());
-            if (!linkTag) return next(new NotFoundError("LinkTag not found."));
+            if (!linkTag) return next(new NotFoundError(MODEL_NAME_LINK_TAG));
             res.status(HTTP_STATUS_OK).json({data: linkTag});
         });
 };

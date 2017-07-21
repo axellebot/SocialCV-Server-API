@@ -41,7 +41,7 @@ exports.programmingLanguage.get = function (req, res, next) {
         .findById(req.params[PARAM_ID_PROGRAMMING_LANGUAGE])
         .exec(function (err, programmingLanguage) {
             if (err) return next(new DatabaseFindError());
-            if (!programmingLanguage) return next(new NotFoundError("ProgrammingLanguage not found."));
+            if (!programmingLanguage) return next(new NotFoundError(MODEL_NAME_PROGRAMMING_LANGUAGE));
             res.status(HTTP_STATUS_OK).json({data: programmingLanguage});
         });
 };

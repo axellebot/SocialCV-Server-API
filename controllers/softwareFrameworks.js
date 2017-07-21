@@ -44,7 +44,7 @@ exports.softwareFramework.get = function (req, res, next) {
         .findById(req.params[PARAM_ID_SOFTWARE_FRAMEWORK])
         .exec(function (err, softwareFramework) {
             if (err) return next(new DatabaseFindError());
-            if (!softwareFramework) return next(new NotFoundError("SoftwareFramework not found."));
+            if (!softwareFramework) return next(new NotFoundError(MODEL_NAME_SOFTWARE_FRAMEWORK));
             res.status(HTTP_STATUS_OK).json({data: softwareFramework});
         });
 };
