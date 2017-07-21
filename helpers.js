@@ -29,6 +29,7 @@ function getRoleRank(checkRole) {
     }
     return role;
 };
+
 module.exports.getRoleRank = getRoleRank;
 
 module.exports.saltPassword = function (next) {
@@ -69,7 +70,7 @@ module.exports.uuid = function () {
  * @param loggedUser
  * @returns {*}
  */
-module.exports.getOptionRemove = function (entityId, loggedUser) {
+module.exports.getFilterEditData = function (entityId, loggedUser) {
     switch (loggedUser.role) {
         case ROLE_MEMBER :
             return {_id: entityId, user: loggedUser._id};
@@ -93,4 +94,17 @@ module.exports.userCanAccessUserData = function (user, ownerId) {
     }
     return (ownerId == user._id);
 };
+
+/**
+ *
+ * @param a {Object}
+ * @param b {Object}
+ * @returns {boolean}
+ */
+module.exports.compareKeys = function (a, b) {
+    const
+        aKeys = Object.keys(a).sort(),
+        bKeys = Object.keys(b).sort();
+
+    return (JSON.stringify(aKeys).equals(JSON.stringify(bKeys)));
 };

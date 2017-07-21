@@ -1,6 +1,6 @@
 "use strict";
 
-var getOptionRemove = require("../helpers").getOptionRemove;
+var getFilterEditData = require("../helpers").getFilterEditData;
 
 const Interest = require('../models/interest.schema');
 
@@ -20,12 +20,12 @@ exports.interests.get = function (req, res, next) {
 
 exports.interests.post = function (req, res, next) {
     //TODO : Interests - Create interest
-    return next(new NotImplementedError("Create a new Interest"));
+    next(new NotImplementedError("Create a new Interest"));
 };
 
 exports.interests.put = function (req, res, next) {
     //TODO : Interests - Add Bulk update
-    return next(new NotImplementedError("Bulk update of interests"));
+    next(new NotImplementedError("Bulk update of interests"));
 };
 
 exports.interests.delete = function (req, res, next) {
@@ -33,7 +33,7 @@ exports.interests.delete = function (req, res, next) {
         .remove()
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };
 
@@ -50,20 +50,25 @@ exports.interest.get = function (req, res, next) {
 };
 
 exports.interest.post = function (req, res, next) {
-    return next(new NotFoundError());
+    next(new NotFoundError());
 };
 
 exports.interest.put = function (req, res, next) {
-    //TODO : Interest - Update interest
-    return next(new NotImplementedError("Update details of interest " + req.params[PARAM_ID_INTEREST]));
+    var filterUpdate = getFilterEditData(req.params[PARAM_ID_INTEREST], req.decoded);
+    Interest
+        .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, interest) {
+            if (err) return next(new DatabaseUpdateError());
+            if (!interest) return next(new NotFoundError(MODEL_NAME_INTEREST));
+            res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_UPDATED, data: interest});
+        });
 };
 
 exports.interest.delete = function (req, res, next) {
-    var optionRemove = getOptionRemove(req.params[PARAM_ID_INTEREST], req.decoded);
+    var filterRemove = getFilterEditData(req.params[PARAM_ID_INTEREST], req.decoded);
     Interest
-        .findOneAndRemove(optionRemove, function (err, interest) {
+        .findOneAndRemove(filterRemove, function (err, interest) {
             if (err) return next(new DatabaseRemoveError());
             if (!interest) return next(new NotFoundError(MODEL_NAME_INTEREST));
-            return res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_DELETED, data: interest});
+            res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_DELETED, data: interest});
         });
 };

@@ -1,6 +1,6 @@
 "use strict";
 
-var getOptionRemove = require("../helpers").getOptionRemove;
+var getFilterEditData = require("../helpers").getFilterEditData;
 
 const Link = require('../models/link.schema');
 
@@ -20,12 +20,12 @@ exports.links.get = function (req, res, next) {
 
 exports.links.post = function (req, res, next) {
     //TODO : Links - Create link
-    return next(new NotImplementedError("Create a new link"));
+    next(new NotImplementedError("Create a new link"));
 };
 
 exports.links.put = function (req, res, next) {
     //TODO : Links - Add Bulk update
-    return next(new NotImplementedError("Bulk update of links"));
+    next(new NotImplementedError("Bulk update of links"));
 };
 
 exports.links.delete = function (req, res, next) {
@@ -33,7 +33,7 @@ exports.links.delete = function (req, res, next) {
         .remove()
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };
 
@@ -50,20 +50,25 @@ exports.link.get = function (req, res, next) {
 };
 
 exports.link.post = function (req, res, next) {
-    return next(new NotFoundError());
+    next(new NotFoundError());
 };
 
 exports.link.put = function (req, res, next) {
-    //TODO : Link - Update link
-    return next(new NotImplementedError("Update details of link " + req.params[PARAM_ID_LINK]));
+    var filterUpdate = getFilterEditData(req.params[PARAM_ID_LINK], req.decoded);
+    Link
+        .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, link) {
+            if (err) return next(new DatabaseUpdateError());
+            if (!link) return next(new NotFoundError(MODEL_NAME_LINK));
+            res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_UPDATED, data: link});
+        });
 };
 
 exports.link.delete = function (req, res, next) {
-    var optionRemove = getOptionRemove(req.params[PARAM_ID_LINK], req.decoded);
+    var filterRemove = getFilterEditData(req.params[PARAM_ID_LINK], req.decoded);
     Link
-        .findOneAndRemove(optionRemove, function (err, link) {
+        .findOneAndRemove(filterRemove, function (err, link) {
             if (err) return next(new DatabaseRemoveError());
             if (!link) return next(new NotFoundError(MODEL_NAME_LINK));
-            return res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_DELETED, data: link});
+            res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_DELETED, data: link});
         });
 };

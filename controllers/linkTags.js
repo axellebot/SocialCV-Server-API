@@ -1,6 +1,6 @@
 "use strict";
 
-var getOptionRemove = require("../helpers").getOptionRemove;
+var getFilterEditData = require("../helpers").getFilterEditData;
 
 const LinkTag = require('../models/linkTag.schema');
 
@@ -20,11 +20,11 @@ exports.linkTags.get = function (req, res, next) {
 };
 exports.linkTags.post = function (req, res, next) {
     //TODO : LinkTags - Create link
-    return next(new NotImplementedError("Create a new linkTag"));
+    next(new NotImplementedError("Create a new linkTag"));
 };
 exports.linkTags.put = function (req, res, next) {
     //TODO : LinkTags - Add Bulk update
-    return next(new NotImplementedError("Bulk update of linkTags"));
+    next(new NotImplementedError("Bulk update of linkTags"));
 };
 
 exports.linkTags.delete = function (req, res, next) {
@@ -49,20 +49,25 @@ exports.linkTag.get = function (req, res, next) {
 };
 
 exports.linkTag.post = function (req, res, next) {
-    return next(new NotFoundError());
+    next(new NotFoundError());
 };
 
 exports.linkTag.put = function (req, res, next) {
-    //TODO : LinkTag - Update link
-    return next(new NotImplementedError("Update details of linkTag " + req.params[PARAM_ID_LINK_TAG]));
+    var filterUpdate = getFilterEditData(req.params[PARAM_ID_LINK_TAG], req.decoded);
+    LinkTag
+        .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, linkTag) {
+            if (err) return next(new DatabaseUpdateError());
+            if (!linkTag) return next(new NotFoundError(MODEL_NAME_LINK_TAG));
+            res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_UPDATED, data: linkTag});
+        });
 };
 
 exports.linkTag.delete = function (req, res, next) {
-    var optionRemove = getOptionRemove(req.params[PARAM_ID_LINK_TAG], req.decoded);
+    var filterRemove = getFilterEditData(req.params[PARAM_ID_LINK_TAG], req.decoded);
     LinkTag
-        .findOneAndRemove(optionRemove, function (err, linkTah) {
+        .findOneAndRemove(filterRemove, function (err, linkTag) {
             if (err) return next(new DatabaseRemoveError());
-            if (!linkTah) return next(new NotFoundError(MODEL_NAME_LINK_TAG));
-            return res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_DELETED, data: linkTah});
+            if (!linkTag) return next(new NotFoundError(MODEL_NAME_LINK_TAG));
+            res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_DELETED, data: linkTag});
         });
 };

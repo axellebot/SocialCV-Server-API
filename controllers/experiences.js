@@ -1,6 +1,6 @@
 "use strict";
 
-var getOptionRemove = require("../helpers").getOptionRemove;
+var getFilterEditData = require("../helpers").getFilterEditData;
 
 const Experience = require('../models/experience.schema');
 
@@ -20,12 +20,12 @@ exports.experiences.get = function (req, res, next) {
 
 exports.experiences.post = function (req, res, next) {
     //TODO : Experiences - Create experience
-    return next(new NotImplementedError("Create a new experience"));
+    next(new NotImplementedError("Create a new experience"));
 };
 
 exports.experiences.put = function (req, res, next) {
     //TODO : Experiences - Add Bulk update
-    return next(new NotImplementedError("Bulk update of experiences"));
+    next(new NotImplementedError("Bulk update of experiences"));
 };
 
 exports.experiences.delete = function (req, res, next) {
@@ -33,7 +33,7 @@ exports.experiences.delete = function (req, res, next) {
         .remove()
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };
 
@@ -50,20 +50,25 @@ exports.experience.get = function (req, res, next) {
 };
 
 exports.experience.post = function (req, res, next) {
-    return next(new NotFoundError());
+    next(new NotFoundError());
 };
 
 exports.experience.put = function (req, res, next) {
-    //TODO : Experience - Update experience
-    return next(new NotImplementedError("Update details of experience " + req.params[PARAM_ID_EXPERIENCE]));
+    var filterUpdate = getFilterEditData(req.params[PARAM_ID_EXPERIENCE], req.decoded);
+    Experience
+        .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, experience) {
+            if (err) return next(new DatabaseUpdateError());
+            if (!experience) return next(new NotFoundError(MODEL_NAME_EXPERIENCE));
+            res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_UPDATED, data: experience});
+        });
 };
 
 exports.experience.delete = function (req, res, next) {
-    var optionRemove = getOptionRemove(req.params[PARAM_ID_EXPERIENCE], req.decoded);
+    var filterRemove = getFilterEditData(req.params[PARAM_ID_EXPERIENCE], req.decoded);
     Experience
-        .findOneAndRemove(optionRemove, function (err, experience) {
+        .findOneAndRemove(filterRemove, function (err, experience) {
             if (err) return next(new DatabaseRemoveError());
             if (!experience) return next(new NotFoundError(MODEL_NAME_EXPERIENCE));
-            return res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_DELETED, data: experience});
+            res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_DELETED, data: experience});
         });
 };

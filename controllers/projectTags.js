@@ -1,6 +1,6 @@
 "use strict";
 
-var getOptionRemove = require("../helpers").getOptionRemove;
+var getFilterEditData = require("../helpers").getFilterEditData;
 
 const ProjectTag = require('../models/projectTag.schema');
 
@@ -20,12 +20,12 @@ exports.projectTags.get = function (req, res, next) {
 
 exports.projectTags.post = function (req, res, next) {
     //TODO : ProjectTags - Create projectTag
-    return next(new NotImplementedError("Create a new projectTag"));
+    next(new NotImplementedError("Create a new projectTag"));
 };
 
 exports.projectTags.put = function (req, res, next) {
     //TODO : ProjectTags - Add Bulk update
-    return next(new NotImplementedError("Bulk update of projectTags"));
+    next(new NotImplementedError("Bulk update of projectTags"));
 };
 
 exports.projectTags.delete = function (req, res, next) {
@@ -33,7 +33,7 @@ exports.projectTags.delete = function (req, res, next) {
         .remove()
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };
 
@@ -50,20 +50,25 @@ exports.projectTag.get = function (req, res, next) {
 };
 
 exports.projectTag.post = function (req, res, next) {
-    return next(new NotFoundError());
+    next(new NotFoundError());
 };
 
 exports.projectTag.put = function (req, res, next) {
-    //TODO : ProjectTag - Update projectTag
-    return next(new NotImplementedError("Update details of projectTag " + req.params[PARAM_ID_PROJECT_TAG]));
+    var filterUpdate = getFilterEditData(req.params[PARAM_ID_PROJECT_TAG], req.decoded);
+    ProjectTag
+        .findOneAndUpdate(filterUpdate, req.body.data, {new: true},function (err, projectTag) {
+            if (err) return next(new DatabaseUpdateError());
+            if (!projectTag) return next(new NotFoundError(MODEL_NAME_PROJECT_TAG));
+            return res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_UPDATED, data: projectTag});
+        });
 };
 
 exports.projectTag.delete = function (req, res, next) {
-    var optionRemove = getOptionRemove(req.params[PARAM_ID_PROJECT_TAG], req.decoded);
+    var filterRemove = getFilterEditData(req.params[PARAM_ID_PROJECT_TAG], req.decoded);
     ProjectTag
-        .findOneAndRemove(optionRemove, function (err, project) {
+        .findOneAndRemove(filterRemove, function (err, projectTag) {
             if (err) return next(new DatabaseRemoveError());
-            if (!project) return next(new NotFoundError(MODEL_NAME_PROJECT_TAG));
-            return res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_DELETED, data: project});
+            if (!projectTag) return next(new NotFoundError(MODEL_NAME_PROJECT_TAG));
+            res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_DELETED, data: projectTag});
         });
 };

@@ -94,6 +94,7 @@ global.PARAM_ID_USER = "UserId";
 
 //Messages
 global.MESSAGE_SUCCESS_RESOURCE_DELETED = "Resource deleted.";
+global.MESSAGE_SUCCESS_RESOURCE_UPDATED = "Resource updated.";
 global.MESSAGE_ERROR_APP = "Error";
 global.MESSAGE_ERROR_DATABASE_CREATE = "Database create action error.";
 global.MESSAGE_ERROR_DATABASE_SAVE = "Database save action error.";

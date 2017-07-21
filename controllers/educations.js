@@ -1,6 +1,6 @@
 "use strict";
 
-var getOptionRemove = require("../helpers").getOptionRemove;
+var getFilterEditData = require("../helpers").getFilterEditData;
 
 const Education = require('../models/education.schema');
 
@@ -19,12 +19,12 @@ exports.educations.get = function (req, res, next) {
 };
 exports.educations.post = function (req, res, next) {
     //TODO : Educations - Create education
-    return next(new NotImplementedError('Create a new education'));
+    next(new NotImplementedError('Create a new education'));
 };
 
 exports.educations.put = function (req, res, next) {
     //TODO : Educations - Add Bulk update
-    return next(new NotImplementedError('Bulk update of educations'));
+    next(new NotImplementedError('Bulk update of educations'));
 };
 
 exports.educations.delete = function (req, res, next) {
@@ -32,7 +32,7 @@ exports.educations.delete = function (req, res, next) {
         .remove()
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };
 
@@ -47,19 +47,27 @@ exports.education.get = function (req, res, next) {
             res.status(HTTP_STATUS_OK).json({data: education});
         });
 };
+
 exports.education.post = function (req, res, next) {
-    return next(new NotFoundError());
+    next(new NotFoundError());
 };
+
 exports.education.put = function (req, res, next) {
-    //TODO : Education - Update education
-    return next(new NotImplementedError("Update details of education " + req.params[PARAM_ID_EDUCATION]));
-};
-exports.education.delete = function (req, res, next) {
-    var optionRemove = getOptionRemove(req.params[PARAM_ID_EDUCATION], req.decoded);
+    var filterUpdate = getFilterEditData(req.params[PARAM_ID_EDUCATION], req.decoded);
     Education
-        .findOneAndRemove(optionRemove, function (err, education) {
+        .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, education) {
+            if (err) return next(new DatabaseUpdateError());
+            if (!education) return next(new NotFoundError(MODEL_NAME_EDUCATION));
+            res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_UPDATED, data: education});
+        });
+};
+
+exports.education.delete = function (req, res, next) {
+    var filterRemove = getFilterEditData(req.params[PARAM_ID_EDUCATION], req.decoded);
+    Education
+        .findOneAndRemove(filterRemove, function (err, education) {
             if (err) return next(new DatabaseRemoveError());
             if (!education) return next(new NotFoundError(MODEL_NAME_EDUCATION));
-            return res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_DELETED, data: education});
+            res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_DELETED, data: education});
         });
 };

@@ -1,6 +1,6 @@
 "use strict";
 
-var getOptionRemove = require("../helpers").getOptionRemove;
+var getFilterEditData = require("../helpers").getFilterEditData;
 
 const Language = require('../models/language.schema');
 
@@ -20,12 +20,12 @@ exports.languages.get = function (req, res, next) {
 
 exports.languages.post = function (req, res, next) {
     //TODO : Languages - Create language
-    return next(new NotImplementedError("Create a new Language"));
+    next(new NotImplementedError("Create a new Language"));
 };
 
 exports.languages.put = function (req, res, next) {
     //TODO : Languages - Add Bulk update
-    return next(new NotImplementedError("Bulk update of languages"));
+    next(new NotImplementedError("Bulk update of languages"));
 };
 
 exports.languages.delete = function (req, res, next) {
@@ -33,7 +33,7 @@ exports.languages.delete = function (req, res, next) {
         .remove()
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };
 
@@ -50,20 +50,25 @@ exports.language.get = function (req, res, next) {
 };
 
 exports.language.post = function (req, res, next) {
-    return next(new NotFoundError());
+    next(new NotFoundError());
 };
 
 exports.language.put = function (req, res, next) {
-    //TODO : Language - Update language
-    return next(new NotImplementedError("Update details of language " + req.params[PARAM_ID_LANGUAGE]));
+    var filterUpdate = getFilterEditData(req.params[PARAM_ID_LANGUAGE], req.decoded);
+    Language
+        .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, language) {
+            if (err) return next(new DatabaseUpdateError());
+            if (!language) return next(new NotFoundError(MODEL_NAME_LANGUAGE));
+            res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_UPDATED, data: language});
+        });
 };
 
 exports.language.delete = function (req, res, next) {
-    var optionRemove = getOptionRemove(req.params[PARAM_ID_LANGUAGE], req.decoded);
+    var filterRemove = getFilterEditData(req.params[PARAM_ID_LANGUAGE], req.decoded);
     Language
-        .findOneAndRemove(optionRemove, function (err, language) {
+        .findOneAndRemove(filterRemove, function (err, language) {
             if (err) return next(new DatabaseRemoveError());
             if (!language) return next(new NotFoundError(MODEL_NAME_LANGUAGE));
-            return res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_DELETED, data: language});
+            res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_DELETED, data: language});
         });
 };

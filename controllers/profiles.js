@@ -1,6 +1,6 @@
 "use strict";
 
-var getOptionRemove = require("../helpers").getOptionRemove;
+var getFilterEditData = require("../helpers").getFilterEditData;
 
 const Profile = require('../models/profile.schema');
 
@@ -20,12 +20,12 @@ exports.profiles.get = function (req, res, next) {
 
 exports.profiles.post = function (req, res, next) {
     //TODO : Profiles - Create profile
-    return next(new NotImplementedError("Create a new profile"));
+    next(new NotImplementedError("Create a new profile"));
 };
 
 exports.profiles.put = function (req, res, next) {
     //TODO : Profiles - Add Bulk update
-    return next(new NotImplementedError("Bulk update of profiles"));
+    next(new NotImplementedError("Bulk update of profiles"));
 };
 
 exports.profiles.delete = function (req, res, next) {
@@ -33,7 +33,7 @@ exports.profiles.delete = function (req, res, next) {
         .remove()
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };
 
@@ -50,20 +50,25 @@ exports.profile.get = function (req, res, next) {
 };
 
 exports.profile.post = function (req, res, next) {
-    return next(new NotFoundError());
+    next(new NotFoundError());
 };
 
 exports.profile.put = function (req, res, next) {
-    //TODO : Profile - Update profile
-    return next(new NotImplementedError("Update details of profile " + req.params[PARAM_ID_PROFILE]));
+    var filterUpdate = getFilterEditData(req.params[PARAM_ID_PROFILE], req.decoded);
+    Profile
+        .findOneAndUpdate(filterUpdate, req.body.data, {new: true},function (err, profile) {
+            if (err) return next(new DatabaseUpdateError());
+            if (!profile) return next(new NotFoundError(MODEL_NAME_PROFILE));
+            return res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_UPDATED, data: profile});
+        });
 };
 
 exports.profile.delete = function (req, res, next) {
-    var optionRemove = getOptionRemove(req.params[PARAM_ID_PROFILE], req.decoded);
+    var filterRemove = getFilterEditData(req.params[PARAM_ID_PROFILE], req.decoded);
     Profile
-        .findOneAndRemove(optionRemove, function (err, profile) {
+        .findOneAndRemove(filterRemove, function (err, profile) {
             if (err) return next(new DatabaseRemoveError());
             if (!profile) return next(new NotFoundError(MODEL_NAME_PROFILE));
-            return res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_DELETED, data: profile});
+            res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_DELETED, data: profile});
         });
 };

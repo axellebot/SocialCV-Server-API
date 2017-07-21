@@ -1,6 +1,6 @@
 "use strict";
 
-var getOptionRemove = require("../../helpers").getOptionRemove,
+var getFilterEditData = require("../../helpers").getFilterEditData,
     userCanAccessUserData = require("../../helpers").userCanAccessUserData;
 
 const User = require('../../models/user.schema');
@@ -21,12 +21,12 @@ exports.users.get = function (req, res, next) {
 
 exports.users.post = function (req, res, next) {
     //TODO : users - Create user
-    return next(new NotImplementedError("Create a new user"));
+    next(new NotImplementedError("Create a new user"));
 };
 
 exports.users.put = function (req, res, next) {
     //TODO : users - Add Bulk update
-    return next(new NotImplementedError("Bulk update of users"));
+    next(new NotImplementedError("Bulk update of users"));
 };
 
 exports.users.delete = function (req, res, next) {
@@ -34,7 +34,7 @@ exports.users.delete = function (req, res, next) {
         .remove()
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };
 
@@ -51,29 +51,30 @@ exports.user.get = function (req, res, next) {
 };
 
 exports.user.post = function (req, res, next) {
-    return next(new NotFoundError());
+    next(new NotFoundError());
 };
 
 exports.user.put = function (req, res, next) {
-    if (!userCanAccessUserData(req.decoded, req.params[PARAM_ID_USER])) {
-        return next(new MissingPrivilegeError());
-    }
-    //TODO : user - Update user
-    return next(new NotImplementedError("Update details of user"));
+    const userId = req.params[PARAM_ID_USER];
+    if (!userCanAccessUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
+    var filterUpdate = getFilterEditData(userId, req.decoded);
+    User
+        .findOneAndUpdate(filterUpdate, req.body.data,{returnNewDocument:true}, function (err, user) {
+            if (err) return next(new DatabaseUpdateError());
+            if (!user) return next(new NotFoundError(MODEL_NAME_USER));
+            res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_UPDATED, data: user});
+        });
 };
 
 exports.user.delete = function (req, res, next) {
-    if (!userCanAccessUserData(req.decoded, req.params[PARAM_ID_USER])) {
-        return next(new MissingPrivilegeError());
-    }
-
-    var optionRemove = getOptionRemove(req.params[PARAM_ID_USER], req.decoded);
-
+    const userId = req.params[PARAM_ID_USER];
+    if (!userCanAccessUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
+    var filterRemove = getFilterEditData(userId, req.decoded);
     User
-        .remove(optionRemove)
-        .exec(function (err, removed) {
+        .findOneAndRemove(filterRemove, function (err, user) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            if (!user) return next(new NotFoundError(MODEL_NAME_USER));
+            res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_DELETED, data: user});
         });
 };
 

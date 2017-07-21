@@ -1,6 +1,6 @@
 "use strict";
 
-var getOptionRemove = require("../helpers").getOptionRemove;
+var getFilterEditData = require("../helpers").getFilterEditData;
 
 const Entity = require('../models/entity.schema');
 
@@ -20,12 +20,12 @@ exports.entities.get = function (req, res, next) {
 
 exports.entities.post = function (req, res, next) {
     //TODO : Entities - Create entity
-    return next(new NotImplementedError("Create a new entity"));
+    next(new NotImplementedError("Create a new entity"));
 };
 
 exports.entities.put = function (req, res, next) {
     //TODO : Entities - Add Bulk update
-    return next(new NotImplementedError("Bulk update of entities"));
+    next(new NotImplementedError("Bulk update of entities"));
 };
 
 exports.entities.delete = function (req, res, next) {
@@ -33,7 +33,7 @@ exports.entities.delete = function (req, res, next) {
         .remove()
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };
 
@@ -50,20 +50,25 @@ exports.entity.get = function (req, res, next) {
 };
 
 exports.entity.post = function (req, res, next) {
-    return next(new NotFoundError());
+    next(new NotFoundError());
 };
 
 exports.entity.put = function (req, res, next) {
-    //TODO : Entity - Update entity
-    return next(new NotImplementedError("Update details of entity " + req.params[PARAM_ID_ENTITY]));
+    var filterUpdate = getFilterEditData(req.params[PARAM_ID_ENTITY], req.decoded);
+    Entity
+        .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, entity) {
+            if (err) return next(new DatabaseUpdateError());
+            if (!entity) return next(new NotFoundError(MODEL_NAME_ENTITY));
+            res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_UPDATED, data: entity});
+        });
 };
 
 exports.entity.delete = function (req, res, next) {
-    var optionRemove = getOptionRemove(req.params[PARAM_ID_ENTITY], req.decoded);
+    var filterRemove = getFilterEditData(req.params[PARAM_ID_ENTITY], req.decoded);
     Entity
-        .findOneAndRemove(optionRemove, function (err, entity) {
+        .findOneAndRemove(filterRemove, function (err, entity) {
             if (err) return next(new DatabaseRemoveError());
             if (!entity) return next(new NotFoundError(MODEL_NAME_ENTITY));
-            return res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_DELETED, data: entity});
+            res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_DELETED, data: entity});
         });
 };

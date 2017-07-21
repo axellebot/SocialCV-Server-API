@@ -1,6 +1,6 @@
 "use strict";
 
-var getOptionRemove = require("../helpers").getOptionRemove;
+var getFilterEditData = require("../helpers").getFilterEditData;
 
 const ProgrammingLanguage = require('../models/programmingLanguage.schema');
 
@@ -19,18 +19,18 @@ exports.programmingLanguages.get = function (req, res, next) {
 };
 exports.programmingLanguages.post = function (req, res, next) {
     //TODO : ProgrammingLanguages - Create programmingLanguage
-    return next(new NotImplementedError("Create a new programmingLanguage"));
+    next(new NotImplementedError("Create a new programmingLanguage"));
 };
 exports.programmingLanguages.put = function (req, res, next) {
     //TODO : ProgrammingLanguages - Add Bulk update
-    return next(new NotImplementedError("Bulk update of programmingLanguages"));
+    next(new NotImplementedError("Bulk update of programmingLanguages"));
 };
 exports.programmingLanguages.delete = function (req, res, next) {
     ProgrammingLanguage
         .remove()
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };
 
@@ -47,21 +47,29 @@ exports.programmingLanguage.get = function (req, res, next) {
 };
 
 exports.programmingLanguage.post = function (req, res, next) {
-    return next(new NotFoundError());
+    next(new NotFoundError());
 };
 
 exports.programmingLanguage.put = function (req, res, next) {
-    //TODO : ProgrammingLanguage - Update programmingLanguage
-    return next(new NotImplementedError("Update details of programmingLanguage " + req.params[PARAM_ID_PROGRAMMING_LANGUAGE]));
+    var filterUpdate = getFilterEditData(req.params[PARAM_ID_PROGRAMMING_LANGUAGE], req.decoded);
+    ProgrammingLanguage
+        .findOneAndUpdate(filterUpdate, req.body.data, {new: true},function (err, programmingLanguage) {
+            if (err) return next(new DatabaseUpdateError());
+            if (!programmingLanguage) return next(new NotFoundError(MODEL_NAME_PROGRAMMING_LANGUAGE));
+            return res.status(HTTP_STATUS_OK).json({
+                message: MESSAGE_SUCCESS_RESOURCE_UPDATED,
+                data: programmingLanguage
+            });
+        });
 };
 
 exports.programmingLanguage.delete = function (req, res, next) {
-    var optionRemove = getOptionRemove(req.params[PARAM_ID_PROGRAMMING_LANGUAGE], req.decoded);
+    var filterRemove = getFilterEditData(req.params[PARAM_ID_PROGRAMMING_LANGUAGE], req.decoded);
     ProgrammingLanguage
-        .findOneAndRemove(optionRemove, function (err, programmingLanguage) {
+        .findOneAndRemove(filterRemove, function (err, programmingLanguage) {
             if (err) return next(new DatabaseRemoveError());
             if (!programmingLanguage) return next(new NotFoundError(MODEL_NAME_PROGRAMMING_LANGUAGE));
-            return res.status(HTTP_STATUS_OK).json({
+            res.status(HTTP_STATUS_OK).json({
                 message: MESSAGE_SUCCESS_RESOURCE_DELETED,
                 data: programmingLanguage
             });

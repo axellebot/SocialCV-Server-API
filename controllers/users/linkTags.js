@@ -21,14 +21,14 @@ exports.post = function (req, res, next) {
     const userId = req.params[PARAM_ID_USER];
     if (!userCanAccessUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
     //TODO : LinkTags - Create link for user
-    return next(new NotImplementedError("Create a new linkTag for user : " + req.params[PARAM_ID_USER]));
+    next(new NotImplementedError("Create a new linkTag for user : " + req.params[PARAM_ID_USER]));
 };
 
 exports.put = function (req, res, next) {
     const userId = req.params[PARAM_ID_USER];
     if (!userCanAccessUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
     //TODO : LinkTags - Add Bulk update for user
-    return next(new NotImplementedError("Bulk update of links for user : " + req.params[PARAM_ID_USER]));
+    next(new NotImplementedError("Bulk update of links for user : " + req.params[PARAM_ID_USER]));
 };
 
 exports.delete = function (req, res, next) {
@@ -39,6 +39,6 @@ exports.delete = function (req, res, next) {
         .remove({user: req.params[PARAM_ID_USER]})
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };

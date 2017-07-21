@@ -1,6 +1,6 @@
 "use strict";
 
-var getOptionRemove = require("../helpers").getOptionRemove;
+var getFilterEditData = require("../helpers").getFilterEditData;
 
 const ComputingTag = require('../models/computingTag.schema');
 
@@ -19,18 +19,18 @@ exports.computingTags.get = function (req, res, next) {
 };
 exports.computingTags.post = function (req, res, next) {
     //TODO : ComputingTags - Create computingTag
-    return next(new NotImplementedError("Create a new computingTag"));
+    next(new NotImplementedError("Create a new computingTag"));
 };
 exports.computingTags.put = function (req, res, next) {
     //TODO : ComputingTags - Add Bulk update
-    return next(new NotImplementedError("Bulk update of computingTags"));
+    next(new NotImplementedError("Bulk update of computingTags"));
 };
 exports.computingTags.delete = function (req, res, next) {
     ComputingTag
         .remove()
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };
 
@@ -47,20 +47,26 @@ exports.computingTag.get = function (req, res, next) {
 };
 
 exports.computingTag.post = function (req, res, next) {
-    return next(new NotFoundError());
+    next(new NotFoundError());
 };
 
 exports.computingTag.put = function (req, res, next) {
-    //TODO : ComputingTag - Update computingTag
-    return next(new NotImplementedError("Update details of computingTag " + req.params[PARAM_ID_COMPUTING_TAG]));
+    var filterUpdate = getFilterEditData(req.params[PARAM_ID_COMPUTING_TAG], req.decoded);
+    console.log(filterUpdate, req.body.data);
+    ComputingTag
+        .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, computingTag) {
+            if (err) return next(new DatabaseUpdateError());
+            if (!computingTag) return next(new NotFoundError(MODEL_NAME_COMPUTING_TAG));
+            res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_UPDATED, data: computingTag});
+        });
 };
 
 exports.computingTag.delete = function (req, res, next) {
-    var optionRemove = getOptionRemove(req.params[PARAM_ID_COMPUTING_TAG], req.decoded);
+    var filterRemove = getFilterEditData(req.params[PARAM_ID_COMPUTING_TAG], req.decoded);
     ComputingTag
-        .findOneAndRemove(optionRemove, function (err, computingTag) {
+        .findOneAndRemove(filterRemove, function (err, computingTag) {
             if (err) return next(new DatabaseRemoveError());
             if (!computingTag) return next(new NotFoundError(MODEL_NAME_COMPUTING_TAG));
-            return res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_DELETED, data: computingTag});
+            res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_DELETED, data: computingTag});
         });
 };
