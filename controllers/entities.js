@@ -14,7 +14,7 @@ exports.entities.get = function (req, res, next) {
         .skip(req.options.pagination.skip)
         .exec(function (err, entities) {
             if (err) return next(new DatabaseFindError());
-            res.json({data: entities});
+            res.status(HTTP_STATUS_OK).json({data: entities});
         });
 };
 
@@ -33,7 +33,7 @@ exports.entities.delete = function (req, res, next) {
         .remove()
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            return res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };
 
@@ -44,7 +44,8 @@ exports.entity.get = function (req, res, next) {
         .findById(req.params[PARAM_ID_ENTITY])
         .exec(function (err, entity) {
             if (err) return next(new DatabaseFindError());
-            res.json({data: entity});
+            if (!entity) return next(new NotFoundError("Entity not found."));
+            res.status(HTTP_STATUS_OK).json({data: entity});
         });
 };
 
@@ -54,7 +55,7 @@ exports.entity.post = function (req, res, next) {
 
 exports.entity.put = function (req, res, next) {
     //TODO : Entity - Update entity
-    return next(new NotImplementedError("Update details of entity "+ req.params[PARAM_ID_ENTITY]));
+    return next(new NotImplementedError("Update details of entity " + req.params[PARAM_ID_ENTITY]));
 };
 
 exports.entity.delete = function (req, res, next) {
@@ -63,6 +64,6 @@ exports.entity.delete = function (req, res, next) {
         .remove(optionRemove)
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            return res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };

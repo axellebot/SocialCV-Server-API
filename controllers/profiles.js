@@ -14,7 +14,7 @@ exports.profiles.get = function (req, res, next) {
         .skip(req.options.pagination.skip)
         .exec(function (err, profiles) {
             if (err) return next(new DatabaseFindError());
-            res.json({data: profiles});
+            res.status(HTTP_STATUS_OK).json({data: profiles});
         });
 };
 
@@ -33,7 +33,7 @@ exports.profiles.delete = function (req, res, next) {
         .remove()
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            return res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };
 
@@ -44,7 +44,8 @@ exports.profile.get = function (req, res, next) {
         .findById(req.params[PARAM_ID_PROFILE])
         .exec(function (err, profile) {
             if (err) return next(new DatabaseFindError());
-            res.json({data: profile});
+            if (!profile) return next(new NotFoundError("Profile not found."));
+            res.status(HTTP_STATUS_OK).json({data: profile});
         });
 };
 
@@ -63,6 +64,6 @@ exports.profile.delete = function (req, res, next) {
         .remove(optionRemove)
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            return res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };

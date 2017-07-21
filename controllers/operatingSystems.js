@@ -14,7 +14,7 @@ exports.operatingSystems.get = function (req, res, next) {
         .skip(req.options.pagination.skip)
         .exec(function (err, operatingSystems) {
             if (err) return next(new DatabaseFindError());
-            res.json({data: operatingSystems});
+            res.status(HTTP_STATUS_OK).json({data: operatingSystems});
         });
 };
 
@@ -33,7 +33,7 @@ exports.operatingSystems.delete = function (req, res, next) {
         .remove()
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            return res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };
 
@@ -44,7 +44,8 @@ exports.operatingSystem.get = function (req, res, next) {
         .findById(req.params[PARAM_ID_OPERATING_SYSTEM])
         .exec(function (err, operatingSystem) {
             if (err) return next(new DatabaseFindError());
-            res.json({data: operatingSystem});
+            if (!operatingSystem) return next(new NotFoundError("OperatingSystem not found."));
+            res.status(HTTP_STATUS_OK).json({data: operatingSystem});
         });
 };
 
@@ -63,6 +64,6 @@ exports.operatingSystem.delete = function (req, res, next) {
         .remove(optionRemove)
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            return res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };

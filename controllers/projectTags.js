@@ -12,9 +12,9 @@ exports.projectTags.get = function (req, res, next) {
         .find({})
         .limit(req.options.pagination.limit)
         .skip(req.options.pagination.skip)
-        .exec(function (err, ProjectTags) {
+        .exec(function (err, projectTags) {
             if (err) return next(new DatabaseFindError());
-            res.json({data: ProjectTags});
+            res.status(HTTP_STATUS_OK).json({data: projectTags});
         });
 };
 
@@ -33,7 +33,7 @@ exports.projectTags.delete = function (req, res, next) {
         .remove()
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            return res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };
 
@@ -42,9 +42,10 @@ exports.projectTag = {};
 exports.projectTag.get = function (req, res, next) {
     ProjectTag
         .findById(req.params[PARAM_ID_PROJECT_TAG])
-        .exec(function (err, ProjectTag) {
+        .exec(function (err, projectTag) {
             if (err) return next(new DatabaseFindError());
-            res.json({data: ProjectTag});
+            if (!projectTag) return next(new NotFoundError("ProjectTag not found."));
+            res.status(HTTP_STATUS_OK).json({data: projectTag});
         });
 };
 
@@ -63,6 +64,6 @@ exports.projectTag.delete = function (req, res, next) {
         .remove(optionRemove)
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            return res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };

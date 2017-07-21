@@ -14,7 +14,7 @@ exports.softwares.get = function (req, res, next) {
         .skip(req.options.pagination.skip)
         .exec(function (err, softwares) {
             if (err) return next(new DatabaseFindError());
-            res.json({data: softwares});
+            res.status(HTTP_STATUS_OK).json({data: softwares});
         });
 };
 
@@ -33,7 +33,7 @@ exports.softwares.delete = function (req, res, next) {
         .remove()
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            return res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };
 
@@ -44,7 +44,8 @@ exports.software.get = function (req, res, next) {
         .findById(req.params[PARAM_ID_SOFTWARE])
         .exec(function (err, software) {
             if (err) return next(new DatabaseFindError());
-            res.json({data: software});
+            if (!software) return next(new NotFoundError("Software not found."));
+            res.status(HTTP_STATUS_OK).json({data: software});
         });
 };
 
@@ -63,6 +64,6 @@ exports.software.delete = function (req, res, next) {
         .remove(optionRemove)
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            return res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };

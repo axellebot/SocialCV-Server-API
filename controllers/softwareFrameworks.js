@@ -14,7 +14,7 @@ exports.softwareFrameworks.get = function (req, res, next) {
         .skip(req.options.pagination.skip)
         .exec(function (err, softwareFrameworks) {
             if (err) return next(new DatabaseFindError());
-            res.json({data: softwareFrameworks});
+            res.status(HTTP_STATUS_OK).json({data: softwareFrameworks});
         });
 };
 
@@ -33,7 +33,7 @@ exports.softwareFrameworks.delete = function (req, res, next) {
         .remove()
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            return res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };
 
@@ -44,7 +44,8 @@ exports.softwareFramework.get = function (req, res, next) {
         .findById(req.params[PARAM_ID_SOFTWARE_FRAMEWORK])
         .exec(function (err, softwareFramework) {
             if (err) return next(new DatabaseFindError());
-            res.json({data: softwareFramework});
+            if (!softwareFramework) return next(new NotFoundError("SoftwareFramework not found."));
+            res.status(HTTP_STATUS_OK).json({data: softwareFramework});
         });
 };
 
@@ -63,6 +64,6 @@ exports.softwareFramework.delete = function (req, res, next) {
         .remove(optionRemove)
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            return res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };

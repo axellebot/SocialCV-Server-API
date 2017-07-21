@@ -14,7 +14,7 @@ exports.experiences.get = function (req, res, next) {
         .skip(req.options.pagination.skip)
         .exec(function (err, experiences) {
             if (err) return next(new DatabaseFindError());
-            res.json({data: experiences});
+            res.status(HTTP_STATUS_OK).json({data: experiences});
         });
 };
 
@@ -33,7 +33,7 @@ exports.experiences.delete = function (req, res, next) {
         .remove()
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            return res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };
 
@@ -44,7 +44,8 @@ exports.experience.get = function (req, res, next) {
         .findById(req.params[PARAM_ID_EXPERIENCE])
         .exec(function (err, experience) {
             if (err) return next(new DatabaseFindError());
-            res.json({data: experience});
+            if (!experience) return next(new NotFoundError("Experience not found."));
+            res.status(HTTP_STATUS_OK).json({data: experience});
         });
 };
 
@@ -63,6 +64,6 @@ exports.experience.delete = function (req, res, next) {
         .remove(optionRemove)
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            return res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };

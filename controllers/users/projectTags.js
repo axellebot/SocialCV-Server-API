@@ -11,9 +11,9 @@ exports.get = function (req, res, next) {
         .find({user: req.params[PARAM_ID_USER]})
         .limit(req.options.pagination.limit)
         .skip(req.options.pagination.skip)
-        .exec(function (err, ProjectTags) {
+        .exec(function (err, projectTags) {
             if (err) return next(new DatabaseFindError());
-            res.json({data: ProjectTags});
+            res.status(HTTP_STATUS_OK).json({data: projectTags});
         });
 };
 
@@ -41,6 +41,6 @@ exports.delete = function (req, res, next) {
         .remove({user: req.params[PARAM_ID_USER]})
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            return res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };

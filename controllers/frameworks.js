@@ -14,7 +14,7 @@ exports.frameworks.get = function (req, res, next) {
         .skip(req.options.pagination.skip)
         .exec(function (err, frameworks) {
             if (err) return next(new DatabaseFindError());
-            res.json({data: frameworks});
+            res.status(HTTP_STATUS_OK).json({data: frameworks});
         });
 };
 
@@ -33,7 +33,7 @@ exports.frameworks.delete = function (req, res, next) {
         .remove()
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            return res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };
 
@@ -44,7 +44,8 @@ exports.framework.get = function (req, res, next) {
         .findById(req.params[PARAM_ID_FRAMEWORK])
         .exec(function (err, framework) {
             if (err) return next(new DatabaseFindError());
-            res.json({data: framework});
+            if (!framework) return next(new NotFoundError("Framework not found."));
+            res.status(HTTP_STATUS_OK).json({data: framework});
         });
 };
 
@@ -63,6 +64,6 @@ exports.framework.delete = function (req, res, next) {
         .remove(optionRemove)
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            return res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };

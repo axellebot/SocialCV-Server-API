@@ -5,6 +5,6 @@ module.exports = class  extends require("./AppError") {
         super();
         this.name = this.constructor.name;
         this.message = message || MESSAGE_ERROR_MISSING_FULL_NAME;
-        this.status = status || 422;
+        this.status = status || HTTP_STATUS_UNPROCESSABLE_ENTITY;
     }
 };

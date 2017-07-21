@@ -94,6 +94,7 @@ global.PARAM_ID_USER = "UserId";
 
 //Messages
 global.MESSAGE_ERROR_APP = "Error";
+global.MESSAGE_ERROR_DATABASE_CREATE = "Database create action error";
 global.MESSAGE_ERROR_DATABASE_SAVE = "Database save action error";
 global.MESSAGE_ERROR_DATABASE_REMOVE = "Database remove action error";
 global.MESSAGE_ERROR_DATABASE_FIND = "Database find action error";
@@ -109,3 +110,21 @@ global.MESSAGE_ERROR_USER_NOT_FOUND = "User not found";
 global.MESSAGE_ERROR_WRONG_PASSWORD = "Wrong password";
 global.MESSAGE_ERROR_NOT_FOUND = "Not found";
 global.MESSAGE_ERROR_NOT_IMPLEMENTED = "Feature not implemented yet.";
+
+// HTTP status
+global.HTTP_STATUS_CONTINUE = 100;
+global.HTTP_STATUS_SWITCHING_PROTOCOLS = 101;
+global.HTTP_STATUS_PROCESSING = 10;
+global.HTTP_STATUS_OK = 200;
+global.HTTP_STATUS_CREATED = 201;
+global.HTTP_STATUS_ACCEPTED = 202;
+global.HTTP_STATUS_NO_CONTENT = 204;
+global.HTTP_STATUS_RESET_CONTENT = 205;
+global.HTTP_STATUS_BAD_REQUEST = 400;
+global.HTTP_STATUS_UNAUTHORIZED = 401;
+global.HTTP_STATUS_NOT_FOUND = 404;
+global.HTTP_STATUS_UNPROCESSABLE_ENTITY = 422;
+global.HTTP_STATUS_INTERNAL_SERVER_ERROR = 500;
+global.HTTP_STATUS_NOT_IMPLEMENTED = 501;
+global.HTTP_STATUS_BAD_GATEWAY = 502;
+global.HTTP_STATUS_SERVICE_UNAVAILABLE = 503;

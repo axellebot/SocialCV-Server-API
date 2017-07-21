@@ -14,7 +14,7 @@ exports.computingTags.get = function (req, res, next) {
         .skip(req.options.pagination.skip)
         .exec(function (err, computingTags) {
             if (err) return next(new DatabaseFindError());
-            res.json({data: computingTags});
+            res.status(HTTP_STATUS_OK).json({data: computingTags});
         });
 };
 exports.computingTags.post = function (req, res, next) {
@@ -30,7 +30,7 @@ exports.computingTags.delete = function (req, res, next) {
         .remove()
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            return res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };
 
@@ -41,7 +41,8 @@ exports.computingTag.get = function (req, res, next) {
         .findById(req.params[PARAM_ID_COMPUTING_TAG])
         .exec(function (err, computingTag) {
             if (err) return next(new DatabaseFindError());
-            res.json({data: computingTag});
+            if (!computingTag) return next(new NotFoundError("ComputingTag not found."));
+            res.status(HTTP_STATUS_OK).json({data: computingTag});
         });
 };
 
@@ -60,6 +61,6 @@ exports.computingTag.delete = function (req, res, next) {
         .remove(optionRemove)
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            return res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };

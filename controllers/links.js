@@ -14,7 +14,7 @@ exports.links.get = function (req, res, next) {
         .skip(req.options.pagination.skip)
         .exec(function (err, links) {
             if (err) return next(new DatabaseFindError());
-            res.json({data: links});
+            res.status(HTTP_STATUS_OK).json({data: links});
         });
 };
 
@@ -33,7 +33,7 @@ exports.links.delete = function (req, res, next) {
         .remove()
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            return res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };
 
@@ -44,7 +44,8 @@ exports.link.get = function (req, res, next) {
         .findById(req.params[PARAM_ID_LINK])
         .exec(function (err, link) {
             if (err) return next(new DatabaseFindError());
-            res.json({data: link});
+            if (!link) return next(new NotFoundError("Link not found."));
+            res.status(HTTP_STATUS_OK).json({data: link});
         });
 };
 
@@ -63,6 +64,6 @@ exports.link.delete = function (req, res, next) {
         .remove(optionRemove)
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            return res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };

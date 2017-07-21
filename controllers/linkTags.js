@@ -15,7 +15,7 @@ exports.linkTags.get = function (req, res, next) {
         .skip(req.options.pagination.skip)
         .exec(function (err, linkTags) {
             if (err) return next(new DatabaseFindError());
-            res.json({data: linkTags});
+            res.status(HTTP_STATUS_OK).json({data: linkTags});
         });
 };
 exports.linkTags.post = function (req, res, next) {
@@ -32,7 +32,7 @@ exports.linkTags.delete = function (req, res, next) {
         .remove()
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            return res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };
 
@@ -43,7 +43,8 @@ exports.linkTag.get = function (req, res, next) {
         .findById(req.params[PARAM_ID_LINK_TAG])
         .exec(function (err, linkTag) {
             if (err) return next(new DatabaseFindError());
-            res.json({data: linkTag});
+            if (!linkTag) return next(new NotFoundError("LinkTag not found."));
+            res.status(HTTP_STATUS_OK).json({data: linkTag});
         });
 };
 
@@ -62,6 +63,6 @@ exports.linkTag.delete = function (req, res, next) {
         .remove(optionRemove)
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            return res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };

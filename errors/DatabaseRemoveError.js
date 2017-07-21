@@ -5,6 +5,6 @@ module.exports = class  extends require("./AppError") {
         super();
         this.name = this.constructor.name;
         this.message = message || MESSAGE_ERROR_DATABASE_SAVE;
-        this.status = status || 500;
+        this.status = status || HTTP_STATUS_INTERNAL_SERVER_ERROR;
     }
 };

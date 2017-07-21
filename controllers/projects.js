@@ -14,7 +14,7 @@ exports.projects.get = function (req, res, next) {
         .skip(req.options.pagination.skip)
         .exec(function (err, projects) {
             if (err) return next(new DatabaseFindError());
-            res.json({data: projects});
+            res.status(HTTP_STATUS_OK).json({data: projects});
         });
 };
 
@@ -33,7 +33,7 @@ exports.projects.delete = function (req, res, next) {
         .remove()
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            return res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };
 
@@ -44,7 +44,8 @@ exports.project.get = function (req, res, next) {
         .findById(req.params[PARAM_ID_PROJECT])
         .exec(function (err, project) {
             if (err) return next(new DatabaseFindError());
-            res.json({data: project});
+            if (!project) return next(new NotFoundError("Project not found."));
+            res.status(HTTP_STATUS_OK).json({data: project});
         });
 };
 
@@ -63,6 +64,6 @@ exports.project.delete = function (req, res, next) {
         .remove(optionRemove)
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            return res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };

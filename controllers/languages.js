@@ -14,7 +14,7 @@ exports.languages.get = function (req, res, next) {
         .skip(req.options.pagination.skip)
         .exec(function (err, languages) {
             if (err) return next(new DatabaseFindError());
-            res.json({data: languages});
+            res.status(HTTP_STATUS_OK).json({data: languages});
         });
 };
 
@@ -33,7 +33,7 @@ exports.languages.delete = function (req, res, next) {
         .remove()
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            return res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };
 
@@ -44,7 +44,8 @@ exports.language.get = function (req, res, next) {
         .findById(req.params[PARAM_ID_LANGUAGE])
         .exec(function (err, language) {
             if (err) return next(new DatabaseFindError());
-            res.json({data: language});
+            if (!language) return next(new NotFoundError("Language not found."));
+            res.status(HTTP_STATUS_OK).json({data: language});
         });
 };
 
@@ -63,6 +64,6 @@ exports.language.delete = function (req, res, next) {
         .remove(optionRemove)
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            return res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };

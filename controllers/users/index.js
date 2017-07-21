@@ -15,7 +15,7 @@ exports.users.get = function (req, res, next) {
         .skip(req.options.pagination.skip)
         .exec(function (err, users) {
             if (err) return next(new DatabaseFindError());
-            res.json({data: users});
+            res.status(HTTP_STATUS_OK).json({data: users});
         });
 };
 
@@ -34,7 +34,7 @@ exports.users.delete = function (req, res, next) {
         .remove()
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            return res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };
 
@@ -45,6 +45,7 @@ exports.user.get = function (req, res, next) {
         .findById(req.params[PARAM_ID_USER])
         .exec(function (err, user) {
             if (err) return next(new DatabaseFindError());
+            if (!user) return next(new NotFoundError("User not found."));
             res.json({data: user});
         });
 };
@@ -72,7 +73,7 @@ exports.user.delete = function (req, res, next) {
         .remove(optionRemove)
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            return res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };
 

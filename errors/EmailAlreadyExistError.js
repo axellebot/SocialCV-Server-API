@@ -5,6 +5,6 @@ module.exports = class  extends require("./AppError") {
         super();
         this.name = this.constructor.name;
         this.message = message || MESSAGE_ERROR_EMAIL_ADDRESS_ALREADY_EXIST;
-        this.status = status || 422;
+        this.status = status || HTTP_STATUS_UNPROCESSABLE_ENTITY;
     }
 };

@@ -14,7 +14,7 @@ exports.interests.get = function (req, res, next) {
         .skip(req.options.pagination.skip)
         .exec(function (err, interests) {
             if (err) return next(new DatabaseFindError());
-            res.json({data: interests});
+            res.status(HTTP_STATUS_OK).json({data: interests});
         });
 };
 
@@ -33,7 +33,7 @@ exports.interests.delete = function (req, res, next) {
         .remove()
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            return res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };
 
@@ -44,7 +44,8 @@ exports.interest.get = function (req, res, next) {
         .findById(req.params[PARAM_ID_INTEREST])
         .exec(function (err, interest) {
             if (err) return next(new DatabaseFindError());
-            res.json({data: interest});
+            if (!interest) return next(new NotFoundError("Interest not found."));
+            res.status(HTTP_STATUS_OK).json({data: interest});
         });
 };
 
@@ -63,6 +64,6 @@ exports.interest.delete = function (req, res, next) {
         .remove(optionRemove)
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            return res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };

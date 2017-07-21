@@ -12,9 +12,9 @@ exports.softwareTags.get = function (req, res, next) {
         .find({})
         .limit(req.options.pagination.limit)
         .skip(req.options.pagination.skip)
-        .exec(function (err, SoftwareTags) {
+        .exec(function (err, softwareTags) {
             if (err) return next(new DatabaseFindError());
-            res.json({data: SoftwareTags});
+            res.status(HTTP_STATUS_OK).json({data: softwareTags});
         });
 };
 
@@ -33,7 +33,7 @@ exports.softwareTags.delete = function (req, res, next) {
         .remove()
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            return res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };
 
@@ -42,9 +42,10 @@ exports.softwareTag = {};
 exports.softwareTag.get = function (req, res, next) {
     SoftwareTag
         .findById(req.params[PARAM_ID_SOFTWARE_TAG])
-        .exec(function (err, SoftwareTag) {
+        .exec(function (err, softwareTag) {
             if (err) return next(new DatabaseFindError());
-            res.json({data: SoftwareTag});
+            if (!softwareTag) return next(new NotFoundError("SoftwareTag not found."));
+            res.status(HTTP_STATUS_OK).json({data: softwareTag});
         });
 };
 
@@ -63,6 +64,6 @@ exports.softwareTag.delete = function (req, res, next) {
         .remove(optionRemove)
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            return res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };

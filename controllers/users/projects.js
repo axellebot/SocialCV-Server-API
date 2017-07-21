@@ -13,7 +13,7 @@ exports.get = function (req, res, next) {
         .skip(req.options.pagination.skip)
         .exec(function (err, projects) {
             if (err) return next(new DatabaseFindError());
-            res.json({data: projects});
+            res.status(HTTP_STATUS_OK).json({data: projects});
         });
 };
 
@@ -41,6 +41,6 @@ exports.delete = function (req, res, next) {
         .remove({user: req.params[PARAM_ID_USER]})
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            return res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };

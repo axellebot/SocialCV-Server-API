@@ -5,6 +5,6 @@ module.exports = class  extends require("./AppError") {
         super();
         this.name = this.constructor.name;
         this.message = message || MESSAGE_ERROR_NOT_FOUND;
-        this.status = status || 404;
+        this.status = status || HTTP_STATUS_NOT_FOUND;
     }
 };
