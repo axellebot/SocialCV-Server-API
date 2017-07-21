@@ -94,21 +94,23 @@ global.PARAM_ID_USER = "UserId";
 
 //Messages
 global.MESSAGE_ERROR_APP = "Error";
-global.MESSAGE_ERROR_DATABASE_CREATE = "Database create action error";
-global.MESSAGE_ERROR_DATABASE_SAVE = "Database save action error";
-global.MESSAGE_ERROR_DATABASE_REMOVE = "Database remove action error";
-global.MESSAGE_ERROR_DATABASE_FIND = "Database find action error";
-global.MESSAGE_ERROR_ACCESS_RESTRICTED = "Access Restricted";
-global.MESSAGE_ERROR_MISSING_PRIVILEGE = "Not enough privileges";
+global.MESSAGE_ERROR_DATABASE_CREATE = "Database create action error.";
+global.MESSAGE_ERROR_DATABASE_SAVE = "Database save action error.";
+global.MESSAGE_ERROR_DATABASE_REMOVE = "Database remove action error.";
+global.MESSAGE_ERROR_DATABASE_FIND = "Database find action error.";
+global.MESSAGE_ERROR_ACCESS_RESTRICTED = "Access Restricted.";
+global.MESSAGE_ERROR_MISSING_PRIVILEGE = "Not enough privileges.";
 global.MESSAGE_ERROR_MISSING_EMAIL_ADDRESS = "Missing email address.";
 global.MESSAGE_ERROR_MISSING_FULL_NAME = "Missing full name.";
 global.MESSAGE_ERROR_MISSING_PASSWORD = "Missing password.";
+global.MESSAGE_ERROR_MISSING_DATA = "Missing data.";
 global.MESSAGE_ERROR_EMAIL_ADDRESS_ALREADY_EXIST = "E-mail already in use.";
 global.MESSAGE_ERROR_PROVIDING_TOKEN = "Can't provide token.";
-global.MESSAGE_ERROR_FAILED_AUTHENTICATION_TOKEN = "Failed to authenticate token";
-global.MESSAGE_ERROR_USER_NOT_FOUND = "User not found";
-global.MESSAGE_ERROR_WRONG_PASSWORD = "Wrong password";
-global.MESSAGE_ERROR_NOT_FOUND = "Not found";
+global.MESSAGE_ERROR_FAILED_AUTHENTICATION_TOKEN = "Failed to authenticate token.";
+global.MESSAGE_ERROR_USER_NOT_FOUND = "User not found.";
+global.MESSAGE_ERROR_WRONG_DATA = "Wrong data.";
+global.MESSAGE_ERROR_WRONG_PASSWORD = "Wrong password.";
+global.MESSAGE_ERROR_NOT_FOUND = "Not found.";
 global.MESSAGE_ERROR_NOT_IMPLEMENTED = "Feature not implemented yet.";
 
 // HTTP status

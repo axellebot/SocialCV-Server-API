@@ -1,10 +1,12 @@
 global.AppError = require("./AppError");
 global.AccessRestrictedError = require("./AccessRestrictedError");
+global.DatabaseCreateError = require("./DatabaseCreateError");
 global.DatabaseFindError = require("./DatabaseFindError");
 global.DatabaseRemoveError = require("./DatabaseRemoveError");
 global.DatabaseSaveError = require("./DatabaseSaveError");
 global.EmailAlreadyExistError = require("./EmailAlreadyExistError");
 global.FailedAuthenticationToken = require("./FailedAuthenticationToken");
+global.MissingDataError = require("./MissingDataError");
 global.MissingFullnameError = require("./MissingFullNameError");
 global.MissingPasswordError = require("./MissingPasswordError");
 global.MissingTokenError = require("./MissingTokenError");
