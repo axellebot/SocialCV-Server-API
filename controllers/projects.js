@@ -24,8 +24,35 @@ exports.projects.post = function (req, res, next) {
 };
 
 exports.projects.put = function (req, res, next) {
-    //TODO : Projects - Add Bulk update
-    next(new NotImplementedError("Bulk update of projects"));
+    const projects = req.body.data;
+    var projectsUpdated = [];
+    Async.eachOf(projects, function (project, key, callback) {
+        const filterUpdate = getFilterEditData(project._id, req.decoded);
+        Project
+            .findOneAndUpdate(filterUpdate, project, {new: true}, function (err, projectUpdated) {
+                if (err) return callback(err);
+                if (projectUpdated) projectsUpdated.push(projectUpdated);
+                callback();
+            });
+    }, function (err) {
+        if (err && projectsUpdated.length === 0) return next(new DatabaseUpdateError());
+        if (err && projectsUpdated.length > 0) {
+            return res
+                .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
+                .json({
+                    error: true,
+                    message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                    data: projectsUpdated
+                });
+        }
+
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                data: projectsUpdated
+            });
+    });
 };
 
 exports.projects.delete = function (req, res, next) {
@@ -49,14 +76,10 @@ exports.project.get = function (req, res, next) {
         });
 };
 
-exports.project.post = function (req, res, next) {
-    next(new NotFoundError());
-};
-
 exports.project.put = function (req, res, next) {
     var filterUpdate = getFilterEditData(req.params[PARAM_ID_PROJECT], req.decoded);
     Project
-        .findOneAndUpdate(filterUpdate, req.body.data, {new: true},function (err, project) {
+        .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, project) {
             if (err) return next(new DatabaseUpdateError());
             if (!project) return next(new NotFoundError(MODEL_NAME_PROJECT));
             return res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_UPDATED, data: project});

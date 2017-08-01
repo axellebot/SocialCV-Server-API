@@ -1,6 +1,6 @@
 "use strict";
 
-var userCanAccessUserData = require("../../helpers").userCanAccessUserData;
+var userCanEditUserData = require("../../helpers").userCanEditUserData;
 
 const Framework = require('../../models/framework.schema');
 
@@ -19,21 +19,50 @@ exports.get = function (req, res, next) {
 
 exports.post = function (req, res, next) {
     const userId = req.params[PARAM_ID_USER];
-    if (!userCanAccessUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
+    if (!userCanEditUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
     //TODO : Frameworks - Create framework for user
     next(new NotImplementedError("Create a new framework for user : " + req.params[PARAM_ID_USER]));
 };
 
 exports.put = function (req, res, next) {
     const userId = req.params[PARAM_ID_USER];
-    if (!userCanAccessUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
-    //TODO : Frameworks - Add Bulk update for user
-    next(new NotImplementedError("Bulk update of frameworks for user : " + req.params[PARAM_ID_USER]));
+    if (!userCanEditUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
+    const frameworks = req.body.data;
+    var frameworksUpdated = [];
+    Async.eachOf(frameworks, function (framework, key, callback) {
+        const filterUpdate = {
+            _id: framework._id,
+            user: userId
+        };
+        Framework
+            .findOneAndUpdate(filterUpdate, framework, {new: true}, function (err, frameworkUpdated) {
+                if (err) return callback(err);
+                if (frameworkUpdated) frameworksUpdated.push(frameworkUpdated);
+                callback();
+            });
+    }, function (err) {
+        if (err && frameworksUpdated.length === 0) return next(new DatabaseUpdateError());
+        if (err && frameworksUpdated.length > 0) {
+            return res
+                .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
+                .json({
+                    error: true,
+                    message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                    data: frameworksUpdated
+                });
+        }
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                data: frameworksUpdated
+            });
+    });
 };
 
 exports.delete = function (req, res, next) {
     const userId = req.params[PARAM_ID_USER];
-    if (!userCanAccessUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
+    if (!userCanEditUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
 
     Framework
         .remove({user: userId})

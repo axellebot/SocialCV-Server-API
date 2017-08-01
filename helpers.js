@@ -88,11 +88,11 @@ module.exports.getFilterEditData = function (entityId, loggedUser) {
  * @param ownerId String
  * @returns {boolean}
  */
-module.exports.userCanAccessUserData = function (user, ownerId) {
+module.exports.userCanEditUserData = function (user, ownerId) {
     if (getRoleRank(user.role) >= getRoleRank(ROLE_ADMIN)) {
         return true;
     }
-    return (ownerId == user._id);
+    return (ownerId === user._id);
 };
 
 /**

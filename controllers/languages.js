@@ -24,8 +24,35 @@ exports.languages.post = function (req, res, next) {
 };
 
 exports.languages.put = function (req, res, next) {
-    //TODO : Languages - Add Bulk update
-    next(new NotImplementedError("Bulk update of languages"));
+    const languages = req.body.data;
+    var languagesUpdated = [];
+    Async.eachOf(languages, function (language, key, callback) {
+        const filterUpdate = getFilterEditData(language._id, req.decoded);
+        Language
+            .findOneAndUpdate(filterUpdate, language, {new: true}, function (err, languageUpdated) {
+                if (err) return callback(err);
+                if (languageUpdated) languagesUpdated.push(languageUpdated);
+                callback();
+            });
+    }, function (err) {
+        if (err && languagesUpdated.length === 0) return next(new DatabaseUpdateError());
+        if (err && languagesUpdated.length > 0) {
+            return res
+                .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
+                .json({
+                    error: true,
+                    message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                    data: languagesUpdated
+                });
+        }
+
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                data: languagesUpdated
+            });
+    });
 };
 
 exports.languages.delete = function (req, res, next) {
@@ -47,10 +74,6 @@ exports.language.get = function (req, res, next) {
             if (!language) return next(new NotFoundError(MODEL_NAME_LANGUAGE));
             res.status(HTTP_STATUS_OK).json({data: language});
         });
-};
-
-exports.language.post = function (req, res, next) {
-    next(new NotFoundError());
 };
 
 exports.language.put = function (req, res, next) {

@@ -24,8 +24,35 @@ exports.operatingSystems.post = function (req, res, next) {
 };
 
 exports.operatingSystems.put = function (req, res, next) {
-    //TODO : OperatingSystems - Add Bulk update
-    next(new NotImplementedError("Bulk update of operatingSystems"));
+    const operatingSystems = req.body.data;
+    var operatingSystemsUpdated = [];
+    Async.eachOf(operatingSystems, function (operatingSystem, key, callback) {
+        const filterUpdate = getFilterEditData(operatingSystem._id, req.decoded);
+        OperatingSystem
+            .findOneAndUpdate(filterUpdate, operatingSystem, {new: true}, function (err, operatingSystemUpdated) {
+                if (err) return callback(err);
+                if (operatingSystemUpdated) operatingSystemsUpdated.push(operatingSystemUpdated);
+                callback();
+            });
+    }, function (err) {
+        if (err && operatingSystemsUpdated.length === 0) return next(new DatabaseUpdateError());
+        if (err && operatingSystemsUpdated.length > 0) {
+            return res
+                .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
+                .json({
+                    error: true,
+                    message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                    data: operatingSystemsUpdated
+                });
+        }
+
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                data: operatingSystemsUpdated
+            });
+    });
 };
 
 exports.operatingSystems.delete = function (req, res, next) {
@@ -49,14 +76,10 @@ exports.operatingSystem.get = function (req, res, next) {
         });
 };
 
-exports.operatingSystem.post = function (req, res, next) {
-    next(new NotFoundError());
-};
-
 exports.operatingSystem.put = function (req, res, next) {
     var filterUpdate = getFilterEditData(req.params[PARAM_ID_OPERATING_SYSTEM], req.decoded);
     OperatingSystem
-        .findOneAndUpdate(filterUpdate, req.body.data, {new: true},function (err, operatingSystem) {
+        .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, operatingSystem) {
             if (err) return next(new DatabaseUpdateError());
             if (!operatingSystem) return next(new NotFoundError(MODEL_NAME_OPERATING_SYSTEM));
             return res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_UPDATED, data: operatingSystem});

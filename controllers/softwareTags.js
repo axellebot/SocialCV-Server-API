@@ -24,8 +24,35 @@ exports.softwareTags.post = function (req, res, next) {
 };
 
 exports.softwareTags.put = function (req, res, next) {
-    //TODO : SoftwareTags - Add Bulk update
-    next(new NotImplementedError("Bulk update of SoftwareTags"));
+    const softwareTags = req.body.data;
+    var softwareTagsUpdated = [];
+    Async.eachOf(softwareTags, function (softwareTag, key, callback) {
+        const filterUpdate = getFilterEditData(softwareTag._id, req.decoded);
+        SoftwareTag
+            .findOneAndUpdate(filterUpdate, softwareTag, {new: true}, function (err, softwareTagUpdated) {
+                if (err) return callback(err);
+                if (softwareTagUpdated) softwareTagsUpdated.push(softwareTagUpdated);
+                callback();
+            });
+    }, function (err) {
+        if (err && softwareTagsUpdated.length === 0) return next(new DatabaseUpdateError());
+        if (err && softwareTagsUpdated.length > 0) {
+            return res
+                .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
+                .json({
+                    error: true,
+                    message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                    data: softwareTagsUpdated
+                });
+        }
+
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                data: softwareTagsUpdated
+            });
+    });
 };
 
 exports.softwareTags.delete = function (req, res, next) {
@@ -49,20 +76,18 @@ exports.softwareTag.get = function (req, res, next) {
         });
 };
 
-exports.softwareTag.post = function (req, res, next) {
-    next(new NotFoundError());
-};
-
 exports.softwareTag.put = function (req, res, next) {
     var filterUpdate = getFilterEditData(req.params[PARAM_ID_SOFTWARE_TAG], req.decoded);
     SoftwareTag
-        .findOneAndUpdate(filterUpdate, req.body.data, {new: true},function (err, softwareTag) {
+        .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, softwareTag) {
             if (err) return next(new DatabaseUpdateError());
             if (!softwareTag) return next(new NotFoundError(MODEL_NAME_SOFTWARE_TAG));
-            return res.status(HTTP_STATUS_OK).json({
-                message: MESSAGE_SUCCESS_RESOURCE_UPDATED,
-                data: softwareTag
-            });
+            res
+                .status(HTTP_STATUS_OK)
+                .json({
+                    message: MESSAGE_SUCCESS_RESOURCE_UPDATED,
+                    data: softwareTag
+                });
         });
 };
 

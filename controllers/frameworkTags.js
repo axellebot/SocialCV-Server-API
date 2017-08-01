@@ -24,8 +24,35 @@ exports.frameworkTags.post = function (req, res, next) {
 };
 
 exports.frameworkTags.put = function (req, res, next) {
-    //TODO : FrameworkTags - Add Bulk update
-    next(new NotImplementedError("Bulk update of frameworkTags"));
+    const frameworkTags = req.body.data;
+    var frameworkTagsUpdated = [];
+    Async.eachOf(frameworkTags, function (frameworkTag, key, callback) {
+        const filterUpdate = getFilterEditData(frameworkTag._id, req.decoded);
+        FrameworkTag
+            .findOneAndUpdate(filterUpdate, frameworkTag, {new: true}, function (err, frameworkTagUpdated) {
+                if (err) return callback(err);
+                if (frameworkTagUpdated) frameworkTagsUpdated.push(frameworkTagUpdated);
+                callback();
+            });
+    }, function (err) {
+        if (err && frameworkTagsUpdated.length === 0) return next(new DatabaseUpdateError());
+        if (err && frameworkTagsUpdated.length > 0) {
+            return res
+                .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
+                .json({
+                    error: true,
+                    message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                    data: frameworkTagsUpdated
+                });
+        }
+
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                data: frameworkTagsUpdated
+            });
+    });
 };
 
 exports.frameworkTags.delete = function (req, res, next) {
@@ -47,10 +74,6 @@ exports.frameworkTag.get = function (req, res, next) {
             if (!frameworkTag) return next(new NotFoundError(MODEL_NAME_FRAMEWORK_TAG));
             res.status(HTTP_STATUS_OK).json({data: frameworkTag});
         });
-};
-
-exports.frameworkTag.post = function (req, res, next) {
-    next(new NotFoundError());
 };
 
 exports.frameworkTag.put = function (req, res, next) {

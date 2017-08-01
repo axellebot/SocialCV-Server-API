@@ -22,8 +22,35 @@ exports.programmingLanguages.post = function (req, res, next) {
     next(new NotImplementedError("Create a new programmingLanguage"));
 };
 exports.programmingLanguages.put = function (req, res, next) {
-    //TODO : ProgrammingLanguages - Add Bulk update
-    next(new NotImplementedError("Bulk update of programmingLanguages"));
+    const programmingLanguages = req.body.data;
+    var programmingLanguagesUpdated = [];
+    Async.eachOf(programmingLanguages, function (programmingLanguage, key, callback) {
+        const filterUpdate = getFilterEditData(programmingLanguage._id, req.decoded);
+        ProgrammingLanguage
+            .findOneAndUpdate(filterUpdate, programmingLanguage, {new: true}, function (err, programmingLanguageUpdated) {
+                if (err) return callback(err);
+                if (programmingLanguageUpdated) programmingLanguagesUpdated.push(programmingLanguageUpdated);
+                callback();
+            });
+    }, function (err) {
+        if (err && programmingLanguagesUpdated.length === 0) return next(new DatabaseUpdateError());
+        if (err && programmingLanguagesUpdated.length > 0) {
+            return res
+                .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
+                .json({
+                    error: true,
+                    message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                    data: programmingLanguagesUpdated
+                });
+        }
+
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                data: programmingLanguagesUpdated
+            });
+    });
 };
 exports.programmingLanguages.delete = function (req, res, next) {
     ProgrammingLanguage
@@ -46,20 +73,18 @@ exports.programmingLanguage.get = function (req, res, next) {
         });
 };
 
-exports.programmingLanguage.post = function (req, res, next) {
-    next(new NotFoundError());
-};
-
 exports.programmingLanguage.put = function (req, res, next) {
     var filterUpdate = getFilterEditData(req.params[PARAM_ID_PROGRAMMING_LANGUAGE], req.decoded);
     ProgrammingLanguage
-        .findOneAndUpdate(filterUpdate, req.body.data, {new: true},function (err, programmingLanguage) {
+        .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, programmingLanguage) {
             if (err) return next(new DatabaseUpdateError());
             if (!programmingLanguage) return next(new NotFoundError(MODEL_NAME_PROGRAMMING_LANGUAGE));
-            return res.status(HTTP_STATUS_OK).json({
-                message: MESSAGE_SUCCESS_RESOURCE_UPDATED,
-                data: programmingLanguage
-            });
+            res
+                .status(HTTP_STATUS_OK)
+                .json({
+                    message: MESSAGE_SUCCESS_RESOURCE_UPDATED,
+                    data: programmingLanguage
+                });
         });
 };
 

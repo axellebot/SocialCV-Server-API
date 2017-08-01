@@ -7,6 +7,8 @@ require("./constants");
 //assign errors to global
 require("./errors");
 
+global.Async = require("async");
+
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');

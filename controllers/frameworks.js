@@ -24,8 +24,34 @@ exports.frameworks.post = function (req, res, next) {
 };
 
 exports.frameworks.put = function (req, res, next) {
-    //TODO : Frameworks - Add Bulk update
-    next(new NotImplementedError("Bulk update of frameworks"));
+    const frameworks = req.body.data;
+    var frameworksUpdated = [];
+    Async.eachOf(frameworks, function (framework, key, callback) {
+        const filterUpdate = getFilterEditData(framework._id, req.decoded);
+        Framework
+            .findOneAndUpdate(filterUpdate, framework, {new: true}, function (err, frameworkUpdated) {
+                if (err) return callback(err);
+                if (frameworkUpdated) frameworksUpdated.push(frameworkUpdated);
+                callback();
+            });
+    }, function (err) {
+        if (err && frameworksUpdated.length === 0) return next(new DatabaseUpdateError());
+        if (err && frameworksUpdated.length > 0) {
+            return res
+                .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
+                .json({
+                    error: true,
+                    message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                    data: frameworksUpdated
+                });
+        }
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                data: frameworksUpdated
+            });
+    });
 };
 
 exports.frameworks.delete = function (req, res, next) {
@@ -47,10 +73,6 @@ exports.framework.get = function (req, res, next) {
             if (!framework) return next(new NotFoundError(MODEL_NAME_FRAMEWORK));
             res.status(HTTP_STATUS_OK).json({data: framework});
         });
-};
-
-exports.framework.post = function (req, res, next) {
-    next(new NotFoundError());
 };
 
 exports.framework.put = function (req, res, next) {

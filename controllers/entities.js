@@ -24,8 +24,35 @@ exports.entities.post = function (req, res, next) {
 };
 
 exports.entities.put = function (req, res, next) {
-    //TODO : Entities - Add Bulk update
-    next(new NotImplementedError("Bulk update of entities"));
+    const entities = req.body.data;
+    var entitiesUpdated = [];
+    Async.eachOf(entities, function (entity, key, callback) {
+        const filterUpdate = getFilterEditData(entity._id, req.decoded);
+        Entity
+            .findOneAndUpdate(filterUpdate, entity, {new: true}, function (err, entityUpdated) {
+                if (err) return callback(err);
+                if (entityUpdated) entitiesUpdated.push(entityUpdated);
+                callback();
+            });
+    }, function (err) {
+        if (err && entitiesUpdated.length === 0) return next(new DatabaseUpdateError());
+        if (err && entitiesUpdated.length > 0) {
+            return res
+                .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
+                .json({
+                    error: true,
+                    message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                    data: entitiesUpdated
+                });
+        }
+
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                data: entitiesUpdated
+            });
+    });
 };
 
 exports.entities.delete = function (req, res, next) {
@@ -49,12 +76,8 @@ exports.entity.get = function (req, res, next) {
         });
 };
 
-exports.entity.post = function (req, res, next) {
-    next(new NotFoundError());
-};
-
 exports.entity.put = function (req, res, next) {
-    var filterUpdate = getFilterEditData(req.params[PARAM_ID_ENTITY], req.decoded);
+    const filterUpdate = getFilterEditData(req.params[PARAM_ID_ENTITY], req.decoded);
     Entity
         .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, entity) {
             if (err) return next(new DatabaseUpdateError());
@@ -64,7 +87,7 @@ exports.entity.put = function (req, res, next) {
 };
 
 exports.entity.delete = function (req, res, next) {
-    var filterRemove = getFilterEditData(req.params[PARAM_ID_ENTITY], req.decoded);
+    const filterRemove = getFilterEditData(req.params[PARAM_ID_ENTITY], req.decoded);
     Entity
         .findOneAndRemove(filterRemove, function (err, entity) {
             if (err) return next(new DatabaseRemoveError());

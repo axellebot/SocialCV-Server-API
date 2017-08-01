@@ -23,8 +23,35 @@ exports.educations.post = function (req, res, next) {
 };
 
 exports.educations.put = function (req, res, next) {
-    //TODO : Educations - Add Bulk update
-    next(new NotImplementedError('Bulk update of educations'));
+    const educations = req.body.data;
+    var educationsUpdated = [];
+    Async.eachOf(educations, function (education, key, callback) {
+        const filterUpdate = getFilterEditData(education._id, req.decoded);
+        Education
+            .findOneAndUpdate(filterUpdate, education, {new: true}, function (err, educationUpdated) {
+                if (err) return callback(err);
+                if (educationUpdated) educationsUpdated.push(educationUpdated);
+                callback();
+            });
+    }, function (err) {
+        if (err && educationsUpdated.length === 0) return next(new DatabaseUpdateError());
+        if (err && educationsUpdated.length > 0) {
+            return res
+                .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
+                .json({
+                    error: true,
+                    message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                    data: educationsUpdated
+                });
+        }
+
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                data: educationsUpdated
+            });
+    });
 };
 
 exports.educations.delete = function (req, res, next) {
@@ -48,12 +75,8 @@ exports.education.get = function (req, res, next) {
         });
 };
 
-exports.education.post = function (req, res, next) {
-    next(new NotFoundError());
-};
-
 exports.education.put = function (req, res, next) {
-    var filterUpdate = getFilterEditData(req.params[PARAM_ID_EDUCATION], req.decoded);
+    const filterUpdate = getFilterEditData(req.params[PARAM_ID_EDUCATION], req.decoded);
     Education
         .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, education) {
             if (err) return next(new DatabaseUpdateError());
@@ -63,7 +86,7 @@ exports.education.put = function (req, res, next) {
 };
 
 exports.education.delete = function (req, res, next) {
-    var filterRemove = getFilterEditData(req.params[PARAM_ID_EDUCATION], req.decoded);
+    const filterRemove = getFilterEditData(req.params[PARAM_ID_EDUCATION], req.decoded);
     Education
         .findOneAndRemove(filterRemove, function (err, education) {
             if (err) return next(new DatabaseRemoveError());

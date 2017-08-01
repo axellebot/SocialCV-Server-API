@@ -24,8 +24,35 @@ exports.interests.post = function (req, res, next) {
 };
 
 exports.interests.put = function (req, res, next) {
-    //TODO : Interests - Add Bulk update
-    next(new NotImplementedError("Bulk update of interests"));
+    const interests = req.body.data;
+    var interestsUpdated = [];
+    Async.eachOf(interests, function (interest, key, callback) {
+        const filterUpdate = getFilterEditData(interest._id, req.decoded);
+        Interest
+            .findOneAndUpdate(filterUpdate, interest, {new: true}, function (err, interestUpdated) {
+                if (err) return callback(err);
+                if (interestUpdated) interestsUpdated.push(interestUpdated);
+                callback();
+            });
+    }, function (err) {
+        if (err && interestsUpdated.length === 0) return next(new DatabaseUpdateError());
+        if (err && interestsUpdated.length > 0) {
+            return res
+                .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
+                .json({
+                    error: true,
+                    message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                    data: interestsUpdated
+                });
+        }
+
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                data: interestsUpdated
+            });
+    });
 };
 
 exports.interests.delete = function (req, res, next) {
@@ -47,10 +74,6 @@ exports.interest.get = function (req, res, next) {
             if (!interest) return next(new NotFoundError(MODEL_NAME_INTEREST));
             res.status(HTTP_STATUS_OK).json({data: interest});
         });
-};
-
-exports.interest.post = function (req, res, next) {
-    next(new NotFoundError());
 };
 
 exports.interest.put = function (req, res, next) {

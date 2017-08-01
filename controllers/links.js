@@ -24,8 +24,35 @@ exports.links.post = function (req, res, next) {
 };
 
 exports.links.put = function (req, res, next) {
-    //TODO : Links - Add Bulk update
-    next(new NotImplementedError("Bulk update of links"));
+    const links = req.body.data;
+    var linksUpdated = [];
+    Async.eachOf(links, function (link, key, callback) {
+        const filterUpdate = getFilterEditData(link._id, req.decoded);
+        Link
+            .findOneAndUpdate(filterUpdate, link, {new: true}, function (err, linkUpdated) {
+                if (err) return callback(err);
+                if (linkUpdated) linksUpdated.push(linkUpdated);
+                callback();
+            });
+    }, function (err) {
+        if (err && linksUpdated.length === 0) return next(new DatabaseUpdateError());
+        if (err && linksUpdated.length > 0) {
+            return res
+                .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
+                .json({
+                    error: true,
+                    message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                    data: linksUpdated
+                });
+        }
+
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                data: linksUpdated
+            });
+    });
 };
 
 exports.links.delete = function (req, res, next) {
@@ -47,10 +74,6 @@ exports.link.get = function (req, res, next) {
             if (!link) return next(new NotFoundError(MODEL_NAME_LINK));
             res.status(HTTP_STATUS_OK).json({data: link});
         });
-};
-
-exports.link.post = function (req, res, next) {
-    next(new NotFoundError());
 };
 
 exports.link.put = function (req, res, next) {

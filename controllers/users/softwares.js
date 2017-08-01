@@ -1,6 +1,6 @@
 "use strict";
 
-var userCanAccessUserData = require("../../helpers").userCanAccessUserData;
+var userCanEditUserData = require("../../helpers").userCanEditUserData;
 
 const Software = require('../../models/software.schema');
 
@@ -19,21 +19,52 @@ exports.get = function (req, res, next) {
 
 exports.post = function (req, res, next) {
     const userId = req.params[PARAM_ID_USER];
-    if (!userCanAccessUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
+    if (!userCanEditUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
     //TODO : Softwares - Create software for user
     next(new NotImplementedError("Create a new software for user : " + req.params[PARAM_ID_USER]));
 };
 
 exports.put = function (req, res, next) {
     const userId = req.params[PARAM_ID_USER];
-    if (!userCanAccessUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
-    //TODO : Softwares - Add Bulk update for user
-    next(new NotImplementedError("Bulk update of softwares for user : " + req.params[PARAM_ID_USER]));
+    if (!userCanEditUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
+
+    const softwares = req.body.data;
+    var softwaresUpdated = [];
+    Async.eachOf(softwares, function (software, key, callback) {
+        const filterUpdate = {
+            _id: software._id,
+            user: userId
+        };
+        Software
+            .findOneAndUpdate(filterUpdate, software, {new: true}, function (err, softwareUpdated) {
+                if (err) return callback(err);
+                if (softwareUpdated) softwaresUpdated.push(softwareUpdated);
+                callback();
+            });
+    }, function (err) {
+        if (err && softwaresUpdated.length === 0) return next(new DatabaseUpdateError());
+        if (err && softwaresUpdated.length > 0) {
+            return res
+                .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
+                .json({
+                    error: true,
+                    message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                    data: softwaresUpdated
+                });
+        }
+
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                data: softwaresUpdated
+            });
+    });
 };
 
 exports.delete = function (req, res, next) {
     const userId = req.params[PARAM_ID_USER];
-    if (!userCanAccessUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
+    if (!userCanEditUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
 
     Software
         .remove({user: userId})

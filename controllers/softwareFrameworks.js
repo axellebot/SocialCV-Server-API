@@ -24,8 +24,35 @@ exports.softwareFrameworks.post = function (req, res, next) {
 };
 
 exports.softwareFrameworks.put = function (req, res, next) {
-    //TODO : SoftwareFrameworks - Add Bulk update
-    next(new NotImplementedError("Bulk update of softwareFrameworks"));
+    const softwareFrameworks = req.body.data;
+    var softwareFrameworksUpdated = [];
+    Async.eachOf(softwareFrameworks, function (softwareFramework, key, callback) {
+        const filterUpdate = getFilterEditData(softwareFramework._id, req.decoded);
+        SoftwareFramework
+            .findOneAndUpdate(filterUpdate, softwareFramework, {new: true}, function (err, softwareFrameworkUpdated) {
+                if (err) return callback(err);
+                if (softwareFrameworkUpdated) softwareFrameworksUpdated.push(softwareFrameworkUpdated);
+                callback();
+            });
+    }, function (err) {
+        if (err && softwareFrameworksUpdated.length === 0) return next(new DatabaseUpdateError());
+        if (err && softwareFrameworksUpdated.length > 0) {
+            return res
+                .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
+                .json({
+                    error: true,
+                    message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                    data: softwareFrameworksUpdated
+                });
+        }
+
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                data: softwareFrameworksUpdated
+            });
+    });
 };
 
 exports.softwareFrameworks.delete = function (req, res, next) {
@@ -49,20 +76,18 @@ exports.softwareFramework.get = function (req, res, next) {
         });
 };
 
-exports.softwareFramework.post = function (req, res, next) {
-    next(new NotFoundError());
-};
-
 exports.softwareFramework.put = function (req, res, next) {
     var filterUpdate = getFilterEditData(req.params[PARAM_ID_SOFTWARE_FRAMEWORK], req.decoded);
     SoftwareFramework
-        .findOneAndUpdate(filterUpdate, req.body.data, {new: true},function (err, softwareFramework) {
+        .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, softwareFramework) {
             if (err) return next(new DatabaseUpdateError());
             if (!softwareFramework) return next(new NotFoundError(MODEL_NAME_SOFTWARE_FRAMEWORK));
-            return res.status(HTTP_STATUS_OK).json({
-                message: MESSAGE_SUCCESS_RESOURCE_UPDATED,
-                data: softwareFramework
-            });
+            res
+                .status(HTTP_STATUS_OK)
+                .json({
+                    message: MESSAGE_SUCCESS_RESOURCE_UPDATED,
+                    data: softwareFramework
+                });
         });
 };
 
@@ -72,9 +97,11 @@ exports.softwareFramework.delete = function (req, res, next) {
         .findOneAndRemove(filterRemove, function (err, softwareFramework) {
             if (err) return next(new DatabaseRemoveError());
             if (!softwareFramework) return next(new NotFoundError(MODEL_NAME_SOFTWARE_FRAMEWORK));
-            res.status(HTTP_STATUS_OK).json({
-                message: MESSAGE_SUCCESS_RESOURCE_DELETED,
-                data: softwareFramework
-            });
+            res
+                .status(HTTP_STATUS_OK)
+                .json({
+                    message: MESSAGE_SUCCESS_RESOURCE_DELETED,
+                    data: softwareFramework
+                });
         });
 };

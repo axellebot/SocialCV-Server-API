@@ -1,7 +1,7 @@
 "use strict";
 
 var getFilterEditData = require("../../helpers").getFilterEditData,
-    userCanAccessUserData = require("../../helpers").userCanAccessUserData;
+    userCanEditUserData = require("../../helpers").userCanEditUserData;
 
 const User = require('../../models/user.schema');
 
@@ -25,8 +25,37 @@ exports.users.post = function (req, res, next) {
 };
 
 exports.users.put = function (req, res, next) {
-    //TODO : users - Add Bulk update
-    next(new NotImplementedError("Bulk update of users"));
+    const users = req.body.data;
+    var usersUpdated = [];
+    Async.eachOf(users, function (user, key, callback) {
+        if (!userCanEditUserData(req.decoded, user._id)) return next(new MissingPrivilegeError());
+
+        const filterUpdate = {_id: user._id};
+        User
+            .findOneAndUpdate(filterUpdate, user, {new: true}, function (err, computingTagUpdated) {
+                if (err) return callback(err);
+                if (computingTagUpdated) usersUpdated.push(computingTagUpdated);
+                callback();
+            });
+    }, function (err) {
+        if (err && usersUpdated.length === 0) return next(new DatabaseUpdateError());
+        if (err && usersUpdated.length > 0) {
+            return res
+                .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
+                .json({
+                    error: true,
+                    message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                    data: usersUpdated
+                });
+        }
+
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                data: usersUpdated
+            });
+    });
 };
 
 exports.users.delete = function (req, res, next) {
@@ -50,16 +79,12 @@ exports.user.get = function (req, res, next) {
         });
 };
 
-exports.user.post = function (req, res, next) {
-    next(new NotFoundError());
-};
-
 exports.user.put = function (req, res, next) {
     const userId = req.params[PARAM_ID_USER];
-    if (!userCanAccessUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
-    var filterUpdate = getFilterEditData(userId, req.decoded);
+    if (!userCanEditUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
+
     User
-        .findOneAndUpdate(filterUpdate, req.body.data,{returnNewDocument:true}, function (err, user) {
+        .findOneAndUpdate({_id: userId}, req.body.data, {returnNewDocument: true}, function (err, user) {
             if (err) return next(new DatabaseUpdateError());
             if (!user) return next(new NotFoundError(MODEL_NAME_USER));
             res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_UPDATED, data: user});
@@ -68,10 +93,10 @@ exports.user.put = function (req, res, next) {
 
 exports.user.delete = function (req, res, next) {
     const userId = req.params[PARAM_ID_USER];
-    if (!userCanAccessUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
-    var filterRemove = getFilterEditData(userId, req.decoded);
+    if (!userCanEditUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
+
     User
-        .findOneAndRemove(filterRemove, function (err, user) {
+        .findOneAndRemove({_id: userId}, function (err, user) {
             if (err) return next(new DatabaseRemoveError());
             if (!user) return next(new NotFoundError(MODEL_NAME_USER));
             res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_DELETED, data: user});

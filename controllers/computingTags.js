@@ -17,14 +17,45 @@ exports.computingTags.get = function (req, res, next) {
             res.status(HTTP_STATUS_OK).json({data: computingTags});
         });
 };
+
 exports.computingTags.post = function (req, res, next) {
     //TODO : ComputingTags - Create computingTag
     next(new NotImplementedError("Create a new computingTag"));
 };
+
 exports.computingTags.put = function (req, res, next) {
-    //TODO : ComputingTags - Add Bulk update
-    next(new NotImplementedError("Bulk update of computingTags"));
+    const computingTags = req.body.data;
+    var computingTagsUpdated = [];
+    Async.eachOf(computingTags, function (computingTag, key, callback) {
+        const filterUpdate = getFilterEditData(computingTag._id, req.decoded);
+        ComputingTag
+            .findOneAndUpdate(filterUpdate, computingTag, {new: true}, function (err, computingTagUpdated) {
+                if (err) return callback(err);
+                if (computingTagUpdated) computingTagsUpdated.push(computingTagUpdated);
+                callback();
+            });
+    }, function (err) {
+        if (err && computingTagsUpdated.length === 0) return next(new DatabaseUpdateError());
+        if (err && computingTagsUpdated.length > 0) {
+            return res
+                .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
+                .json({
+                    error: true,
+                    message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                    data: computingTagsUpdated
+                });
+        }
+
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                data: computingTagsUpdated
+            });
+    });
 };
+
+
 exports.computingTags.delete = function (req, res, next) {
     ComputingTag
         .remove()
@@ -46,13 +77,8 @@ exports.computingTag.get = function (req, res, next) {
         });
 };
 
-exports.computingTag.post = function (req, res, next) {
-    next(new NotFoundError());
-};
-
 exports.computingTag.put = function (req, res, next) {
-    var filterUpdate = getFilterEditData(req.params[PARAM_ID_COMPUTING_TAG], req.decoded);
-    console.log(filterUpdate, req.body.data);
+    const filterUpdate = getFilterEditData(req.params[PARAM_ID_COMPUTING_TAG], req.decoded);
     ComputingTag
         .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, computingTag) {
             if (err) return next(new DatabaseUpdateError());
@@ -62,7 +88,7 @@ exports.computingTag.put = function (req, res, next) {
 };
 
 exports.computingTag.delete = function (req, res, next) {
-    var filterRemove = getFilterEditData(req.params[PARAM_ID_COMPUTING_TAG], req.decoded);
+    const filterRemove = getFilterEditData(req.params[PARAM_ID_COMPUTING_TAG], req.decoded);
     ComputingTag
         .findOneAndRemove(filterRemove, function (err, computingTag) {
             if (err) return next(new DatabaseRemoveError());

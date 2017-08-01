@@ -24,8 +24,35 @@ exports.profiles.post = function (req, res, next) {
 };
 
 exports.profiles.put = function (req, res, next) {
-    //TODO : Profiles - Add Bulk update
-    next(new NotImplementedError("Bulk update of profiles"));
+    const profiles = req.body.data;
+    var profilesUpdated = [];
+    Async.eachOf(profiles, function (profile, key, callback) {
+        const filterUpdate = getFilterEditData(profile._id, req.decoded);
+        Profile
+            .findOneAndUpdate(filterUpdate, profile, {new: true}, function (err, profileUpdated) {
+                if (err) return callback(err);
+                if (profileUpdated) profilesUpdated.push(profileUpdated);
+                callback();
+            });
+    }, function (err) {
+        if (err && profilesUpdated.length === 0) return next(new DatabaseUpdateError());
+        if (err && profilesUpdated.length > 0) {
+            return res
+                .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
+                .json({
+                    error: true,
+                    message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                    data: profilesUpdated
+                });
+        }
+
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                data: profilesUpdated
+            });
+    });
 };
 
 exports.profiles.delete = function (req, res, next) {
@@ -49,14 +76,10 @@ exports.profile.get = function (req, res, next) {
         });
 };
 
-exports.profile.post = function (req, res, next) {
-    next(new NotFoundError());
-};
-
 exports.profile.put = function (req, res, next) {
     var filterUpdate = getFilterEditData(req.params[PARAM_ID_PROFILE], req.decoded);
     Profile
-        .findOneAndUpdate(filterUpdate, req.body.data, {new: true},function (err, profile) {
+        .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, profile) {
             if (err) return next(new DatabaseUpdateError());
             if (!profile) return next(new NotFoundError(MODEL_NAME_PROFILE));
             return res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_UPDATED, data: profile});

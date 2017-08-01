@@ -23,8 +23,35 @@ exports.linkTags.post = function (req, res, next) {
     next(new NotImplementedError("Create a new linkTag"));
 };
 exports.linkTags.put = function (req, res, next) {
-    //TODO : LinkTags - Add Bulk update
-    next(new NotImplementedError("Bulk update of linkTags"));
+    const linkTags = req.body.data;
+    var linkTagsUpdated = [];
+    Async.eachOf(linkTags, function (linkTag, key, callback) {
+        const filterUpdate = getFilterEditData(linkTag._id, req.decoded);
+        LinkTag
+            .findOneAndUpdate(filterUpdate, linkTag, {new: true}, function (err, linkTagUpdated) {
+                if (err) return callback(err);
+                if (linkTagUpdated) linkTagsUpdated.push(linkTagUpdated);
+                callback();
+            });
+    }, function (err) {
+        if (err && linkTagsUpdated.length === 0) return next(new DatabaseUpdateError());
+        if (err && linkTagsUpdated.length > 0) {
+            return res
+                .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
+                .json({
+                    error: true,
+                    message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                    data: linkTagsUpdated
+                });
+        }
+
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                data: linkTagsUpdated
+            });
+    });
 };
 
 exports.linkTags.delete = function (req, res, next) {
@@ -46,10 +73,6 @@ exports.linkTag.get = function (req, res, next) {
             if (!linkTag) return next(new NotFoundError(MODEL_NAME_LINK_TAG));
             res.status(HTTP_STATUS_OK).json({data: linkTag});
         });
-};
-
-exports.linkTag.post = function (req, res, next) {
-    next(new NotFoundError());
 };
 
 exports.linkTag.put = function (req, res, next) {

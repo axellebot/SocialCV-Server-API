@@ -1,6 +1,6 @@
 "use strict";
 
-var userCanAccessUserData = require("../../helpers").userCanAccessUserData;
+var userCanEditUserData = require("../../helpers").userCanEditUserData;
 
 const OperatingSystem = require('../../models/operatingSystem.schema');
 
@@ -18,21 +18,52 @@ exports.get = function (req, res, next) {
 };
 exports.post = function (req, res, next) {
     const userId = req.params[PARAM_ID_USER];
-    if (!userCanAccessUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
+    if (!userCanEditUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
     //TODO : OperatingSystems - Create operatingSystem for user
     next(new NotImplementedError("Create a new operatingSystem for user : " + req.params[PARAM_ID_USER]));
 };
 
 exports.put = function (req, res, next) {
     const userId = req.params[PARAM_ID_USER];
-    if (!userCanAccessUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
-    //TODO : OperatingSystems - Add Bulk update for user
-    next(new NotImplementedError("Bulk update of operatingSystems for user : " + req.params[PARAM_ID_USER]));
+    if (!userCanEditUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
+
+    const operatingSystems = req.body.data;
+    var operatingSystemsUpdated = [];
+    Async.eachOf(operatingSystems, function (operatingSystem, key, callback) {
+        const filterUpdate = {
+            _id: operatingSystem._id,
+            user: userId
+        };
+        OperatingSystem
+            .findOneAndUpdate(filterUpdate, operatingSystem, {new: true}, function (err, operatingSystemUpdated) {
+                if (err) return callback(err);
+                if (operatingSystemUpdated) operatingSystemsUpdated.push(operatingSystemUpdated);
+                callback();
+            });
+    }, function (err) {
+        if (err && operatingSystemsUpdated.length === 0) return next(new DatabaseUpdateError());
+        if (err && operatingSystemsUpdated.length > 0) {
+            return res
+                .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
+                .json({
+                    error: true,
+                    message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                    data: operatingSystemsUpdated
+                });
+        }
+
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                data: operatingSystemsUpdated
+            });
+    });
 };
 
 exports.delete = function (req, res, next) {
     const userId = req.params[PARAM_ID_USER];
-    if (!userCanAccessUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
+    if (!userCanEditUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
 
     OperatingSystem
         .remove({user: userId})

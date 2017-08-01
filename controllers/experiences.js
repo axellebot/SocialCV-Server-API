@@ -24,8 +24,35 @@ exports.experiences.post = function (req, res, next) {
 };
 
 exports.experiences.put = function (req, res, next) {
-    //TODO : Experiences - Add Bulk update
-    next(new NotImplementedError("Bulk update of experiences"));
+    const experiences = req.body.data;
+    var experiencesUpdated = [];
+    Async.eachOf(experiences, function (experience, key, callback) {
+        const filterUpdate = getFilterEditData(experience._id, req.decoded);
+        Experience
+            .findOneAndUpdate(filterUpdate, experience, {new: true}, function (err, experienceUpdated) {
+                if (err) return callback(err);
+                if (experienceUpdated) experiencesUpdated.push(experienceUpdated);
+                callback();
+            });
+    }, function (err) {
+        if (err && experiencesUpdated.length === 0) return next(new DatabaseUpdateError());
+        if (err && experiencesUpdated.length > 0) {
+            return res
+                .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
+                .json({
+                    error: true,
+                    message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                    data: experiencesUpdated
+                });
+        }
+
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                data: experiencesUpdated
+            });
+    });
 };
 
 exports.experiences.delete = function (req, res, next) {
@@ -49,12 +76,8 @@ exports.experience.get = function (req, res, next) {
         });
 };
 
-exports.experience.post = function (req, res, next) {
-    next(new NotFoundError());
-};
-
 exports.experience.put = function (req, res, next) {
-    var filterUpdate = getFilterEditData(req.params[PARAM_ID_EXPERIENCE], req.decoded);
+    const filterUpdate = getFilterEditData(req.params[PARAM_ID_EXPERIENCE], req.decoded);
     Experience
         .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, experience) {
             if (err) return next(new DatabaseUpdateError());
@@ -64,7 +87,7 @@ exports.experience.put = function (req, res, next) {
 };
 
 exports.experience.delete = function (req, res, next) {
-    var filterRemove = getFilterEditData(req.params[PARAM_ID_EXPERIENCE], req.decoded);
+    const filterRemove = getFilterEditData(req.params[PARAM_ID_EXPERIENCE], req.decoded);
     Experience
         .findOneAndRemove(filterRemove, function (err, experience) {
             if (err) return next(new DatabaseRemoveError());

@@ -24,8 +24,35 @@ exports.projectTags.post = function (req, res, next) {
 };
 
 exports.projectTags.put = function (req, res, next) {
-    //TODO : ProjectTags - Add Bulk update
-    next(new NotImplementedError("Bulk update of projectTags"));
+    const projectTags = req.body.data;
+    var projectTagsUpdated = [];
+    Async.eachOf(projectTags, function (projectTag, key, callback) {
+        const filterUpdate = getFilterEditData(projectTag._id, req.decoded);
+        ProjectTag
+            .findOneAndUpdate(filterUpdate, projectTag, {new: true}, function (err, projectTagUpdated) {
+                if (err) return callback(err);
+                if (projectTagUpdated) projectTagsUpdated.push(projectTagUpdated);
+                callback();
+            });
+    }, function (err) {
+        if (err && projectTagsUpdated.length === 0) return next(new DatabaseUpdateError());
+        if (err && projectTagsUpdated.length > 0) {
+            return res
+                .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
+                .json({
+                    error: true,
+                    message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                    data: projectTagsUpdated
+                });
+        }
+
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                data: projectTagsUpdated
+            });
+    });
 };
 
 exports.projectTags.delete = function (req, res, next) {
@@ -49,14 +76,10 @@ exports.projectTag.get = function (req, res, next) {
         });
 };
 
-exports.projectTag.post = function (req, res, next) {
-    next(new NotFoundError());
-};
-
 exports.projectTag.put = function (req, res, next) {
     var filterUpdate = getFilterEditData(req.params[PARAM_ID_PROJECT_TAG], req.decoded);
     ProjectTag
-        .findOneAndUpdate(filterUpdate, req.body.data, {new: true},function (err, projectTag) {
+        .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, projectTag) {
             if (err) return next(new DatabaseUpdateError());
             if (!projectTag) return next(new NotFoundError(MODEL_NAME_PROJECT_TAG));
             return res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_UPDATED, data: projectTag});

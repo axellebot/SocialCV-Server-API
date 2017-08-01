@@ -24,8 +24,35 @@ exports.softwares.post = function (req, res, next) {
 };
 
 exports.softwares.put = function (req, res, next) {
-    //TODO : Softwares - Add Bulk update
-    next(new NotImplementedError("Bulk update of softwares"));
+    const softwares = req.body.data;
+    var softwaresUpdated = [];
+    Async.eachOf(softwares, function (software, key, callback) {
+        const filterUpdate = getFilterEditData(software._id, req.decoded);
+        Software
+            .findOneAndUpdate(filterUpdate, software, {new: true}, function (err, softwareUpdated) {
+                if (err) return callback(err);
+                if (softwareUpdated) softwaresUpdated.push(softwareUpdated);
+                callback();
+            });
+    }, function (err) {
+        if (err && softwaresUpdated.length === 0) return next(new DatabaseUpdateError());
+        if (err && softwaresUpdated.length > 0) {
+            return res
+                .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
+                .json({
+                    error: true,
+                    message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                    data: softwaresUpdated
+                });
+        }
+
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                data: softwaresUpdated
+            });
+    });
 };
 
 exports.softwares.delete = function (req, res, next) {
@@ -49,20 +76,18 @@ exports.software.get = function (req, res, next) {
         });
 };
 
-exports.software.post = function (req, res, next) {
-    next(new NotFoundError());
-};
-
 exports.software.put = function (req, res, next) {
     var filterUpdate = getFilterEditData(req.params[PARAM_ID_SOFTWARE], req.decoded);
     Software
-        .findOneAndUpdate(filterUpdate, req.body.data, {new: true},function (err, software) {
+        .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, software) {
             if (err) return next(new DatabaseUpdateError());
             if (!software) return next(new NotFoundError(MODEL_NAME_SOFTWARE));
-            return res.status(HTTP_STATUS_OK).json({
-                message: MESSAGE_SUCCESS_RESOURCE_UPDATED,
-                data: software
-            });
+            res
+                .status(HTTP_STATUS_OK)
+                .json({
+                    message: MESSAGE_SUCCESS_RESOURCE_UPDATED,
+                    data: software
+                });
         });
 };
 

@@ -1,6 +1,6 @@
 "use strict";
 
-var userCanAccessUserData = require("../../helpers").userCanAccessUserData;
+var userCanEditUserData = require("../../helpers").userCanEditUserData;
 
 const SoftwareTag = require('../../models/softwareTag.schema');
 
@@ -19,21 +19,52 @@ exports.get = function (req, res, next) {
 
 exports.post = function (req, res, next) {
     const userId = req.params[PARAM_ID_USER];
-    if (!userCanAccessUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
+    if (!userCanEditUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
     //TODO : SoftwareTags - Create softwareTag for user
     next(new NotImplementedError("Create a new softwareTag for user : " + req.params[PARAM_ID_USER]));
 };
 
 exports.put = function (req, res, next) {
     const userId = req.params[PARAM_ID_USER];
-    if (!userCanAccessUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
-    //TODO : SoftwareTags - Add Bulk update for user
-    next(new NotImplementedError("Bulk update of SoftwareTags for user : " + req.params[PARAM_ID_USER]));
+    if (!userCanEditUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
+
+    const softwareTags = req.body.data;
+    var softwareTagsUpdated = [];
+    Async.eachOf(softwareTags, function (softwareTag, key, callback) {
+        const filterUpdate = {
+            _id: softwareTag._id,
+            user: userId
+        };
+        SoftwareTag
+            .findOneAndUpdate(filterUpdate, softwareTag, {new: true}, function (err, softwareTagUpdated) {
+                if (err) return callback(err);
+                if (softwareTagUpdated) softwareTagsUpdated.push(softwareTagUpdated);
+                callback();
+            });
+    }, function (err) {
+        if (err && softwareTagsUpdated.length === 0) return next(new DatabaseUpdateError());
+        if (err && softwareTagsUpdated.length > 0) {
+            return res
+                .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
+                .json({
+                    error: true,
+                    message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                    data: softwareTagsUpdated
+                });
+        }
+
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                data: softwareTagsUpdated
+            });
+    });
 };
 
 exports.delete = function (req, res, next) {
     const userId = req.params[PARAM_ID_USER];
-    if (!userCanAccessUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
+    if (!userCanEditUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
 
     SoftwareTag
         .remove({user: userId})
