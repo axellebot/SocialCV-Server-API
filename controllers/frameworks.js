@@ -1,10 +1,8 @@
 "use strict";
 
-var getOptionRemove = require("../helpers").getOptionRemove;
+var getFilterEditData = require("../helpers").getFilterEditData;
 
 const Framework = require('../models/framework.schema');
-
-const PARAM_ID = PARAM.PARAM_ID_FRAMEWORK;
 
 /* Frameworks page. */
 exports.frameworks = {};
@@ -16,18 +14,44 @@ exports.frameworks.get = function (req, res, next) {
         .skip(req.options.pagination.skip)
         .exec(function (err, frameworks) {
             if (err) return next(new DatabaseFindError());
-            res.json({data: frameworks});
+            res.status(HTTP_STATUS_OK).json({data: frameworks});
         });
 };
 
 exports.frameworks.post = function (req, res, next) {
     //TODO : Frameworks - Create framework
-    return next(new NotImplementedError("Create a new framework"));
+    next(new NotImplementedError("Create a new framework"));
 };
 
 exports.frameworks.put = function (req, res, next) {
-    //TODO : Frameworks - Add Bulk update
-    return next(new NotImplementedError("Bulk update of frameworks"));
+    const frameworks = req.body.data;
+    var frameworksUpdated = [];
+    Async.eachOf(frameworks, function (framework, key, callback) {
+        const filterUpdate = getFilterEditData(framework._id, req.decoded);
+        Framework
+            .findOneAndUpdate(filterUpdate, framework, {new: true}, function (err, frameworkUpdated) {
+                if (err) return callback(err);
+                if (frameworkUpdated) frameworksUpdated.push(frameworkUpdated);
+                callback();
+            });
+    }, function (err) {
+        if (err && frameworksUpdated.length === 0) return next(new DatabaseUpdateError());
+        if (err && frameworksUpdated.length > 0) {
+            return res
+                .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
+                .json({
+                    error: true,
+                    message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                    data: frameworksUpdated
+                });
+        }
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                data: frameworksUpdated
+            });
+    });
 };
 
 exports.frameworks.delete = function (req, res, next) {
@@ -35,7 +59,7 @@ exports.frameworks.delete = function (req, res, next) {
         .remove()
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };
 
@@ -43,28 +67,30 @@ exports.frameworks.delete = function (req, res, next) {
 exports.framework = {};
 exports.framework.get = function (req, res, next) {
     Framework
-        .findById(req.params[PARAM_ID])
+        .findById(req.params[PARAM_ID_FRAMEWORK])
         .exec(function (err, framework) {
             if (err) return next(new DatabaseFindError());
-            res.json({data: framework});
+            if (!framework) return next(new NotFoundError(MODEL_NAME_FRAMEWORK));
+            res.status(HTTP_STATUS_OK).json({data: framework});
         });
 };
 
-exports.framework.post = function (req, res, next) {
-    return next(new NotFoundError());
-};
-
 exports.framework.put = function (req, res, next) {
-    //TODO : Framework - Update framework
-    return next(new NotImplementedError("Update details of frameworks "+ req.params[PARAM_ID]));
+    var filterUpdate = getFilterEditData(req.params[PARAM_ID_FRAMEWORK], req.decoded);
+    Framework
+        .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, framework) {
+            if (err) return next(new DatabaseUpdateError());
+            if (!framework) return next(new NotFoundError(MODEL_NAME_FRAMEWORK));
+            res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_UPDATED, data: framework});
+        });
 };
 
 exports.framework.delete = function (req, res, next) {
-    var optionRemove = getOptionRemove(req.params[PARAM_ID], req.decoded);
+    var filterRemove = getFilterEditData(req.params[PARAM_ID_FRAMEWORK], req.decoded);
     Framework
-        .remove(optionRemove)
-        .exec(function (err, removed) {
+        .findOneAndRemove(filterRemove, function (err, framework) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            if (!framework) return next(new NotFoundError(MODEL_NAME_FRAMEWORK));
+            res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_DELETED, data: framework});
         });
 };

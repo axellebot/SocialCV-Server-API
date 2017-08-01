@@ -1,10 +1,8 @@
 "use strict";
 
-var getOptionRemove = require("../helpers").getOptionRemove;
+var getFilterEditData = require("../helpers").getFilterEditData;
 
 const OperatingSystem = require('../models/operatingSystem.schema');
-
-const PARAM_ID = PARAM.PARAM_ID_OPERATING_SYSTEM;
 
 /* OperatingSystems page. */
 exports.operatingSystems = {};
@@ -16,18 +14,45 @@ exports.operatingSystems.get = function (req, res, next) {
         .skip(req.options.pagination.skip)
         .exec(function (err, operatingSystems) {
             if (err) return next(new DatabaseFindError());
-            res.json({data: operatingSystems});
+            res.status(HTTP_STATUS_OK).json({data: operatingSystems});
         });
 };
 
 exports.operatingSystems.post = function (req, res, next) {
     //TODO : OperatingSystems - Create operatingSystem
-    return next(new NotImplementedError("Create a new operatingSystem"));
+    next(new NotImplementedError("Create a new operatingSystem"));
 };
 
 exports.operatingSystems.put = function (req, res, next) {
-    //TODO : OperatingSystems - Add Bulk update
-    return next(new NotImplementedError("Bulk update of operatingSystems"));
+    const operatingSystems = req.body.data;
+    var operatingSystemsUpdated = [];
+    Async.eachOf(operatingSystems, function (operatingSystem, key, callback) {
+        const filterUpdate = getFilterEditData(operatingSystem._id, req.decoded);
+        OperatingSystem
+            .findOneAndUpdate(filterUpdate, operatingSystem, {new: true}, function (err, operatingSystemUpdated) {
+                if (err) return callback(err);
+                if (operatingSystemUpdated) operatingSystemsUpdated.push(operatingSystemUpdated);
+                callback();
+            });
+    }, function (err) {
+        if (err && operatingSystemsUpdated.length === 0) return next(new DatabaseUpdateError());
+        if (err && operatingSystemsUpdated.length > 0) {
+            return res
+                .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
+                .json({
+                    error: true,
+                    message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                    data: operatingSystemsUpdated
+                });
+        }
+
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                data: operatingSystemsUpdated
+            });
+    });
 };
 
 exports.operatingSystems.delete = function (req, res, next) {
@@ -35,7 +60,7 @@ exports.operatingSystems.delete = function (req, res, next) {
         .remove()
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };
 
@@ -43,28 +68,30 @@ exports.operatingSystems.delete = function (req, res, next) {
 exports.operatingSystem = {};
 exports.operatingSystem.get = function (req, res, next) {
     OperatingSystem
-        .findById(req.params[PARAM_ID])
+        .findById(req.params[PARAM_ID_OPERATING_SYSTEM])
         .exec(function (err, operatingSystem) {
             if (err) return next(new DatabaseFindError());
-            res.json({data: operatingSystem});
+            if (!operatingSystem) return next(new NotFoundError(MODEL_NAME_OPERATING_SYSTEM));
+            res.status(HTTP_STATUS_OK).json({data: operatingSystem});
         });
 };
 
-exports.operatingSystem.post = function (req, res, next) {
-    return next(new NotFoundError());
-};
-
 exports.operatingSystem.put = function (req, res, next) {
-    //TODO : OperatingSystem - Update operatingSystem
-    return next(new NotImplementedError("Update details of operatingSystem " + req.params[PARAM_ID]));
+    var filterUpdate = getFilterEditData(req.params[PARAM_ID_OPERATING_SYSTEM], req.decoded);
+    OperatingSystem
+        .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, operatingSystem) {
+            if (err) return next(new DatabaseUpdateError());
+            if (!operatingSystem) return next(new NotFoundError(MODEL_NAME_OPERATING_SYSTEM));
+            return res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_UPDATED, data: operatingSystem});
+        });
 };
 
 exports.operatingSystem.delete = function (req, res, next) {
-    var optionRemove = getOptionRemove(req.params[PARAM_ID], req.decoded);
+    var filterRemove = getFilterEditData(req.params[PARAM_ID_OPERATING_SYSTEM], req.decoded);
     OperatingSystem
-        .remove(optionRemove)
-        .exec(function (err, removed) {
+        .findOneAndRemove(filterRemove, function (err, operatingSystem) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            if (!operatingSystem) return next(new NotFoundError(MODEL_NAME_OPERATING_SYSTEM));
+            return res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_DELETED, data: operatingSystem});
         });
 };

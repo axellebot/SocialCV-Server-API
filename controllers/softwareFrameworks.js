@@ -1,10 +1,8 @@
 "use strict";
 
-var getOptionRemove = require("../helpers").getOptionRemove;
+var getFilterEditData = require("../helpers").getFilterEditData;
 
 const SoftwareFramework = require('../models/softwareFramework.schema');
-
-const PARAM_ID = PARAM.PARAM_ID_SOFTWARE_FRAMEWORK;
 
 /* SoftwareFrameworks page. */
 exports.softwareFrameworks = {};
@@ -16,18 +14,45 @@ exports.softwareFrameworks.get = function (req, res, next) {
         .skip(req.options.pagination.skip)
         .exec(function (err, softwareFrameworks) {
             if (err) return next(new DatabaseFindError());
-            res.json({data: softwareFrameworks});
+            res.status(HTTP_STATUS_OK).json({data: softwareFrameworks});
         });
 };
 
 exports.softwareFrameworks.post = function (req, res, next) {
     //TODO : SoftwareFrameworks - Create softwareFramework
-    return next(new NotImplementedError("Create a new softwareFramework"));
+    next(new NotImplementedError("Create a new softwareFramework"));
 };
 
 exports.softwareFrameworks.put = function (req, res, next) {
-    //TODO : SoftwareFrameworks - Add Bulk update
-    return next(new NotImplementedError("Bulk update of softwareFrameworks"));
+    const softwareFrameworks = req.body.data;
+    var softwareFrameworksUpdated = [];
+    Async.eachOf(softwareFrameworks, function (softwareFramework, key, callback) {
+        const filterUpdate = getFilterEditData(softwareFramework._id, req.decoded);
+        SoftwareFramework
+            .findOneAndUpdate(filterUpdate, softwareFramework, {new: true}, function (err, softwareFrameworkUpdated) {
+                if (err) return callback(err);
+                if (softwareFrameworkUpdated) softwareFrameworksUpdated.push(softwareFrameworkUpdated);
+                callback();
+            });
+    }, function (err) {
+        if (err && softwareFrameworksUpdated.length === 0) return next(new DatabaseUpdateError());
+        if (err && softwareFrameworksUpdated.length > 0) {
+            return res
+                .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
+                .json({
+                    error: true,
+                    message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                    data: softwareFrameworksUpdated
+                });
+        }
+
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                data: softwareFrameworksUpdated
+            });
+    });
 };
 
 exports.softwareFrameworks.delete = function (req, res, next) {
@@ -35,7 +60,7 @@ exports.softwareFrameworks.delete = function (req, res, next) {
         .remove()
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };
 
@@ -43,28 +68,40 @@ exports.softwareFrameworks.delete = function (req, res, next) {
 exports.softwareFramework = {};
 exports.softwareFramework.get = function (req, res, next) {
     SoftwareFramework
-        .findById(req.params[PARAM_ID])
+        .findById(req.params[PARAM_ID_SOFTWARE_FRAMEWORK])
         .exec(function (err, softwareFramework) {
             if (err) return next(new DatabaseFindError());
-            res.json({data: softwareFramework});
+            if (!softwareFramework) return next(new NotFoundError(MODEL_NAME_SOFTWARE_FRAMEWORK));
+            res.status(HTTP_STATUS_OK).json({data: softwareFramework});
         });
 };
 
-exports.softwareFramework.post = function (req, res, next) {
-    return next(new NotFoundError());
-};
-
 exports.softwareFramework.put = function (req, res, next) {
-    //TODO : SoftwareFramework - Update softwareFramework
-    return next(new NotImplementedError("Update details of softwareFramework " + req.params[PARAM_ID]));
+    var filterUpdate = getFilterEditData(req.params[PARAM_ID_SOFTWARE_FRAMEWORK], req.decoded);
+    SoftwareFramework
+        .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, softwareFramework) {
+            if (err) return next(new DatabaseUpdateError());
+            if (!softwareFramework) return next(new NotFoundError(MODEL_NAME_SOFTWARE_FRAMEWORK));
+            res
+                .status(HTTP_STATUS_OK)
+                .json({
+                    message: MESSAGE_SUCCESS_RESOURCE_UPDATED,
+                    data: softwareFramework
+                });
+        });
 };
 
 exports.softwareFramework.delete = function (req, res, next) {
-    var optionRemove = getOptionRemove(req.params[PARAM_ID], req.decoded);
+    var filterRemove = getFilterEditData(req.params[PARAM_ID_SOFTWARE_FRAMEWORK], req.decoded);
     SoftwareFramework
-        .remove(optionRemove)
-        .exec(function (err, removed) {
+        .findOneAndRemove(filterRemove, function (err, softwareFramework) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            if (!softwareFramework) return next(new NotFoundError(MODEL_NAME_SOFTWARE_FRAMEWORK));
+            res
+                .status(HTTP_STATUS_OK)
+                .json({
+                    message: MESSAGE_SUCCESS_RESOURCE_DELETED,
+                    data: softwareFramework
+                });
         });
 };

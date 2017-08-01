@@ -1,10 +1,8 @@
 "use strict";
 
-var getOptionRemove = require("../helpers").getOptionRemove;
+var getFilterEditData = require("../helpers").getFilterEditData;
 
 const LinkTag = require('../models/linkTag.schema');
-
-const PARAM_ID = PARAM.PARAM_ID_LINK_TAG;
 
 /* Links page. */
 exports.linkTags = {};
@@ -17,16 +15,43 @@ exports.linkTags.get = function (req, res, next) {
         .skip(req.options.pagination.skip)
         .exec(function (err, linkTags) {
             if (err) return next(new DatabaseFindError());
-            res.json({data: linkTags});
+            res.status(HTTP_STATUS_OK).json({data: linkTags});
         });
 };
 exports.linkTags.post = function (req, res, next) {
     //TODO : LinkTags - Create link
-    return next(new NotImplementedError("Create a new linkTag"));
+    next(new NotImplementedError("Create a new linkTag"));
 };
 exports.linkTags.put = function (req, res, next) {
-    //TODO : LinkTags - Add Bulk update
-    return next(new NotImplementedError("Bulk update of linkTags"));
+    const linkTags = req.body.data;
+    var linkTagsUpdated = [];
+    Async.eachOf(linkTags, function (linkTag, key, callback) {
+        const filterUpdate = getFilterEditData(linkTag._id, req.decoded);
+        LinkTag
+            .findOneAndUpdate(filterUpdate, linkTag, {new: true}, function (err, linkTagUpdated) {
+                if (err) return callback(err);
+                if (linkTagUpdated) linkTagsUpdated.push(linkTagUpdated);
+                callback();
+            });
+    }, function (err) {
+        if (err && linkTagsUpdated.length === 0) return next(new DatabaseUpdateError());
+        if (err && linkTagsUpdated.length > 0) {
+            return res
+                .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
+                .json({
+                    error: true,
+                    message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                    data: linkTagsUpdated
+                });
+        }
+
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                data: linkTagsUpdated
+            });
+    });
 };
 
 exports.linkTags.delete = function (req, res, next) {
@@ -34,7 +59,7 @@ exports.linkTags.delete = function (req, res, next) {
         .remove()
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            return res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };
 
@@ -42,28 +67,30 @@ exports.linkTags.delete = function (req, res, next) {
 exports.linkTag = {};
 exports.linkTag.get = function (req, res, next) {
     LinkTag
-        .findById(req.params[PARAM_ID])
+        .findById(req.params[PARAM_ID_LINK_TAG])
         .exec(function (err, linkTag) {
             if (err) return next(new DatabaseFindError());
-            res.json({data: linkTag});
+            if (!linkTag) return next(new NotFoundError(MODEL_NAME_LINK_TAG));
+            res.status(HTTP_STATUS_OK).json({data: linkTag});
         });
 };
 
-exports.linkTag.post = function (req, res, next) {
-    return next(new NotFoundError());
-};
-
 exports.linkTag.put = function (req, res, next) {
-    //TODO : LinkTag - Update link
-    return next(new NotImplementedError("Update details of linkTag " + req.params[PARAM_ID]));
+    var filterUpdate = getFilterEditData(req.params[PARAM_ID_LINK_TAG], req.decoded);
+    LinkTag
+        .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, linkTag) {
+            if (err) return next(new DatabaseUpdateError());
+            if (!linkTag) return next(new NotFoundError(MODEL_NAME_LINK_TAG));
+            res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_UPDATED, data: linkTag});
+        });
 };
 
 exports.linkTag.delete = function (req, res, next) {
-    var optionRemove = getOptionRemove(req.params[PARAM_ID], req.decoded);
+    var filterRemove = getFilterEditData(req.params[PARAM_ID_LINK_TAG], req.decoded);
     LinkTag
-        .remove(optionRemove)
-        .exec(function (err, removed) {
+        .findOneAndRemove(filterRemove, function (err, linkTag) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            if (!linkTag) return next(new NotFoundError(MODEL_NAME_LINK_TAG));
+            res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_DELETED, data: linkTag});
         });
 };

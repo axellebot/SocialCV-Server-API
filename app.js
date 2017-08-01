@@ -4,9 +4,10 @@ global.config = require("./config");
 
 //assign constants
 require("./constants");
-
 //assign errors to global
 require("./errors");
+
+global.Async = require("async");
 
 var express = require('express');
 var path = require('path');
@@ -46,8 +47,8 @@ app.use(function (err, req, res, next) {
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') === 'development' ? err : {};
     res
-        .status(err.status || 500)
-        .json({error: true, message: err.message || MESSAGE.MESSAGE_ERROR_APP});
+        .status(err.status || HTTP_STATUS_INTERNAL_SERVER_ERROR)
+        .json({error: true, message: err.message || MESSAGE_ERROR_APP});
 
     next();
 });

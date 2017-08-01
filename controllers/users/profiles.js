@@ -1,48 +1,74 @@
 "use strict";
 
-var userCanAccessUserData = require("../../helpers").userCanAccessUserData;
+var userCanEditUserData = require("../../helpers").userCanEditUserData;
 
 const Profile = require('../../models/profile.schema');
-
-const PARAM_ID = PARAM.PARAM_ID_USER;
 
 /* Profiles page. */
 exports.get = function (req, res, next) {
     //TODO : Profiles - Handle options
     Profile
-        .find({user: req.params[PARAM_ID]})
+        .find({user: req.params[PARAM_ID_USER]})
         .limit(req.options.pagination.limit)
         .skip(req.options.pagination.skip)
         .exec(function (err, profiles) {
             if (err) return next(new DatabaseFindError());
-            res.json({data: profiles});
+            res.status(HTTP_STATUS_OK).json({data: profiles});
         });
 };
 
 exports.post = function (req, res, next) {
-    if (!userCanAccessUserData(req.decoded, req.params[PARAM_ID])) {
-        return next(new MissingPrivilegeError());
-    }
+    const userId = req.params[PARAM_ID_USER];
+    if (!userCanEditUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
     //TODO : Profiles - Create profile for user
-    return next(new NotImplementedError("Create a new profile for user : " + req.params[PARAM_ID]));
+    next(new NotImplementedError("Create a new profile for user : " + req.params[PARAM_ID_USER]));
 };
 
 exports.put = function (req, res, next) {
-    if (!userCanAccessUserData(req.decoded, req.params[PARAM_ID])) {
-        return next(new MissingPrivilegeError());
-    }
-    //TODO : Profiles - Add Bulk update for user
-    return next(new NotImplementedError("Bulk update of profiles for user : " + req.params[PARAM_ID]));
+    const userId = req.params[PARAM_ID_USER];
+    if (!userCanEditUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
+
+    const profiles = req.body.data;
+    var profilesUpdated = [];
+    Async.eachOf(profiles, function (profile, key, callback) {
+        const filterUpdate = {
+            _id: profile._id,
+            user: userId
+        };
+        Profile
+            .findOneAndUpdate(filterUpdate, profile, {new: true}, function (err, profileUpdated) {
+                if (err) return callback(err);
+                if (profileUpdated) profilesUpdated.push(profileUpdated);
+                callback();
+            });
+    }, function (err) {
+        if (err && profilesUpdated.length === 0) return next(new DatabaseUpdateError());
+        if (err && profilesUpdated.length > 0) {
+            return res
+                .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
+                .json({
+                    error: true,
+                    message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                    data: profilesUpdated
+                });
+        }
+
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                data: profilesUpdated
+            });
+    });
 };
 
 exports.delete = function (req, res, next) {
-    if (!userCanAccessUserData(req.decoded, req.params[PARAM_ID])) {
-        return next(new MissingPrivilegeError());
-    }
+    const userId = req.params[PARAM_ID_USER];
+    if (!userCanEditUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
     Profile
-        .remove({user: req.params[PARAM_ID]})
+        .remove({user: userId})
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };

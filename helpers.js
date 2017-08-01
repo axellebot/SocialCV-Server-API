@@ -1,10 +1,6 @@
 "use strict";
 
 const
-    ROLE_MEMBER = ROLE.ROLE_MEMBER,
-    ROLE_ADMIN = ROLE.ROLE_ADMIN;
-
-const
     uuidv4 = require('uuid/v4'),
     bcrypt = require('bcrypt');
 
@@ -18,7 +14,7 @@ module.exports.setUserInfo = function (user) {
     return getUserInfo;
 };
 
-function getRole(checkRole) {
+function getRoleRank(checkRole) {
     var role;
 
     switch (checkRole) {
@@ -33,7 +29,8 @@ function getRole(checkRole) {
     }
     return role;
 };
-module.exports.getRole = getRole;
+
+module.exports.getRoleRank = getRoleRank;
 
 module.exports.saltPassword = function (next) {
 
@@ -67,8 +64,13 @@ module.exports.uuid = function () {
     return uuidv4
 };
 
-module.exports.getOptionRemove = function (entityId, loggedUser) {
-    console.log(loggedUser);
+/**
+ *
+ * @param entityId
+ * @param loggedUser
+ * @returns {*}
+ */
+module.exports.getFilterEditData = function (entityId, loggedUser) {
     switch (loggedUser.role) {
         case ROLE_MEMBER :
             return {_id: entityId, user: loggedUser._id};
@@ -86,9 +88,23 @@ module.exports.getOptionRemove = function (entityId, loggedUser) {
  * @param ownerId String
  * @returns {boolean}
  */
-module.exports.userCanAccessUserData = function (user, ownerId) {
-    if (getRole(user.role) >= getRole(ROLE_ADMIN)) {
+module.exports.userCanEditUserData = function (user, ownerId) {
+    if (getRoleRank(user.role) >= getRoleRank(ROLE_ADMIN)) {
         return true;
     }
-    return (ownerId == user._id);
+    return (ownerId === user._id);
+};
+
+/**
+ *
+ * @param a {Object}
+ * @param b {Object}
+ * @returns {boolean}
+ */
+module.exports.compareKeys = function (a, b) {
+    const
+        aKeys = Object.keys(a).sort(),
+        bKeys = Object.keys(b).sort();
+
+    return (JSON.stringify(aKeys).equals(JSON.stringify(bKeys)));
 };

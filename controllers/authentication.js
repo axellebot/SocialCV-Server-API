@@ -57,7 +57,7 @@ exports.register.post = function (req, res, next) {
 
             const userInfo = setUserInfo(user);
 
-            res.status(201).json({
+            res.status(HTTP_STATUS_CREATED).json({
                 error: false,
                 token: generateToken(userInfo),
                 user: userInfo
@@ -88,7 +88,7 @@ exports.login.post = function (req, res, next) {
 
                 if (!token) return next(new ProvidingTokenError());
 
-                res.status(200).json({
+                res.status(HTTP_STATUS_OK).json({
                     error: false,
                     token: generateToken(userInfo),
                     user: userInfo

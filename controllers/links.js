@@ -1,10 +1,8 @@
 "use strict";
 
-var getOptionRemove = require("../helpers").getOptionRemove;
+var getFilterEditData = require("../helpers").getFilterEditData;
 
 const Link = require('../models/link.schema');
-
-const PARAM_ID = PARAM.PARAM_ID_LINK;
 
 /* Links page. */
 exports.links = {};
@@ -16,18 +14,45 @@ exports.links.get = function (req, res, next) {
         .skip(req.options.pagination.skip)
         .exec(function (err, links) {
             if (err) return next(new DatabaseFindError());
-            res.json({data: links});
+            res.status(HTTP_STATUS_OK).json({data: links});
         });
 };
 
 exports.links.post = function (req, res, next) {
     //TODO : Links - Create link
-    return next(new NotImplementedError("Create a new link"));
+    next(new NotImplementedError("Create a new link"));
 };
 
 exports.links.put = function (req, res, next) {
-    //TODO : Links - Add Bulk update
-    return next(new NotImplementedError("Bulk update of links"));
+    const links = req.body.data;
+    var linksUpdated = [];
+    Async.eachOf(links, function (link, key, callback) {
+        const filterUpdate = getFilterEditData(link._id, req.decoded);
+        Link
+            .findOneAndUpdate(filterUpdate, link, {new: true}, function (err, linkUpdated) {
+                if (err) return callback(err);
+                if (linkUpdated) linksUpdated.push(linkUpdated);
+                callback();
+            });
+    }, function (err) {
+        if (err && linksUpdated.length === 0) return next(new DatabaseUpdateError());
+        if (err && linksUpdated.length > 0) {
+            return res
+                .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
+                .json({
+                    error: true,
+                    message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                    data: linksUpdated
+                });
+        }
+
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                data: linksUpdated
+            });
+    });
 };
 
 exports.links.delete = function (req, res, next) {
@@ -35,7 +60,7 @@ exports.links.delete = function (req, res, next) {
         .remove()
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };
 
@@ -43,28 +68,30 @@ exports.links.delete = function (req, res, next) {
 exports.link = {};
 exports.link.get = function (req, res, next) {
     Link
-        .findById(req.params[PARAM_ID])
+        .findById(req.params[PARAM_ID_LINK])
         .exec(function (err, link) {
             if (err) return next(new DatabaseFindError());
-            res.json({data: link});
+            if (!link) return next(new NotFoundError(MODEL_NAME_LINK));
+            res.status(HTTP_STATUS_OK).json({data: link});
         });
 };
 
-exports.link.post = function (req, res, next) {
-    return next(new NotFoundError());
-};
-
 exports.link.put = function (req, res, next) {
-    //TODO : Link - Update link
-    return next(new NotImplementedError("Update details of link " + req.params[PARAM_ID]));
+    var filterUpdate = getFilterEditData(req.params[PARAM_ID_LINK], req.decoded);
+    Link
+        .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, link) {
+            if (err) return next(new DatabaseUpdateError());
+            if (!link) return next(new NotFoundError(MODEL_NAME_LINK));
+            res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_UPDATED, data: link});
+        });
 };
 
 exports.link.delete = function (req, res, next) {
-    var optionRemove = getOptionRemove(req.params[PARAM_ID], req.decoded);
+    var filterRemove = getFilterEditData(req.params[PARAM_ID_LINK], req.decoded);
     Link
-        .remove(optionRemove)
-        .exec(function (err, removed) {
+        .findOneAndRemove(filterRemove, function (err, link) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            if (!link) return next(new NotFoundError(MODEL_NAME_LINK));
+            res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_DELETED, data: link});
         });
 };

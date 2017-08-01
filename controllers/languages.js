@@ -1,10 +1,8 @@
 "use strict";
 
-var getOptionRemove = require("../helpers").getOptionRemove;
+var getFilterEditData = require("../helpers").getFilterEditData;
 
 const Language = require('../models/language.schema');
-
-const PARAM_ID = PARAM.PARAM_ID_LANGUAGE;
 
 /* Languages page. */
 exports.languages = {};
@@ -16,18 +14,45 @@ exports.languages.get = function (req, res, next) {
         .skip(req.options.pagination.skip)
         .exec(function (err, languages) {
             if (err) return next(new DatabaseFindError());
-            res.json({data: languages});
+            res.status(HTTP_STATUS_OK).json({data: languages});
         });
 };
 
 exports.languages.post = function (req, res, next) {
     //TODO : Languages - Create language
-    return next(new NotImplementedError("Create a new Language"));
+    next(new NotImplementedError("Create a new Language"));
 };
 
 exports.languages.put = function (req, res, next) {
-    //TODO : Languages - Add Bulk update
-    return next(new NotImplementedError("Bulk update of languages"));
+    const languages = req.body.data;
+    var languagesUpdated = [];
+    Async.eachOf(languages, function (language, key, callback) {
+        const filterUpdate = getFilterEditData(language._id, req.decoded);
+        Language
+            .findOneAndUpdate(filterUpdate, language, {new: true}, function (err, languageUpdated) {
+                if (err) return callback(err);
+                if (languageUpdated) languagesUpdated.push(languageUpdated);
+                callback();
+            });
+    }, function (err) {
+        if (err && languagesUpdated.length === 0) return next(new DatabaseUpdateError());
+        if (err && languagesUpdated.length > 0) {
+            return res
+                .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
+                .json({
+                    error: true,
+                    message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                    data: languagesUpdated
+                });
+        }
+
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                data: languagesUpdated
+            });
+    });
 };
 
 exports.languages.delete = function (req, res, next) {
@@ -35,7 +60,7 @@ exports.languages.delete = function (req, res, next) {
         .remove()
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };
 
@@ -43,28 +68,30 @@ exports.languages.delete = function (req, res, next) {
 exports.language = {};
 exports.language.get = function (req, res, next) {
     Language
-        .findById(req.params[PARAM_ID])
+        .findById(req.params[PARAM_ID_LANGUAGE])
         .exec(function (err, language) {
             if (err) return next(new DatabaseFindError());
-            res.json({data: language});
+            if (!language) return next(new NotFoundError(MODEL_NAME_LANGUAGE));
+            res.status(HTTP_STATUS_OK).json({data: language});
         });
 };
 
-exports.language.post = function (req, res, next) {
-    return next(new NotFoundError());
-};
-
 exports.language.put = function (req, res, next) {
-    //TODO : Language - Update language
-    return next(new NotImplementedError("Update details of language " + req.params[PARAM_ID]));
+    var filterUpdate = getFilterEditData(req.params[PARAM_ID_LANGUAGE], req.decoded);
+    Language
+        .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, language) {
+            if (err) return next(new DatabaseUpdateError());
+            if (!language) return next(new NotFoundError(MODEL_NAME_LANGUAGE));
+            res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_UPDATED, data: language});
+        });
 };
 
 exports.language.delete = function (req, res, next) {
-    var optionRemove = getOptionRemove(req.params[PARAM_ID], req.decoded);
+    var filterRemove = getFilterEditData(req.params[PARAM_ID_LANGUAGE], req.decoded);
     Language
-        .remove(optionRemove)
-        .exec(function (err, removed) {
+        .findOneAndRemove(filterRemove, function (err, language) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            if (!language) return next(new NotFoundError(MODEL_NAME_LANGUAGE));
+            res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_DELETED, data: language});
         });
 };

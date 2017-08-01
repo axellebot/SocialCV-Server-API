@@ -11,7 +11,6 @@ module.exports = function (req, res, next) {
     var token = req.body.token || req.query.token || req.headers['x-access-token'];
 
     // forbidden without token
-    console.log("test");
     if (!token) return next(new AccessRestrictedError());
 
     // verifies secret and checks exp

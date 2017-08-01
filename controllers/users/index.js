@@ -1,11 +1,9 @@
 "use strict";
 
-var getOptionRemove = require("../../helpers").getOptionRemove,
-    userCanAccessUserData = require("../../helpers").userCanAccessUserData;
+var getFilterEditData = require("../../helpers").getFilterEditData,
+    userCanEditUserData = require("../../helpers").userCanEditUserData;
 
 const User = require('../../models/user.schema');
-
-const PARAM_ID = PARAM.PARAM_ID_USER;
 
 /* users page. */
 exports.users = {};
@@ -17,18 +15,47 @@ exports.users.get = function (req, res, next) {
         .skip(req.options.pagination.skip)
         .exec(function (err, users) {
             if (err) return next(new DatabaseFindError());
-            res.json({data: users});
+            res.status(HTTP_STATUS_OK).json({data: users});
         });
 };
 
 exports.users.post = function (req, res, next) {
     //TODO : users - Create user
-    return next(new NotImplementedError("Create a new user"));
+    next(new NotImplementedError("Create a new user"));
 };
 
 exports.users.put = function (req, res, next) {
-    //TODO : users - Add Bulk update
-    return next(new NotImplementedError("Bulk update of users"));
+    const users = req.body.data;
+    var usersUpdated = [];
+    Async.eachOf(users, function (user, key, callback) {
+        if (!userCanEditUserData(req.decoded, user._id)) return next(new MissingPrivilegeError());
+
+        const filterUpdate = {_id: user._id};
+        User
+            .findOneAndUpdate(filterUpdate, user, {new: true}, function (err, computingTagUpdated) {
+                if (err) return callback(err);
+                if (computingTagUpdated) usersUpdated.push(computingTagUpdated);
+                callback();
+            });
+    }, function (err) {
+        if (err && usersUpdated.length === 0) return next(new DatabaseUpdateError());
+        if (err && usersUpdated.length > 0) {
+            return res
+                .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
+                .json({
+                    error: true,
+                    message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                    data: usersUpdated
+                });
+        }
+
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                data: usersUpdated
+            });
+    });
 };
 
 exports.users.delete = function (req, res, next) {
@@ -36,7 +63,7 @@ exports.users.delete = function (req, res, next) {
         .remove()
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };
 
@@ -44,37 +71,35 @@ exports.users.delete = function (req, res, next) {
 exports.user = {};
 exports.user.get = function (req, res, next) {
     User
-        .findById(req.params[PARAM_ID])
+        .findById(req.params[PARAM_ID_USER])
         .exec(function (err, user) {
             if (err) return next(new DatabaseFindError());
-            res.json({data: user});
+            if (!user) return next(new NotFoundError(MODEL_NAME_USER));
+            res.status(HTTP_STATUS_OK).json({data: user});
         });
 };
 
-exports.user.post = function (req, res, next) {
-    return next(new NotFoundError());
-};
-
 exports.user.put = function (req, res, next) {
-    if (!userCanAccessUserData(req.decoded, req.params[PARAM_ID])) {
-        return next(new MissingPrivilegeError());
-    }
-    //TODO : user - Update user
-    return next(new NotImplementedError("Update details of user"));
+    const userId = req.params[PARAM_ID_USER];
+    if (!userCanEditUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
+
+    User
+        .findOneAndUpdate({_id: userId}, req.body.data, {returnNewDocument: true}, function (err, user) {
+            if (err) return next(new DatabaseUpdateError());
+            if (!user) return next(new NotFoundError(MODEL_NAME_USER));
+            res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_UPDATED, data: user});
+        });
 };
 
 exports.user.delete = function (req, res, next) {
-    if (!userCanAccessUserData(req.decoded, req.params[PARAM_ID])) {
-        return next(new MissingPrivilegeError());
-    }
-
-    var optionRemove = getOptionRemove(req.params[PARAM_ID], req.decoded);
+    const userId = req.params[PARAM_ID_USER];
+    if (!userCanEditUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
 
     User
-        .remove(optionRemove)
-        .exec(function (err, removed) {
+        .findOneAndRemove({_id: userId}, function (err, user) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            if (!user) return next(new NotFoundError(MODEL_NAME_USER));
+            res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_DELETED, data: user});
         });
 };
 

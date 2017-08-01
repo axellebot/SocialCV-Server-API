@@ -4,16 +4,15 @@ var mongoose = require('../mongoose');
 var Schema = mongoose.Schema;
 
 const uuid = require("../helpers").uuid;
-const COLLECTION_NAME = COLLECTION.COLLECTION_LINK;
 
 var LinkSchema = new Schema({
-    _id: {type: String, default: uuid},
+    _id: {type: String, default: uuid()},
     label: String,
     uri: String,
-    tag: {type: String, ref: COLLECTION.COLLECTION_LINK_TAG},
-    user: {type: String, ref: COLLECTION.COLLECTION_USER}
+    tag: {type: String, ref: MODEL_NAME_LINK_TAG},
+    user: {type: String, ref: MODEL_NAME_USER}
 }, {
     timestamps: true
 });
 
-module.exports = mongoose.model(COLLECTION_NAME, LinkSchema);
+module.exports = mongoose.model(MODEL_NAME_LINK, LinkSchema, COLLECTION_NAME_LINK);

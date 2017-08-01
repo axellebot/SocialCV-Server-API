@@ -1,10 +1,8 @@
 "use strict";
 
-var getOptionRemove = require("../helpers").getOptionRemove;
+var getFilterEditData = require("../helpers").getFilterEditData;
 
 const Profile = require('../models/profile.schema');
-
-const PARAM_ID = PARAM.PARAM_ID_PROFILE;
 
 /* Profiles page. */
 exports.profiles = {};
@@ -16,18 +14,45 @@ exports.profiles.get = function (req, res, next) {
         .skip(req.options.pagination.skip)
         .exec(function (err, profiles) {
             if (err) return next(new DatabaseFindError());
-            res.json({data: profiles});
+            res.status(HTTP_STATUS_OK).json({data: profiles});
         });
 };
 
 exports.profiles.post = function (req, res, next) {
     //TODO : Profiles - Create profile
-    return next(new NotImplementedError("Create a new profile"));
+    next(new NotImplementedError("Create a new profile"));
 };
 
 exports.profiles.put = function (req, res, next) {
-    //TODO : Profiles - Add Bulk update
-    return next(new NotImplementedError("Bulk update of profiles"));
+    const profiles = req.body.data;
+    var profilesUpdated = [];
+    Async.eachOf(profiles, function (profile, key, callback) {
+        const filterUpdate = getFilterEditData(profile._id, req.decoded);
+        Profile
+            .findOneAndUpdate(filterUpdate, profile, {new: true}, function (err, profileUpdated) {
+                if (err) return callback(err);
+                if (profileUpdated) profilesUpdated.push(profileUpdated);
+                callback();
+            });
+    }, function (err) {
+        if (err && profilesUpdated.length === 0) return next(new DatabaseUpdateError());
+        if (err && profilesUpdated.length > 0) {
+            return res
+                .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
+                .json({
+                    error: true,
+                    message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                    data: profilesUpdated
+                });
+        }
+
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                data: profilesUpdated
+            });
+    });
 };
 
 exports.profiles.delete = function (req, res, next) {
@@ -35,7 +60,7 @@ exports.profiles.delete = function (req, res, next) {
         .remove()
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };
 
@@ -43,28 +68,30 @@ exports.profiles.delete = function (req, res, next) {
 exports.profile = {};
 exports.profile.get = function (req, res, next) {
     Profile
-        .findById(req.params[PARAM_ID])
+        .findById(req.params[PARAM_ID_PROFILE])
         .exec(function (err, profile) {
             if (err) return next(new DatabaseFindError());
-            res.json({data: profile});
+            if (!profile) return next(new NotFoundError(MODEL_NAME_PROFILE));
+            res.status(HTTP_STATUS_OK).json({data: profile});
         });
 };
 
-exports.profile.post = function (req, res, next) {
-    return next(new NotFoundError());
-};
-
 exports.profile.put = function (req, res, next) {
-    //TODO : Profile - Update profile
-    return next(new NotImplementedError("Update details of profile " + req.params[PARAM_ID]));
+    var filterUpdate = getFilterEditData(req.params[PARAM_ID_PROFILE], req.decoded);
+    Profile
+        .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, profile) {
+            if (err) return next(new DatabaseUpdateError());
+            if (!profile) return next(new NotFoundError(MODEL_NAME_PROFILE));
+            return res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_UPDATED, data: profile});
+        });
 };
 
 exports.profile.delete = function (req, res, next) {
-    var optionRemove = getOptionRemove(req.params[PARAM_ID], req.decoded);
+    var filterRemove = getFilterEditData(req.params[PARAM_ID_PROFILE], req.decoded);
     Profile
-        .remove(optionRemove)
-        .exec(function (err, removed) {
+        .findOneAndRemove(filterRemove, function (err, profile) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            if (!profile) return next(new NotFoundError(MODEL_NAME_PROFILE));
+            res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_DELETED, data: profile});
         });
 };

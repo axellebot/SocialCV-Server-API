@@ -1,10 +1,8 @@
 "use strict";
 
-var getOptionRemove = require("../helpers").getOptionRemove;
+var getFilterEditData = require("../helpers").getFilterEditData;
 
 const Software = require('../models/software.schema');
-
-const PARAM_ID = PARAM.PARAM_ID_SOFTWARE;
 
 /* Softwares page. */
 exports.softwares = {};
@@ -16,18 +14,45 @@ exports.softwares.get = function (req, res, next) {
         .skip(req.options.pagination.skip)
         .exec(function (err, softwares) {
             if (err) return next(new DatabaseFindError());
-            res.json({data: softwares});
+            res.status(HTTP_STATUS_OK).json({data: softwares});
         });
 };
 
 exports.softwares.post = function (req, res, next) {
     //TODO : Softwares - Create software
-    return next(new NotImplementedError("Create a new software"));
+    next(new NotImplementedError("Create a new software"));
 };
 
 exports.softwares.put = function (req, res, next) {
-    //TODO : Softwares - Add Bulk update
-    return next(new NotImplementedError("Bulk update of softwares"));
+    const softwares = req.body.data;
+    var softwaresUpdated = [];
+    Async.eachOf(softwares, function (software, key, callback) {
+        const filterUpdate = getFilterEditData(software._id, req.decoded);
+        Software
+            .findOneAndUpdate(filterUpdate, software, {new: true}, function (err, softwareUpdated) {
+                if (err) return callback(err);
+                if (softwareUpdated) softwaresUpdated.push(softwareUpdated);
+                callback();
+            });
+    }, function (err) {
+        if (err && softwaresUpdated.length === 0) return next(new DatabaseUpdateError());
+        if (err && softwaresUpdated.length > 0) {
+            return res
+                .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
+                .json({
+                    error: true,
+                    message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                    data: softwaresUpdated
+                });
+        }
+
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                data: softwaresUpdated
+            });
+    });
 };
 
 exports.softwares.delete = function (req, res, next) {
@@ -35,7 +60,7 @@ exports.softwares.delete = function (req, res, next) {
         .remove()
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };
 
@@ -43,28 +68,35 @@ exports.softwares.delete = function (req, res, next) {
 exports.software = {};
 exports.software.get = function (req, res, next) {
     Software
-        .findById(req.params[PARAM_ID])
+        .findById(req.params[PARAM_ID_SOFTWARE])
         .exec(function (err, software) {
             if (err) return next(new DatabaseFindError());
-            res.json({data: software});
+            if (!software) return next(new NotFoundError(MODEL_NAME_SOFTWARE));
+            res.status(HTTP_STATUS_OK).json({data: software});
         });
 };
 
-exports.software.post = function (req, res, next) {
-    return next(new NotFoundError());
-};
-
 exports.software.put = function (req, res, next) {
-    //TODO : Software - Update software
-    return next(new NotImplementedError("Update details of software " + req.params[PARAM_ID]));
+    var filterUpdate = getFilterEditData(req.params[PARAM_ID_SOFTWARE], req.decoded);
+    Software
+        .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, software) {
+            if (err) return next(new DatabaseUpdateError());
+            if (!software) return next(new NotFoundError(MODEL_NAME_SOFTWARE));
+            res
+                .status(HTTP_STATUS_OK)
+                .json({
+                    message: MESSAGE_SUCCESS_RESOURCE_UPDATED,
+                    data: software
+                });
+        });
 };
 
 exports.software.delete = function (req, res, next) {
-    var optionRemove = getOptionRemove(req.params[PARAM_ID], req.decoded);
+    var filterRemove = getFilterEditData(req.params[PARAM_ID_SOFTWARE], req.decoded);
     Software
-        .remove(optionRemove)
-        .exec(function (err, removed) {
+        .findOneAndRemove(filterRemove, function (err, software) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            if (!software) return next(new NotFoundError(MODEL_NAME_SOFTWARE));
+            res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_DELETED, data: software});
         });
 };

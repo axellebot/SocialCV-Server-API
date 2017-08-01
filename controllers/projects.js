@@ -1,10 +1,8 @@
 "use strict";
 
-var getOptionRemove = require("../helpers").getOptionRemove;
+var getFilterEditData = require("../helpers").getFilterEditData;
 
 const Project = require('../models/project.schema');
-
-const PARAM_ID = PARAM.PARAM_ID_PROJECT;
 
 /* Projects page. */
 exports.projects = {};
@@ -16,18 +14,45 @@ exports.projects.get = function (req, res, next) {
         .skip(req.options.pagination.skip)
         .exec(function (err, projects) {
             if (err) return next(new DatabaseFindError());
-            res.json({data: projects});
+            res.status(HTTP_STATUS_OK).json({data: projects});
         });
 };
 
 exports.projects.post = function (req, res, next) {
     //TODO : Projects - Create project
-    return next(new NotImplementedError("Create a new project'"));
+    next(new NotImplementedError("Create a new project'"));
 };
 
 exports.projects.put = function (req, res, next) {
-    //TODO : Projects - Add Bulk update
-    return next(new NotImplementedError("Bulk update of projects"));
+    const projects = req.body.data;
+    var projectsUpdated = [];
+    Async.eachOf(projects, function (project, key, callback) {
+        const filterUpdate = getFilterEditData(project._id, req.decoded);
+        Project
+            .findOneAndUpdate(filterUpdate, project, {new: true}, function (err, projectUpdated) {
+                if (err) return callback(err);
+                if (projectUpdated) projectsUpdated.push(projectUpdated);
+                callback();
+            });
+    }, function (err) {
+        if (err && projectsUpdated.length === 0) return next(new DatabaseUpdateError());
+        if (err && projectsUpdated.length > 0) {
+            return res
+                .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
+                .json({
+                    error: true,
+                    message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                    data: projectsUpdated
+                });
+        }
+
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                data: projectsUpdated
+            });
+    });
 };
 
 exports.projects.delete = function (req, res, next) {
@@ -35,7 +60,7 @@ exports.projects.delete = function (req, res, next) {
         .remove()
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            return res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };
 
@@ -43,28 +68,30 @@ exports.projects.delete = function (req, res, next) {
 exports.project = {};
 exports.project.get = function (req, res, next) {
     Project
-        .findById(req.params[PARAM_ID])
+        .findById(req.params[PARAM_ID_PROJECT])
         .exec(function (err, project) {
             if (err) return next(new DatabaseFindError());
-            res.json({data: project});
+            if (!project) return next(new NotFoundError(MODEL_NAME_PROJECT));
+            res.status(HTTP_STATUS_OK).json({data: project});
         });
 };
 
-exports.project.post = function (req, res, next) {
-    return next(new NotFoundError());
-};
-
 exports.project.put = function (req, res, next) {
-    //TODO : Project - Update project
-    return next(new NotImplementedError("Update details of project " + req.params[PARAM_ID]));
+    var filterUpdate = getFilterEditData(req.params[PARAM_ID_PROJECT], req.decoded);
+    Project
+        .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, project) {
+            if (err) return next(new DatabaseUpdateError());
+            if (!project) return next(new NotFoundError(MODEL_NAME_PROJECT));
+            return res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_UPDATED, data: project});
+        });
 };
 
 exports.project.delete = function (req, res, next) {
-    var optionRemove = getOptionRemove(req.params[PARAM_ID], req.decoded);
+    var filterRemove = getFilterEditData(req.params[PARAM_ID_PROJECT], req.decoded);
     Project
-        .remove(optionRemove)
-        .exec(function (err, removed) {
+        .findOneAndRemove(filterRemove, function (err, project) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            if (!project) return next(new NotFoundError(MODEL_NAME_PROJECT));
+            res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_DELETED, data: project});
         });
 };

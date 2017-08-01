@@ -1,10 +1,8 @@
 "use strict";
 
-var getOptionRemove = require("../helpers").getOptionRemove;
+var getFilterEditData = require("../helpers").getFilterEditData;
 
 const SoftwareTag = require('../models/softwareTag.schema');
-
-const PARAM_ID = PARAM.PARAM_ID_SOFTWARE_TAG;
 
 /* SoftwareTags page. */
 exports.softwareTags = {};
@@ -14,20 +12,47 @@ exports.softwareTags.get = function (req, res, next) {
         .find({})
         .limit(req.options.pagination.limit)
         .skip(req.options.pagination.skip)
-        .exec(function (err, SoftwareTags) {
+        .exec(function (err, softwareTags) {
             if (err) return next(new DatabaseFindError());
-            res.json({data: SoftwareTags});
+            res.status(HTTP_STATUS_OK).json({data: softwareTags});
         });
 };
 
 exports.softwareTags.post = function (req, res, next) {
     //TODO : SoftwareTags - Create softwareTag
-    return next(new NotImplementedError("Create a new softwareTag"));
+    next(new NotImplementedError("Create a new softwareTag"));
 };
 
 exports.softwareTags.put = function (req, res, next) {
-    //TODO : SoftwareTags - Add Bulk update
-    return next(new NotImplementedError("Bulk update of SoftwareTags"));
+    const softwareTags = req.body.data;
+    var softwareTagsUpdated = [];
+    Async.eachOf(softwareTags, function (softwareTag, key, callback) {
+        const filterUpdate = getFilterEditData(softwareTag._id, req.decoded);
+        SoftwareTag
+            .findOneAndUpdate(filterUpdate, softwareTag, {new: true}, function (err, softwareTagUpdated) {
+                if (err) return callback(err);
+                if (softwareTagUpdated) softwareTagsUpdated.push(softwareTagUpdated);
+                callback();
+            });
+    }, function (err) {
+        if (err && softwareTagsUpdated.length === 0) return next(new DatabaseUpdateError());
+        if (err && softwareTagsUpdated.length > 0) {
+            return res
+                .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
+                .json({
+                    error: true,
+                    message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                    data: softwareTagsUpdated
+                });
+        }
+
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                data: softwareTagsUpdated
+            });
+    });
 };
 
 exports.softwareTags.delete = function (req, res, next) {
@@ -35,7 +60,7 @@ exports.softwareTags.delete = function (req, res, next) {
         .remove()
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
         });
 };
 
@@ -43,28 +68,35 @@ exports.softwareTags.delete = function (req, res, next) {
 exports.softwareTag = {};
 exports.softwareTag.get = function (req, res, next) {
     SoftwareTag
-        .findById(req.params[PARAM_ID])
-        .exec(function (err, SoftwareTag) {
+        .findById(req.params[PARAM_ID_SOFTWARE_TAG])
+        .exec(function (err, softwareTag) {
             if (err) return next(new DatabaseFindError());
-            res.json({data: SoftwareTag});
+            if (!softwareTag) return next(new NotFoundError(MODEL_NAME_FRAMEWORK_TAG));
+            res.status(HTTP_STATUS_OK).json({data: softwareTag});
         });
 };
 
-exports.softwareTag.post = function (req, res, next) {
-    return next(new NotFoundError());
-};
-
 exports.softwareTag.put = function (req, res, next) {
-    //TODO : SoftwareTag - Update softwareTag
-    return next(new NotImplementedError("Update details of softwareTag " + req.params[PARAM_ID]));
+    var filterUpdate = getFilterEditData(req.params[PARAM_ID_SOFTWARE_TAG], req.decoded);
+    SoftwareTag
+        .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, softwareTag) {
+            if (err) return next(new DatabaseUpdateError());
+            if (!softwareTag) return next(new NotFoundError(MODEL_NAME_SOFTWARE_TAG));
+            res
+                .status(HTTP_STATUS_OK)
+                .json({
+                    message: MESSAGE_SUCCESS_RESOURCE_UPDATED,
+                    data: softwareTag
+                });
+        });
 };
 
 exports.softwareTag.delete = function (req, res, next) {
-    var optionRemove = getOptionRemove(req.params[PARAM_ID], req.decoded);
+    var filterRemove = getFilterEditData(req.params[PARAM_ID_SOFTWARE_TAG], req.decoded);
     SoftwareTag
-        .remove(optionRemove)
-        .exec(function (err, removed) {
+        .findOneAndRemove(filterRemove, function (err, softwareTag) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(200).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            if (!softwareTag) return next(new NotFoundError(MODEL_NAME_SOFTWARE_TAG));
+            res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_DELETED, data: softwareTag});
         });
 };
