@@ -11,6 +11,7 @@ exports.get = function (req, res, next) {
         .find({user: req.params[PARAM_ID_USER]})
         .limit(req.options.pagination.limit)
         .skip(req.options.pagination.skip)
+        .sort(req.options.sort)
         .exec(function (err, experiences) {
             if (err) return next(new DatabaseFindError());
             res.status(HTTP_STATUS_OK).json({data: experiences});

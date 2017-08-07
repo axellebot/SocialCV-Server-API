@@ -172,3 +172,21 @@ global.WrongPasswordError = class  extends AppError {
         this.status = status || HTTP_STATUS_BAD_REQUEST;
     }
 };
+
+global.WrongOptionPaginationError = class  extends AppError {
+    constructor(message, status) {
+        super();
+        this.name = this.constructor.name;
+        this.message = message || MESSAGE_ERROR_WRONG_OPTION_PAGINATION;
+        this.status = status || HTTP_STATUS_BAD_REQUEST;
+    }
+};
+
+global.WrongOptionSortError = class  extends AppError {
+    constructor(message, status) {
+        super();
+        this.name = this.constructor.name;
+        this.message = message || MESSAGE_ERROR_WRONG_OPTION_SORT;
+        this.status = status || HTTP_STATUS_BAD_REQUEST;
+    }
+};

@@ -116,6 +116,8 @@ global.MESSAGE_ERROR_FAILED_AUTHENTICATION_TOKEN = "Failed to authenticate token
 global.MESSAGE_ERROR_USER_NOT_FOUND = "User not found.";
 global.MESSAGE_ERROR_WRONG_DATA = "Wrong data.";
 global.MESSAGE_ERROR_WRONG_PASSWORD = "Wrong password.";
+global.MESSAGE_ERROR_WRONG_OPTION_SORT = "Wrong sort option.";
+global.MESSAGE_ERROR_WRONG_OPTION_PAGINATION = "Wrong pagination option.";
 global.MESSAGE_ERROR_NOT_FOUND = "Not found.";
 global.MESSAGE_ERROR_NOT_IMPLEMENTED = "Feature not implemented yet.";
 

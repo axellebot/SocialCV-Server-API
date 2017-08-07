@@ -13,6 +13,7 @@ exports.linkTags.get = function (req, res, next) {
         .find({})
         .limit(req.options.pagination.limit)
         .skip(req.options.pagination.skip)
+        .sort(req.options.sort)
         .exec(function (err, linkTags) {
             if (err) return next(new DatabaseFindError());
             res.status(HTTP_STATUS_OK).json({data: linkTags});
