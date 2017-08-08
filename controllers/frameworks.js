@@ -10,9 +10,9 @@ exports.frameworks.get = function (req, res, next) {
     //TODO : Frameworks - Handle options
     Framework
         .find({})
-        .limit(req.options.pagination.limit)
-        .skip(req.options.pagination.skip)
-        .sort(req.options.sort)
+        .limit(req.queryParsed.cursor.limit)
+        .skip(req.queryParsed.cursor.skip)
+        .sort(req.queryParsed.cursor.sort)
         .exec(function (err, frameworks) {
             if (err) return next(new DatabaseFindError());
             res.status(HTTP_STATUS_OK).json({data: frameworks});

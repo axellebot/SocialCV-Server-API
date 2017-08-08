@@ -173,20 +173,20 @@ global.WrongPasswordError = class  extends AppError {
     }
 };
 
-global.WrongOptionPaginationError = class  extends AppError {
+global.WrongQueryCursorPaginationError = class  extends AppError {
     constructor(message, status) {
         super();
         this.name = this.constructor.name;
-        this.message = message || MESSAGE_ERROR_WRONG_OPTION_PAGINATION;
+        this.message = message || MESSAGE_ERROR_WRONG_CURSOR_PAGINATION;
         this.status = status || HTTP_STATUS_BAD_REQUEST;
     }
 };
 
-global.WrongOptionSortError = class  extends AppError {
+global.WrongQueryCursorSortError = class  extends AppError {
     constructor(message, status) {
         super();
         this.name = this.constructor.name;
-        this.message = message || MESSAGE_ERROR_WRONG_OPTION_SORT;
+        this.message = message || MESSAGE_ERROR_WRONG_CURSOR_SORT;
         this.status = status || HTTP_STATUS_BAD_REQUEST;
     }
 };

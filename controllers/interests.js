@@ -10,9 +10,9 @@ exports.interests.get = function (req, res, next) {
     //TODO : Interests - Handle options
     Interest
         .find({})
-        .limit(req.options.pagination.limit)
-        .skip(req.options.pagination.skip)
-        .sort(req.options.sort)
+        .limit(req.queryParsed.cursor.limit)
+        .skip(req.queryParsed.cursor.skip)
+        .sort(req.queryParsed.cursor.sort)
         .exec(function (err, interests) {
             if (err) return next(new DatabaseFindError());
             res.status(HTTP_STATUS_OK).json({data: interests});

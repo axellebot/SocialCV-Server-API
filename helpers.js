@@ -108,3 +108,9 @@ module.exports.compareKeys = function (a, b) {
 
     return (JSON.stringify(aKeys).equals(JSON.stringify(bKeys)));
 };
+
+module.exports.extractJson= function (object,keys) {
+    var newObject = {};
+
+    return;
+};
