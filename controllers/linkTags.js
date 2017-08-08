@@ -11,6 +11,7 @@ exports.linkTags.get = function (req, res, next) {
     //TODO : LinkTags - Handle options
     LinkTag
         .find({})
+        .select(req.queryParsed.select)
         .limit(req.queryParsed.cursor.limit)
         .skip(req.queryParsed.cursor.skip)
         .sort(req.queryParsed.cursor.sort)

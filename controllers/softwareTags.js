@@ -10,6 +10,7 @@ exports.softwareTags.get = function (req, res, next) {
     //TODO : SoftwareTags - Handle options
     SoftwareTag
         .find({})
+        .select(req.queryParsed.select)
         .limit(req.queryParsed.cursor.limit)
         .skip(req.queryParsed.cursor.skip)
         .sort(req.queryParsed.cursor.sort)

@@ -10,6 +10,7 @@ exports.computingTags.get = function (req, res, next) {
     //TODO : ComputingTags - Handle options
     ComputingTag
         .find({})
+        .select(req.queryParsed.select)
         .limit(req.queryParsed.cursor.limit)
         .skip(req.queryParsed.cursor.skip)
         .sort(req.queryParsed.cursor.sort)

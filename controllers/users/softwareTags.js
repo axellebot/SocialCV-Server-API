@@ -9,6 +9,7 @@ exports.get = function (req, res, next) {
     //TODO : SoftwareTags - Handle options
     SoftwareTag
         .find({user: req.params[PARAM_ID_USER]})
+        .select(req.queryParsed.select)
         .limit(req.queryParsed.cursor.limit)
         .skip(req.queryParsed.cursor.skip)
         .sort(req.queryParsed.cursor.sort)

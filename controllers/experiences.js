@@ -10,6 +10,7 @@ exports.experiences.get = function (req, res, next) {
     //TODO : Experiences - Handle options
     Experience
         .find({})
+        .select(req.queryParsed.select)
         .limit(req.queryParsed.cursor.limit)
         .skip(req.queryParsed.cursor.skip)
         .sort(req.queryParsed.cursor.sort)

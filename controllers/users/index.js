@@ -11,6 +11,7 @@ exports.users.get = function (req, res, next) {
     //TODO : users - Handle options
     User
         .find({})
+        .select(req.queryParsed.select)
         .limit(req.queryParsed.cursor.limit)
         .skip(req.queryParsed.cursor.skip)
         .sort(req.queryParsed.cursor.sort)

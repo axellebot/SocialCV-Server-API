@@ -10,6 +10,7 @@ exports.interests.get = function (req, res, next) {
     //TODO : Interests - Handle options
     Interest
         .find({})
+        .select(req.queryParsed.select)
         .limit(req.queryParsed.cursor.limit)
         .skip(req.queryParsed.cursor.skip)
         .sort(req.queryParsed.cursor.sort)
