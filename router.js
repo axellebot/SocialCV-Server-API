@@ -2,13 +2,13 @@
 
 const express = require('express');
 
-const requireRole = require('./middlewares/require/role'),
-    requireBodyData = require('./middlewares/require/bodyData'),
-    requireBodyDataArray = require('./middlewares/require/bodyDataArray'),
-    requireBodyDataObject = require('./middlewares/require/bodyDataObject'),
-    queryCursor = require('./middlewares/query/cursor'),
-    querySelect = require('./middlewares/query/select'),
-    parseQuery = [queryCursor, querySelect];
+const requireRole = require('./middlewares/security/role'),
+    requireBodyData = require('./middlewares/body/data'),
+    requireBodyDataArray = require('./middlewares/body/dataArray'),
+    requireBodyDataObject = require('./middlewares/body/dataObject'),
+    parseQueryCursor = require('./middlewares/query/cursor'),
+    parseQuerySelect = require('./middlewares/query/select'),
+    parseQuery = [parseQueryCursor, parseQuerySelect];
 
 // Controllers
 const

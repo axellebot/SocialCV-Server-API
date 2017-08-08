@@ -1,4 +1,4 @@
-const bodyData = require("./bodyData");
+const bodyData = require("./data");
 
 module.exports = [
     bodyData,
