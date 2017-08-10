@@ -23,8 +23,20 @@ exports.get = function (req, res, next) {
 exports.post = function (req, res, next) {
     const userId = req.params[PARAM_ID_USER];
     if (!userCanEditUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
-    //TODO : OperatingSystems - Create operatingSystem for user
-    next(new NotImplementedError("Create a new operatingSystem for user : " + req.params[PARAM_ID_USER]));
+
+    var operatingSystem = req.body.data;
+    operatingSystem.user = userId;
+    operatingSystem = new OperatingSystem(operatingSystem);
+
+    operatingSystem.save(function (err, operatingSystemSaved) {
+        if (err) return next(new DatabaseCreateError());
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_SUCCESS_RESOURCE_CREATED,
+                data: operatingSystemSaved
+            });
+    });
 };
 
 exports.put = function (req, res, next) {

@@ -24,8 +24,20 @@ exports.get = function (req, res, next) {
 exports.post = function (req, res, next) {
     const userId = req.params[PARAM_ID_USER];
     if (!userCanEditUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
-    //TODO : Interests - Create interest for user
-    next(new NotImplementedError("Create a new interest for user : " + req.params[PARAM_ID_USER]));
+
+    var interest = req.body.data;
+    interest.user = userId;
+    interest = new Interest(interest);
+
+    interest.save(function (err, interestSaved) {
+        if (err) return next(new DatabaseCreateError());
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_SUCCESS_RESOURCE_CREATED,
+                data: interestSaved
+            });
+    });
 };
 
 exports.put = function (req, res, next) {

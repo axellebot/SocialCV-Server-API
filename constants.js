@@ -95,6 +95,7 @@ global.PARAM_ID_USER = "UserId";
 //Messages
 global.MESSAGE_SUCCESS_RESOURCE_DELETED = "Resource deleted.";
 global.MESSAGE_SUCCESS_RESOURCE_UPDATED = "Resource updated.";
+global.MESSAGE_SUCCESS_RESOURCE_CREATED = "Resource created.";
 global.MESSAGE_ERROR_APP = "Error";
 global.MESSAGE_ERROR_RESOURCE_DELETE = "Error deleting resource";
 global.MESSAGE_ERROR_RESOURCE_UPDATE = "Error updating resource";

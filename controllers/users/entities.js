@@ -24,8 +24,20 @@ exports.get = function (req, res, next) {
 exports.post = function (req, res, next) {
     const userId = req.params[PARAM_ID_USER];
     if (!userCanEditUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
-    //TODO : Entities - Create entity for user
-    next(new NotImplementedError("Create a new entity for user : " + req.params[PARAM_ID_USER]));
+
+    var entity = req.body.data;
+    entity.user = userId;
+    entity = new Entity(entity);
+
+    entity.save(function (err, entitySaved) {
+        if (err) return next(new DatabaseCreateError());
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_SUCCESS_RESOURCE_CREATED,
+                data: entitySaved
+            });
+    });
 };
 
 exports.put = function (req, res, next) {

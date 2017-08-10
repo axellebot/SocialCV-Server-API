@@ -24,8 +24,20 @@ exports.get = function (req, res, next) {
 exports.post = function (req, res, next) {
     const userId = req.params[PARAM_ID_USER];
     if (!userCanEditUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
-    //TODO : Profiles - Create profile for user
-    next(new NotImplementedError("Create a new profile for user : " + req.params[PARAM_ID_USER]));
+
+    var profile = req.body.data;
+    profile.user = userId;
+    profile = new Profile(profile);
+
+    profile.save(function (err, profileSaved) {
+        if (err) return next(new DatabaseCreateError());
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_SUCCESS_RESOURCE_CREATED,
+                data: profileSaved
+            });
+    });
 };
 
 exports.put = function (req, res, next) {

@@ -24,8 +24,20 @@ exports.get = function (req, res, next) {
 exports.post = function (req, res, next) {
     const userId = req.params[PARAM_ID_USER];
     if (!userCanEditUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
-    //TODO : LinkTags - Create link for user
-    next(new NotImplementedError("Create a new linkTag for user : " + req.params[PARAM_ID_USER]));
+
+    var linkTag = req.body.data;
+    linkTag.user = userId;
+    linkTag = new LinkTag(linkTag);
+
+    linkTag.save(function (err, linkTagSaved) {
+        if (err) return next(new DatabaseCreateError());
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_SUCCESS_RESOURCE_CREATED,
+                data: linkTagSaved
+            });
+    });
 };
 
 exports.put = function (req, res, next) {

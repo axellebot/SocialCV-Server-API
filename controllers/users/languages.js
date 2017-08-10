@@ -24,8 +24,20 @@ exports.get = function (req, res, next) {
 exports.post = function (req, res, next) {
     const userId = req.params[PARAM_ID_USER];
     if (!userCanEditUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
-    //TODO : Languages - Create language for user
-    next(new NotImplementedError("Create a new language for user : " + req.params[PARAM_ID_USER]));
+
+    var language = req.body.data;
+    language.user = userId;
+    language = new Language(language);
+
+    language.save(function (err, languageSaved) {
+        if (err) return next(new DatabaseCreateError());
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_SUCCESS_RESOURCE_CREATED,
+                data: languageSaved
+            });
+    });
 };
 
 exports.put = function (req, res, next) {
