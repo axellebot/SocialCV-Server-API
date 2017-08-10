@@ -7,16 +7,18 @@ const Education = require('../models/education.schema');
 /* Educations page. */
 exports.educations = {};
 exports.educations.get = function (req, res, next) {
-    //TODO : Educations - Handle options
     Education
-        .find({})
-        .limit(req.options.pagination.limit)
-        .skip(req.options.pagination.skip)
+        .find(req.queryParsed.filter)
+        .select(req.queryParsed.select)
+        .limit(req.queryParsed.cursor.limit)
+        .skip(req.queryParsed.cursor.skip)
+        .sort(req.queryParsed.cursor.sort)
         .exec(function (err, educations) {
             if (err) return next(new DatabaseFindError());
             res.status(HTTP_STATUS_OK).json({data: educations});
         });
 };
+
 exports.educations.post = function (req, res, next) {
     //TODO : Educations - Create education
     next(new NotImplementedError('Create a new education'));

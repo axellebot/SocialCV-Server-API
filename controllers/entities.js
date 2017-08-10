@@ -7,11 +7,12 @@ const Entity = require('../models/entity.schema');
 /* Entities page. */
 exports.entities = {};
 exports.entities.get = function (req, res, next) {
-    //TODO : Entities - Handle options
     Entity
-        .find({})
-        .limit(req.options.pagination.limit)
-        .skip(req.options.pagination.skip)
+        .find(req.queryParsed.filter)
+        .select(req.queryParsed.select)
+        .limit(req.queryParsed.cursor.limit)
+        .skip(req.queryParsed.cursor.skip)
+        .sort(req.queryParsed.cursor.sort)
         .exec(function (err, entities) {
             if (err) return next(new DatabaseFindError());
             res.status(HTTP_STATUS_OK).json({data: entities});

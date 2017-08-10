@@ -6,11 +6,15 @@ const ProjectTag = require('../../models/projectTag.schema');
 
 /* ProjectTags page. */
 exports.get = function (req, res, next) {
-    //TODO : ProjectTags - Handle options
+    var filter = req.queryParsed.filter || {};
+    filter.user = req.params[PARAM_ID_USER];
+
     ProjectTag
-        .find({user: req.params[PARAM_ID_USER]})
-        .limit(req.options.pagination.limit)
-        .skip(req.options.pagination.skip)
+        .find(filter)
+        .select(req.queryParsed.select)
+        .limit(req.queryParsed.cursor.limit)
+        .skip(req.queryParsed.cursor.skip)
+        .sort(req.queryParsed.cursor.sort)
         .exec(function (err, projectTags) {
             if (err) return next(new DatabaseFindError());
             res.status(HTTP_STATUS_OK).json({data: projectTags});

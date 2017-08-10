@@ -7,11 +7,12 @@ const Interest = require('../models/interest.schema');
 /* Interests page. */
 exports.interests = {};
 exports.interests.get = function (req, res, next) {
-    //TODO : Interests - Handle options
     Interest
-        .find({})
-        .limit(req.options.pagination.limit)
-        .skip(req.options.pagination.skip)
+        .find(req.queryParsed.filter)
+        .select(req.queryParsed.select)
+        .limit(req.queryParsed.cursor.limit)
+        .skip(req.queryParsed.cursor.skip)
+        .sort(req.queryParsed.cursor.sort)
         .exec(function (err, interests) {
             if (err) return next(new DatabaseFindError());
             res.status(HTTP_STATUS_OK).json({data: interests});

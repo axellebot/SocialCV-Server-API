@@ -6,11 +6,15 @@ const ProgrammingLanguage = require('../../models/programmingLanguage.schema');
 
 /* ProgrammingLanguages page. */
 exports.get = function (req, res, next) {
-    //TODO : ProgrammingLanguages - Handle options
+    var filter = req.queryParsed.filter || {};
+    filter.user = req.params[PARAM_ID_USER];
+
     ProgrammingLanguage
-        .find({user: req.params[PARAM_ID_USER]})
-        .limit(req.options.pagination.limit)
-        .skip(req.options.pagination.skip)
+        .find(filter)
+        .select(req.queryParsed.select)
+        .limit(req.queryParsed.cursor.limit)
+        .skip(req.queryParsed.cursor.skip)
+        .sort(req.queryParsed.cursor.sort)
         .exec(function (err, programmingLanguages) {
             if (err) return next(new DatabaseFindError());
             res.status(HTTP_STATUS_OK).json({data: programmingLanguages});

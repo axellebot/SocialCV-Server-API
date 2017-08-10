@@ -18,3 +18,7 @@ Fill in the `config\production.json`
 ```shell
 $ mongod
 ```
+
+- Import JSON
+Don't forget to use the Date type for date string with `ISODate(<String>)` function
+Use timestamp fields (create, update, ...)

@@ -172,3 +172,31 @@ global.WrongPasswordError = class  extends AppError {
         this.status = status || HTTP_STATUS_BAD_REQUEST;
     }
 };
+
+global.WrongQueryCursorPaginationError = class  extends AppError {
+    constructor(message, status) {
+        super();
+        this.name = this.constructor.name;
+        this.message = message || MESSAGE_ERROR_WRONG_CURSOR_PAGINATION;
+        this.status = status || HTTP_STATUS_BAD_REQUEST;
+    }
+};
+
+global.WrongQueryCursorSortError = class  extends AppError {
+    constructor(message, status) {
+        super();
+        this.name = this.constructor.name;
+        this.message = message || MESSAGE_ERROR_WRONG_CURSOR_SORT;
+        this.status = status || HTTP_STATUS_BAD_REQUEST;
+    }
+};
+
+global.WrongQueryQueryError = class  extends AppError {
+    constructor(message, status) {
+        super();
+        this.name = this.constructor.name;
+        this.message = message || MESSAGE_ERROR_WRONG_QUERY;
+        this.status = status || HTTP_STATUS_BAD_REQUEST;
+    }
+};
+

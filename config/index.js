@@ -14,18 +14,18 @@
  */
 function requiredProcessEnv() {
     console.log("Requiring Process Env");
-    if(process.env.NODE_ENV === "prod") {
+    if (process.env.NODE_ENV === "prod") {
         process.env.NODE_ENV = "production";
     }
 
-    if(process.env.NODE_ENV === "test") {
+    if (process.env.NODE_ENV === "test") {
         process.env.NODE_ENV = "testing";
     }
 
-    if(!process.env.NODE_ENV) {
+    if (!process.env.NODE_ENV) {
         process.env.NODE_ENV = "testing"
     }
-
+    console.log(process.env.NODE_ENV, "env required");
     return process.env.NODE_ENV;
 }
 

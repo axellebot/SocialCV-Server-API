@@ -7,11 +7,12 @@ const Software = require('../models/software.schema');
 /* Softwares page. */
 exports.softwares = {};
 exports.softwares.get = function (req, res, next) {
-    //TODO : Softwares - Handle options
     Software
-        .find({})
-        .limit(req.options.pagination.limit)
-        .skip(req.options.pagination.skip)
+        .find(req.queryParsed.filter)
+        .select(req.queryParsed.select)
+        .limit(req.queryParsed.cursor.limit)
+        .skip(req.queryParsed.cursor.skip)
+        .sort(req.queryParsed.cursor.sort)
         .exec(function (err, softwares) {
             if (err) return next(new DatabaseFindError());
             res.status(HTTP_STATUS_OK).json({data: softwares});

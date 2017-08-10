@@ -7,11 +7,12 @@ const Project = require('../models/project.schema');
 /* Projects page. */
 exports.projects = {};
 exports.projects.get = function (req, res, next) {
-    //TODO : Projects - Handle options
     Project
-        .find({})
-        .limit(req.options.pagination.limit)
-        .skip(req.options.pagination.skip)
+        .find(req.queryParsed.filter)
+        .select(req.queryParsed.select)
+        .limit(req.queryParsed.cursor.limit)
+        .skip(req.queryParsed.cursor.skip)
+        .sort(req.queryParsed.cursor.sort)
         .exec(function (err, projects) {
             if (err) return next(new DatabaseFindError());
             res.status(HTTP_STATUS_OK).json({data: projects});

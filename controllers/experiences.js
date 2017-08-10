@@ -7,11 +7,12 @@ const Experience = require('../models/experience.schema');
 /* Experiences page. */
 exports.experiences = {};
 exports.experiences.get = function (req, res, next) {
-    //TODO : Experiences - Handle options
     Experience
-        .find({})
-        .limit(req.options.pagination.limit)
-        .skip(req.options.pagination.skip)
+        .find(req.queryParsed.filter)
+        .select(req.queryParsed.select)
+        .limit(req.queryParsed.cursor.limit)
+        .skip(req.queryParsed.cursor.skip)
+        .sort(req.queryParsed.cursor.sort)
         .exec(function (err, experiences) {
             if (err) return next(new DatabaseFindError());
             res.status(HTTP_STATUS_OK).json({data: experiences});
