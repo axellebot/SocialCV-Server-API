@@ -53,7 +53,7 @@ exports.users.put = function (req, res, next) {
         res
             .status(HTTP_STATUS_OK)
             .json({
-                message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                message: MESSAGE_SUCCESS_RESOURCE_UPDATED,
                 data: usersUpdated
             });
     });
