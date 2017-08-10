@@ -7,9 +7,8 @@ const SoftwareFramework = require('../models/softwareFramework.schema');
 /* SoftwareFrameworks page. */
 exports.softwareFrameworks = {};
 exports.softwareFrameworks.get = function (req, res, next) {
-    //TODO : SoftwareFrameworks - Handle options
     SoftwareFramework
-        .find({})
+        .find(req.queryParsed.filter)
         .select(req.queryParsed.select)
         .limit(req.queryParsed.cursor.limit)
         .skip(req.queryParsed.cursor.skip)

@@ -8,7 +8,8 @@ const requireRole = require('./middlewares/security/role'),
     requireBodyDataObject = require('./middlewares/body/dataObject'),
     parseQueryCursor = require('./middlewares/query/cursor'),
     parseQuerySelect = require('./middlewares/query/select'),
-    parseQuery = [parseQueryCursor, parseQuerySelect];
+    parseQueryFilter = require('./middlewares/query/filter'),
+    parseQuery = [parseQueryCursor, parseQuerySelect, parseQueryFilter];
 
 // Controllers
 const

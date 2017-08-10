@@ -7,9 +7,8 @@ const SoftwareTag = require('../models/softwareTag.schema');
 /* SoftwareTags page. */
 exports.softwareTags = {};
 exports.softwareTags.get = function (req, res, next) {
-    //TODO : SoftwareTags - Handle options
     SoftwareTag
-        .find({})
+        .find(req.queryParsed.filter)
         .select(req.queryParsed.select)
         .limit(req.queryParsed.cursor.limit)
         .skip(req.queryParsed.cursor.skip)

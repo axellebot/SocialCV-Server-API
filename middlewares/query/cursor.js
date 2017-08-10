@@ -6,8 +6,8 @@
  * @param next
  */
 module.exports = function (req, res, next) {
-    if (!req.queryParsed) req.queryParsed = {};
-    if (!req.queryParsed.cursor) req.queryParsed.cursor = {};
+    req.queryParsed = req.queryParsed || {};
+    req.queryParsed.cursor = req.queryParsed.cursor || {};
 
     //Pagination
     const page = req.query.page, limit = req.query.limit;

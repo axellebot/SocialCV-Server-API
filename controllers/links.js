@@ -7,9 +7,8 @@ const Link = require('../models/link.schema');
 /* Links page. */
 exports.links = {};
 exports.links.get = function (req, res, next) {
-    //TODO : Links - Handle options
     Link
-        .find({})
+        .find(req.queryParsed.filter)
         .select(req.queryParsed.select)
         .limit(req.queryParsed.cursor.limit)
         .skip(req.queryParsed.cursor.skip)

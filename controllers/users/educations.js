@@ -6,9 +6,11 @@ const Education = require('../../models/education.schema');
 
 /* Educations page. */
 exports.get = function (req, res, next) {
-    //TODO : Educations - Handle options
+    var filter = req.queryParsed.filter || {};
+    filter.user = req.params[PARAM_ID_USER];
+
     Education
-        .find({user: req.params[PARAM_ID_USER]})
+        .find(filter)
         .select(req.queryParsed.select)
         .limit(req.queryParsed.cursor.limit)
         .skip(req.queryParsed.cursor.skip)

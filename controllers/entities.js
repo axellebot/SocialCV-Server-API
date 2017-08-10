@@ -7,9 +7,8 @@ const Entity = require('../models/entity.schema');
 /* Entities page. */
 exports.entities = {};
 exports.entities.get = function (req, res, next) {
-    //TODO : Entities - Handle options
     Entity
-        .find({})
+        .find(req.queryParsed.filter)
         .select(req.queryParsed.select)
         .limit(req.queryParsed.cursor.limit)
         .skip(req.queryParsed.cursor.skip)

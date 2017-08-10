@@ -8,9 +8,8 @@ const LinkTag = require('../models/linkTag.schema');
 exports.linkTags = {};
 
 exports.linkTags.get = function (req, res, next) {
-    //TODO : LinkTags - Handle options
     LinkTag
-        .find({})
+        .find(req.queryParsed.filter)
         .select(req.queryParsed.select)
         .limit(req.queryParsed.cursor.limit)
         .skip(req.queryParsed.cursor.skip)

@@ -7,9 +7,8 @@ const Framework = require('../models/framework.schema');
 /* Frameworks page. */
 exports.frameworks = {};
 exports.frameworks.get = function (req, res, next) {
-    //TODO : Frameworks - Handle options
     Framework
-        .find({})
+        .find(req.queryParsed.filter)
         .select(req.queryParsed.select)
         .limit(req.queryParsed.cursor.limit)
         .skip(req.queryParsed.cursor.skip)

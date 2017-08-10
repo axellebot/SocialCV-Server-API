@@ -6,9 +6,11 @@ const Experience = require('../../models/experience.schema');
 
 /* Experiences page. */
 exports.get = function (req, res, next) {
-    //TODO : Experiences - Handle options
+    var filter = req.queryParsed.filter || {};
+    filter.user = req.params[PARAM_ID_USER];
+
     Experience
-        .find({user: req.params[PARAM_ID_USER]})
+        .find(filter)
         .select(req.queryParsed.select)
         .limit(req.queryParsed.cursor.limit)
         .skip(req.queryParsed.cursor.skip)

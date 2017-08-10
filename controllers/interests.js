@@ -7,9 +7,8 @@ const Interest = require('../models/interest.schema');
 /* Interests page. */
 exports.interests = {};
 exports.interests.get = function (req, res, next) {
-    //TODO : Interests - Handle options
     Interest
-        .find({})
+        .find(req.queryParsed.filter)
         .select(req.queryParsed.select)
         .limit(req.queryParsed.cursor.limit)
         .skip(req.queryParsed.cursor.skip)

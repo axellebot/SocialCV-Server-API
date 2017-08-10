@@ -7,9 +7,8 @@ const Profile = require('../models/profile.schema');
 /* Profiles page. */
 exports.profiles = {};
 exports.profiles.get = function (req, res, next) {
-    //TODO : Profiles - Handle options
     Profile
-        .find({})
+        .find(req.queryParsed.filter)
         .select(req.queryParsed.select)
         .limit(req.queryParsed.cursor.limit)
         .skip(req.queryParsed.cursor.skip)

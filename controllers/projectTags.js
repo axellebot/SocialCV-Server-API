@@ -7,9 +7,8 @@ const ProjectTag = require('../models/projectTag.schema');
 /* ProjectTags page. */
 exports.projectTags = {};
 exports.projectTags.get = function (req, res, next) {
-    //TODO : ProjectTags - Handle options
     ProjectTag
-        .find({})
+        .find(req.queryParsed.filter)
         .select(req.queryParsed.select)
         .limit(req.queryParsed.cursor.limit)
         .skip(req.queryParsed.cursor.skip)

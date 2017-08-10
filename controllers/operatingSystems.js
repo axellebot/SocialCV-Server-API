@@ -7,9 +7,8 @@ const OperatingSystem = require('../models/operatingSystem.schema');
 /* OperatingSystems page. */
 exports.operatingSystems = {};
 exports.operatingSystems.get = function (req, res, next) {
-    //TODO : OperatingSystems - Handle options
     OperatingSystem
-        .find({})
+        .find(req.queryParsed.filter)
         .select(req.queryParsed.select)
         .limit(req.queryParsed.cursor.limit)
         .skip(req.queryParsed.cursor.skip)

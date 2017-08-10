@@ -7,9 +7,8 @@ const ProgrammingLanguage = require('../models/programmingLanguage.schema');
 /* ProgrammingLanguages page. */
 exports.programmingLanguages = {};
 exports.programmingLanguages.get = function (req, res, next) {
-    //TODO : ProgrammingLanguages - Handle options
     ProgrammingLanguage
-        .find({})
+        .find(req.queryParsed.filter)
         .select(req.queryParsed.select)
         .limit(req.queryParsed.cursor.limit)
         .skip(req.queryParsed.cursor.skip)

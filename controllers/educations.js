@@ -7,9 +7,8 @@ const Education = require('../models/education.schema');
 /* Educations page. */
 exports.educations = {};
 exports.educations.get = function (req, res, next) {
-    //TODO : Educations - Handle options
     Education
-        .find({})
+        .find(req.queryParsed.filter)
         .select(req.queryParsed.select)
         .limit(req.queryParsed.cursor.limit)
         .skip(req.queryParsed.cursor.skip)

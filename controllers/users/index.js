@@ -8,9 +8,8 @@ const User = require('../../models/user.schema');
 /* users page. */
 exports.users = {};
 exports.users.get = function (req, res, next) {
-    //TODO : users - Handle options
     User
-        .find({})
+        .find(req.queryParsed.filter)
         .select(req.queryParsed.select)
         .limit(req.queryParsed.cursor.limit)
         .skip(req.queryParsed.cursor.skip)

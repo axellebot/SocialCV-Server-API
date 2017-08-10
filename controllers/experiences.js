@@ -7,9 +7,8 @@ const Experience = require('../models/experience.schema');
 /* Experiences page. */
 exports.experiences = {};
 exports.experiences.get = function (req, res, next) {
-    //TODO : Experiences - Handle options
     Experience
-        .find({})
+        .find(req.queryParsed.filter)
         .select(req.queryParsed.select)
         .limit(req.queryParsed.cursor.limit)
         .skip(req.queryParsed.cursor.skip)

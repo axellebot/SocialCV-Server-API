@@ -7,9 +7,8 @@ const Language = require('../models/language.schema');
 /* Languages page. */
 exports.languages = {};
 exports.languages.get = function (req, res, next) {
-    //TODO : Languages - Handle options
     Language
-        .find({})
+        .find(req.queryParsed.filter)
         .select(req.queryParsed.select)
         .limit(req.queryParsed.cursor.limit)
         .skip(req.queryParsed.cursor.skip)

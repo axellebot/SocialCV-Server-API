@@ -7,9 +7,8 @@ const Software = require('../models/software.schema');
 /* Softwares page. */
 exports.softwares = {};
 exports.softwares.get = function (req, res, next) {
-    //TODO : Softwares - Handle options
     Software
-        .find({})
+        .find(req.queryParsed.filter)
         .select(req.queryParsed.select)
         .limit(req.queryParsed.cursor.limit)
         .skip(req.queryParsed.cursor.skip)
