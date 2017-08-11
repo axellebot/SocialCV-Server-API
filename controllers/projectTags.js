@@ -20,15 +20,26 @@ exports.projectTags.get = function (req, res, next) {
 };
 
 exports.projectTags.post = function (req, res, next) {
-    //TODO : ProjectTags - Create projectTag
-    next(new NotImplementedError("Create a new projectTag"));
+    var projectTag = req.body.data;
+    if (getRoleRank(req.loggedUser.role) < getRoleRank(ROLE_ADMIN)) projectTag.user = req.loggedUser._id;
+    projectTag = new ProjectTag(projectTag);
+
+    projectTag.save(function (err, projectTagSaved) {
+        if (err) return next(new DatabaseCreateError(err.message)());
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_SUCCESS_RESOURCE_CREATED,
+                data: projectTagSaved
+            });
+    });
 };
 
 exports.projectTags.put = function (req, res, next) {
     const projectTags = req.body.data;
     var projectTagsUpdated = [];
     Async.eachOf(projectTags, function (projectTag, key, callback) {
-        const filterUpdate = getFilterEditData(projectTag._id, req.decoded);
+        const filterUpdate = getFilterEditData(projectTag._id, req.loggedUser);
         ProjectTag
             .findOneAndUpdate(filterUpdate, projectTag, {new: true}, function (err, projectTagUpdated) {
                 if (err) return callback(err);
@@ -50,7 +61,7 @@ exports.projectTags.put = function (req, res, next) {
         res
             .status(HTTP_STATUS_OK)
             .json({
-                message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                message: MESSAGE_SUCCESS_RESOURCE_UPDATED,
                 data: projectTagsUpdated
             });
     });
@@ -78,7 +89,7 @@ exports.projectTag.get = function (req, res, next) {
 };
 
 exports.projectTag.put = function (req, res, next) {
-    var filterUpdate = getFilterEditData(req.params[PARAM_ID_PROJECT_TAG], req.decoded);
+    var filterUpdate = getFilterEditData(req.params[PARAM_ID_PROJECT_TAG], req.loggedUser);
     ProjectTag
         .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, projectTag) {
             if (err) return next(new DatabaseUpdateError());
@@ -88,7 +99,7 @@ exports.projectTag.put = function (req, res, next) {
 };
 
 exports.projectTag.delete = function (req, res, next) {
-    var filterRemove = getFilterEditData(req.params[PARAM_ID_PROJECT_TAG], req.decoded);
+    var filterRemove = getFilterEditData(req.params[PARAM_ID_PROJECT_TAG], req.loggedUser);
     ProjectTag
         .findOneAndRemove(filterRemove, function (err, projectTag) {
             if (err) return next(new DatabaseRemoveError());

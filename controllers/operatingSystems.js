@@ -20,15 +20,26 @@ exports.operatingSystems.get = function (req, res, next) {
 };
 
 exports.operatingSystems.post = function (req, res, next) {
-    //TODO : OperatingSystems - Create operatingSystem
-    next(new NotImplementedError("Create a new operatingSystem"));
+    var operatingSystem = req.body.data;
+    if (getRoleRank(req.loggedUser.role) < getRoleRank(ROLE_ADMIN)) operatingSystem.user = req.loggedUser._id;
+    operatingSystem = new OperatingSystem(operatingSystem);
+
+    operatingSystem.save(function (err, operatingSystemSaved) {
+        if (err) return next(new DatabaseCreateError(err.message)());
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_SUCCESS_RESOURCE_CREATED,
+                data: operatingSystemSaved
+            });
+    });
 };
 
 exports.operatingSystems.put = function (req, res, next) {
     const operatingSystems = req.body.data;
     var operatingSystemsUpdated = [];
     Async.eachOf(operatingSystems, function (operatingSystem, key, callback) {
-        const filterUpdate = getFilterEditData(operatingSystem._id, req.decoded);
+        const filterUpdate = getFilterEditData(operatingSystem._id, req.loggedUser);
         OperatingSystem
             .findOneAndUpdate(filterUpdate, operatingSystem, {new: true}, function (err, operatingSystemUpdated) {
                 if (err) return callback(err);
@@ -50,7 +61,7 @@ exports.operatingSystems.put = function (req, res, next) {
         res
             .status(HTTP_STATUS_OK)
             .json({
-                message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                message: MESSAGE_SUCCESS_RESOURCE_UPDATED,
                 data: operatingSystemsUpdated
             });
     });
@@ -78,7 +89,7 @@ exports.operatingSystem.get = function (req, res, next) {
 };
 
 exports.operatingSystem.put = function (req, res, next) {
-    var filterUpdate = getFilterEditData(req.params[PARAM_ID_OPERATING_SYSTEM], req.decoded);
+    var filterUpdate = getFilterEditData(req.params[PARAM_ID_OPERATING_SYSTEM], req.loggedUser);
     OperatingSystem
         .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, operatingSystem) {
             if (err) return next(new DatabaseUpdateError());
@@ -88,7 +99,7 @@ exports.operatingSystem.put = function (req, res, next) {
 };
 
 exports.operatingSystem.delete = function (req, res, next) {
-    var filterRemove = getFilterEditData(req.params[PARAM_ID_OPERATING_SYSTEM], req.decoded);
+    var filterRemove = getFilterEditData(req.params[PARAM_ID_OPERATING_SYSTEM], req.loggedUser);
     OperatingSystem
         .findOneAndRemove(filterRemove, function (err, operatingSystem) {
             if (err) return next(new DatabaseRemoveError());

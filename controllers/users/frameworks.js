@@ -23,14 +23,26 @@ exports.get = function (req, res, next) {
 
 exports.post = function (req, res, next) {
     const userId = req.params[PARAM_ID_USER];
-    if (!userCanEditUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
-    //TODO : Frameworks - Create framework for user
-    next(new NotImplementedError("Create a new framework for user : " + req.params[PARAM_ID_USER]));
+    if (!userCanEditUserData(req.loggedUser, userId)) return next(new MissingPrivilegeError());
+
+    var framework = req.body.data;
+    framework.user = userId;
+    framework = new Framework(framework);
+
+    framework.save(function (err, frameworkSaved) {
+        if (err) return next(new DatabaseCreateError(err.message)());
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_SUCCESS_RESOURCE_CREATED,
+                data: frameworkSaved
+            });
+    });
 };
 
 exports.put = function (req, res, next) {
     const userId = req.params[PARAM_ID_USER];
-    if (!userCanEditUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
+    if (!userCanEditUserData(req.loggedUser, userId)) return next(new MissingPrivilegeError());
     const frameworks = req.body.data;
     var frameworksUpdated = [];
     Async.eachOf(frameworks, function (framework, key, callback) {
@@ -58,7 +70,7 @@ exports.put = function (req, res, next) {
         res
             .status(HTTP_STATUS_OK)
             .json({
-                message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                message: MESSAGE_SUCCESS_RESOURCE_UPDATED,
                 data: frameworksUpdated
             });
     });
@@ -66,7 +78,7 @@ exports.put = function (req, res, next) {
 
 exports.delete = function (req, res, next) {
     const userId = req.params[PARAM_ID_USER];
-    if (!userCanEditUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
+    if (!userCanEditUserData(req.loggedUser, userId)) return next(new MissingPrivilegeError());
 
     Framework
         .remove({user: userId})

@@ -23,14 +23,26 @@ exports.get = function (req, res, next) {
 
 exports.post = function (req, res, next) {
     const userId = req.params[PARAM_ID_USER];
-    if (!userCanEditUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
-    //TODO : Experiences - Create experience for user
-    next(new NotImplementedError("Create a new experience for user : " + req.params[PARAM_ID_USER]));
+    if (!userCanEditUserData(req.loggedUser, userId)) return next(new MissingPrivilegeError());
+
+    var experience = req.body.data;
+    experience.user = userId;
+    experience = new Experience(experience);
+
+    experience.save(function (err, experienceSaved) {
+        if (err) return next(new DatabaseCreateError(err.message)());
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_SUCCESS_RESOURCE_CREATED,
+                data: experienceSaved
+            });
+    });
 };
 
 exports.put = function (req, res, next) {
     const userId = req.params[PARAM_ID_USER];
-    if (!userCanEditUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
+    if (!userCanEditUserData(req.loggedUser, userId)) return next(new MissingPrivilegeError());
 
     const experiences = req.body.data;
     var experiencesUpdated = [];
@@ -60,7 +72,7 @@ exports.put = function (req, res, next) {
         res
             .status(HTTP_STATUS_OK)
             .json({
-                message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                message: MESSAGE_SUCCESS_RESOURCE_UPDATED,
                 data: experiencesUpdated
             });
     });
@@ -68,7 +80,7 @@ exports.put = function (req, res, next) {
 
 exports.delete = function (req, res, next) {
     const userId = req.params[PARAM_ID_USER];
-    if (!userCanEditUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
+    if (!userCanEditUserData(req.loggedUser, userId)) return next(new MissingPrivilegeError());
     Experience
         .remove({user: userId})
         .exec(function (err, removed) {

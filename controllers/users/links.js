@@ -23,14 +23,26 @@ exports.get = function (req, res, next) {
 
 exports.post = function (req, res, next) {
     const userId = req.params[PARAM_ID_USER];
-    if (!userCanEditUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
-    //TODO : Links - Create link for user
-    next(new NotImplementedError("Create a new link for user : " + req.params[PARAM_ID_USER]));
+    if (!userCanEditUserData(req.loggedUser, userId)) return next(new MissingPrivilegeError());
+
+    var link = req.body.data;
+    link.user = userId;
+    link = new Link(link);
+
+    link.save(function (err, linkSaved) {
+        if (err) return next(new DatabaseCreateError(err.message)());
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_SUCCESS_RESOURCE_CREATED,
+                data: linkSaved
+            });
+    });
 };
 
 exports.put = function (req, res, next) {
     const userId = req.params[PARAM_ID_USER];
-    if (!userCanEditUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
+    if (!userCanEditUserData(req.loggedUser, userId)) return next(new MissingPrivilegeError());
 
     const links = req.body.data;
     var linksUpdated = [];
@@ -60,7 +72,7 @@ exports.put = function (req, res, next) {
         res
             .status(HTTP_STATUS_OK)
             .json({
-                message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                message: MESSAGE_SUCCESS_RESOURCE_UPDATED,
                 data: linksUpdated
             });
     });
@@ -68,7 +80,7 @@ exports.put = function (req, res, next) {
 
 exports.delete = function (req, res, next) {
     const userId = req.params[PARAM_ID_USER];
-    if (!userCanEditUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
+    if (!userCanEditUserData(req.loggedUser, userId)) return next(new MissingPrivilegeError());
 
     Link
         .remove({user: userId})

@@ -7,12 +7,12 @@ const uuid = require("../helpers").uuid;
 
 var EducationSchema = new Schema({
     _id: {type: String, default: uuid()},
-    label: String,
-    description: String,
-    entity: {type: String, ref: MODEL_NAME_ENTITY},
-    startDate: Date,
-    endDate: Date,
-    user: {type: String, ref: MODEL_NAME_USER}
+    label: {type: String, default: "", required: true},
+    description: {type: String, default: ""},
+    entity: {type: String, default: null, ref: MODEL_NAME_ENTITY},
+    startDate: {type: Date, default: null},
+    endDate: {type: Date, default: null},
+    user: {type: String, default: null, required: true, ref: MODEL_NAME_USER}
 }, {
     timestamps: true
 });

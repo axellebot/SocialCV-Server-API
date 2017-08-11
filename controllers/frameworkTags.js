@@ -20,15 +20,26 @@ exports.frameworkTags.get = function (req, res, next) {
 };
 
 exports.frameworkTags.post = function (req, res, next) {
-    //TODO : FrameworkTags - Create frameworkTag
-    next(new NotImplementedError("Create a new frameworkTag"));
+    var frameworkTag = req.body.data;
+    if (getRoleRank(req.loggedUser.role) < getRoleRank(ROLE_ADMIN)) frameworkTag.user = req.loggedUser._id;
+    frameworkTag = new FrameworkTag(frameworkTag);
+
+    frameworkTag.save(function (err, frameworkTagSaved) {
+        if (err) return next(new DatabaseCreateError(err.message)());
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_SUCCESS_RESOURCE_CREATED,
+                data: frameworkTagSaved
+            });
+    });
 };
 
 exports.frameworkTags.put = function (req, res, next) {
     const frameworkTags = req.body.data;
     var frameworkTagsUpdated = [];
     Async.eachOf(frameworkTags, function (frameworkTag, key, callback) {
-        const filterUpdate = getFilterEditData(frameworkTag._id, req.decoded);
+        const filterUpdate = getFilterEditData(frameworkTag._id, req.loggedUser);
         FrameworkTag
             .findOneAndUpdate(filterUpdate, frameworkTag, {new: true}, function (err, frameworkTagUpdated) {
                 if (err) return callback(err);
@@ -50,7 +61,7 @@ exports.frameworkTags.put = function (req, res, next) {
         res
             .status(HTTP_STATUS_OK)
             .json({
-                message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                message: MESSAGE_SUCCESS_RESOURCE_UPDATED,
                 data: frameworkTagsUpdated
             });
     });
@@ -78,7 +89,7 @@ exports.frameworkTag.get = function (req, res, next) {
 };
 
 exports.frameworkTag.put = function (req, res, next) {
-    var filterUpdate = getFilterEditData(req.params[PARAM_ID_FRAMEWORK_TAG], req.decoded);
+    var filterUpdate = getFilterEditData(req.params[PARAM_ID_FRAMEWORK_TAG], req.loggedUser);
     FrameworkTag
         .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, frameworkTag) {
             if (err) return next(new DatabaseUpdateError());
@@ -88,7 +99,7 @@ exports.frameworkTag.put = function (req, res, next) {
 };
 
 exports.frameworkTag.delete = function (req, res, next) {
-    var filterRemove = getFilterEditData(req.params[PARAM_ID_FRAMEWORK_TAG], req.decoded);
+    var filterRemove = getFilterEditData(req.params[PARAM_ID_FRAMEWORK_TAG], req.loggedUser);
     FrameworkTag
         .findOneAndRemove(filterRemove, function (err, frameworkTag) {
             if (err) return next(new DatabaseRemoveError());

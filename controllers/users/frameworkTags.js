@@ -22,13 +22,25 @@ exports.get = function (req, res, next) {
 };
 exports.post = function (req, res, next) {
     const userId = req.params[PARAM_ID_USER];
-    if (!userCanEditUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
-    //TODO : FrameworkTags - Create frameworkTag for user
-    next(new NotImplementedError("Create a new frameworkTag for user : " + req.params[PARAM_ID_USER]));
+    if (!userCanEditUserData(req.loggedUser, userId)) return next(new MissingPrivilegeError());
+
+    var frameworkTag = req.body.data;
+    frameworkTag.user = userId;
+    frameworkTag = new FrameworkTag(frameworkTag);
+
+    frameworkTag.save(function (err, frameworkTagSaved) {
+        if (err) return next(new DatabaseCreateError(err.message)());
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_SUCCESS_RESOURCE_CREATED,
+                data: frameworkTagSaved
+            });
+    });
 };
 exports.put = function (req, res, next) {
     const userId = req.params[PARAM_ID_USER];
-    if (!userCanEditUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
+    if (!userCanEditUserData(req.loggedUser, userId)) return next(new MissingPrivilegeError());
 
     const frameworkTags = req.body.data;
     var frameworkTagsUpdated = [];
@@ -58,14 +70,14 @@ exports.put = function (req, res, next) {
         res
             .status(HTTP_STATUS_OK)
             .json({
-                message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                message: MESSAGE_SUCCESS_RESOURCE_UPDATED,
                 data: frameworkTagsUpdated
             });
     });
 };
 exports.delete = function (req, res, next) {
     const userId = req.params[PARAM_ID_USER];
-    if (!userCanEditUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
+    if (!userCanEditUserData(req.loggedUser, userId)) return next(new MissingPrivilegeError());
 
     FrameworkTag
         .remove({user: userId})

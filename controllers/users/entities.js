@@ -23,14 +23,26 @@ exports.get = function (req, res, next) {
 
 exports.post = function (req, res, next) {
     const userId = req.params[PARAM_ID_USER];
-    if (!userCanEditUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
-    //TODO : Entities - Create entity for user
-    next(new NotImplementedError("Create a new entity for user : " + req.params[PARAM_ID_USER]));
+    if (!userCanEditUserData(req.loggedUser, userId)) return next(new MissingPrivilegeError());
+
+    var entity = req.body.data;
+    entity.user = userId;
+    entity = new Entity(entity);
+
+    entity.save(function (err, entitySaved) {
+        if (err) return next(new DatabaseCreateError(err.message));
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_SUCCESS_RESOURCE_CREATED,
+                data: entitySaved
+            });
+    });
 };
 
 exports.put = function (req, res, next) {
     const userId = req.params[PARAM_ID_USER];
-    if (!userCanEditUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
+    if (!userCanEditUserData(req.loggedUser, userId)) return next(new MissingPrivilegeError());
 
     const entities = req.body.data;
     var entitiesUpdated = [];
@@ -60,7 +72,7 @@ exports.put = function (req, res, next) {
         res
             .status(HTTP_STATUS_OK)
             .json({
-                message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                message: MESSAGE_SUCCESS_RESOURCE_UPDATED,
                 data: entitiesUpdated
             });
     });
@@ -68,7 +80,7 @@ exports.put = function (req, res, next) {
 
 exports.delete = function (req, res, next) {
     const userId = req.params[PARAM_ID_USER];
-    if (!userCanEditUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
+    if (!userCanEditUserData(req.loggedUser, userId)) return next(new MissingPrivilegeError());
 
     Entity
         .remove({user: userId})

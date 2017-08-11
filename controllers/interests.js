@@ -20,15 +20,26 @@ exports.interests.get = function (req, res, next) {
 };
 
 exports.interests.post = function (req, res, next) {
-    //TODO : Interests - Create interest
-    next(new NotImplementedError("Create a new Interest"));
+    var interest = req.body.data;
+    if (getRoleRank(req.loggedUser.role) < getRoleRank(ROLE_ADMIN)) interest.user = req.loggedUser._id;
+    interest = new Interest(interest);
+
+    interest.save(function (err, interestSaved) {
+        if (err) return next(new DatabaseCreateError(err.message)());
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_SUCCESS_RESOURCE_CREATED,
+                data: interestSaved
+            });
+    });
 };
 
 exports.interests.put = function (req, res, next) {
     const interests = req.body.data;
     var interestsUpdated = [];
     Async.eachOf(interests, function (interest, key, callback) {
-        const filterUpdate = getFilterEditData(interest._id, req.decoded);
+        const filterUpdate = getFilterEditData(interest._id, req.loggedUser);
         Interest
             .findOneAndUpdate(filterUpdate, interest, {new: true}, function (err, interestUpdated) {
                 if (err) return callback(err);
@@ -50,7 +61,7 @@ exports.interests.put = function (req, res, next) {
         res
             .status(HTTP_STATUS_OK)
             .json({
-                message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                message: MESSAGE_SUCCESS_RESOURCE_UPDATED,
                 data: interestsUpdated
             });
     });
@@ -78,7 +89,7 @@ exports.interest.get = function (req, res, next) {
 };
 
 exports.interest.put = function (req, res, next) {
-    var filterUpdate = getFilterEditData(req.params[PARAM_ID_INTEREST], req.decoded);
+    var filterUpdate = getFilterEditData(req.params[PARAM_ID_INTEREST], req.loggedUser);
     Interest
         .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, interest) {
             if (err) return next(new DatabaseUpdateError());
@@ -88,7 +99,7 @@ exports.interest.put = function (req, res, next) {
 };
 
 exports.interest.delete = function (req, res, next) {
-    var filterRemove = getFilterEditData(req.params[PARAM_ID_INTEREST], req.decoded);
+    var filterRemove = getFilterEditData(req.params[PARAM_ID_INTEREST], req.loggedUser);
     Interest
         .findOneAndRemove(filterRemove, function (err, interest) {
             if (err) return next(new DatabaseRemoveError());

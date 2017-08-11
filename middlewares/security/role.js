@@ -13,7 +13,7 @@ module.exports = function (requiredRole) {
     return [
         requireAuthentication,
         function (req, res, next) {
-            if (getRoleRank(req.decoded.role) >= getRoleRank(requiredRole)) return next();
+            if (getRoleRank(req.loggedUser.role) >= getRoleRank(requiredRole)) return next();
             return next(new MissingPrivilegeError());
         }];
 };

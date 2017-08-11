@@ -7,16 +7,28 @@ const uuid = require("../helpers").uuid;
 
 var ProjectSchema = new Schema({
     _id: {type: String, default: uuid()},
-    label: String,
-    description: String,
-    links: [{type: String, ref: MODEL_NAME_LINK}],
-    tag: {type: String, ref: MODEL_NAME_PROJECT},
-    more: {
-        programmingLanguages: [{type: String, ref: MODEL_NAME_PROGRAMMING_LANGUAGE}],
-        frameworks: [{type: String, ref: MODEL_NAME_FRAMEWORK}],
-        softwareFrameworks: [{type: String, ref: MODEL_NAME_SOFTWARE_FRAMEWORK}]
+    label: {type: String, default: "", required: true},
+    description: {type: String, default: ""},
+    links: {
+        type: [{type: String, ref: MODEL_NAME_LINK}],
+        default: []
     },
-    user: {type: String, ref: MODEL_NAME_USER}
+    tag: {type: String, default: null, ref: MODEL_NAME_PROJECT},
+    more: {
+        programmingLanguages: {
+            type: [{type: String, ref: MODEL_NAME_PROGRAMMING_LANGUAGE}],
+            default: []
+        },
+        frameworks: {
+            type: [{type: String, ref: MODEL_NAME_FRAMEWORK}],
+            default: []
+        },
+        softwareFrameworks: {
+            type: [{type: String, ref: MODEL_NAME_SOFTWARE_FRAMEWORK}],
+            default: []
+        }
+    },
+    user: {type: String, default: null, required: true, ref: MODEL_NAME_USER}
 }, {
     timestamps: true
 });

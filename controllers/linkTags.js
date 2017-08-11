@@ -20,14 +20,25 @@ exports.linkTags.get = function (req, res, next) {
         });
 };
 exports.linkTags.post = function (req, res, next) {
-    //TODO : LinkTags - Create link
-    next(new NotImplementedError("Create a new linkTag"));
+    var linkTag = req.body.data;
+    if (getRoleRank(req.loggedUser.role) < getRoleRank(ROLE_ADMIN)) linkTag.user = req.loggedUser._id;
+    linkTag = new LinkTag(linkTag);
+
+    linkTag.save(function (err, linkTagSaved) {
+        if (err) return next(new DatabaseCreateError(err.message)());
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_SUCCESS_RESOURCE_CREATED,
+                data: linkTagSaved
+            });
+    });
 };
 exports.linkTags.put = function (req, res, next) {
     const linkTags = req.body.data;
     var linkTagsUpdated = [];
     Async.eachOf(linkTags, function (linkTag, key, callback) {
-        const filterUpdate = getFilterEditData(linkTag._id, req.decoded);
+        const filterUpdate = getFilterEditData(linkTag._id, req.loggedUser);
         LinkTag
             .findOneAndUpdate(filterUpdate, linkTag, {new: true}, function (err, linkTagUpdated) {
                 if (err) return callback(err);
@@ -49,7 +60,7 @@ exports.linkTags.put = function (req, res, next) {
         res
             .status(HTTP_STATUS_OK)
             .json({
-                message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                message: MESSAGE_SUCCESS_RESOURCE_UPDATED,
                 data: linkTagsUpdated
             });
     });
@@ -77,7 +88,7 @@ exports.linkTag.get = function (req, res, next) {
 };
 
 exports.linkTag.put = function (req, res, next) {
-    var filterUpdate = getFilterEditData(req.params[PARAM_ID_LINK_TAG], req.decoded);
+    var filterUpdate = getFilterEditData(req.params[PARAM_ID_LINK_TAG], req.loggedUser);
     LinkTag
         .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, linkTag) {
             if (err) return next(new DatabaseUpdateError());
@@ -87,7 +98,7 @@ exports.linkTag.put = function (req, res, next) {
 };
 
 exports.linkTag.delete = function (req, res, next) {
-    var filterRemove = getFilterEditData(req.params[PARAM_ID_LINK_TAG], req.decoded);
+    var filterRemove = getFilterEditData(req.params[PARAM_ID_LINK_TAG], req.loggedUser);
     LinkTag
         .findOneAndRemove(filterRemove, function (err, linkTag) {
             if (err) return next(new DatabaseRemoveError());

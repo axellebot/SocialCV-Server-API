@@ -20,15 +20,26 @@ exports.profiles.get = function (req, res, next) {
 };
 
 exports.profiles.post = function (req, res, next) {
-    //TODO : Profiles - Create profile
-    next(new NotImplementedError("Create a new profile"));
+    var profile = req.body.data;
+    if (getRoleRank(req.loggedUser.role) < getRoleRank(ROLE_ADMIN)) profile.user = req.loggedUser._id;
+    profile = new Profile(profile);
+
+    profile.save(function (err, profileSaved) {
+        if (err) return next(new DatabaseCreateError(err.message)());
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_SUCCESS_RESOURCE_CREATED,
+                data: profileSaved
+            });
+    });
 };
 
 exports.profiles.put = function (req, res, next) {
     const profiles = req.body.data;
     var profilesUpdated = [];
     Async.eachOf(profiles, function (profile, key, callback) {
-        const filterUpdate = getFilterEditData(profile._id, req.decoded);
+        const filterUpdate = getFilterEditData(profile._id, req.loggedUser);
         Profile
             .findOneAndUpdate(filterUpdate, profile, {new: true}, function (err, profileUpdated) {
                 if (err) return callback(err);
@@ -50,7 +61,7 @@ exports.profiles.put = function (req, res, next) {
         res
             .status(HTTP_STATUS_OK)
             .json({
-                message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                message: MESSAGE_SUCCESS_RESOURCE_UPDATED,
                 data: profilesUpdated
             });
     });
@@ -78,7 +89,7 @@ exports.profile.get = function (req, res, next) {
 };
 
 exports.profile.put = function (req, res, next) {
-    var filterUpdate = getFilterEditData(req.params[PARAM_ID_PROFILE], req.decoded);
+    var filterUpdate = getFilterEditData(req.params[PARAM_ID_PROFILE], req.loggedUser);
     Profile
         .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, profile) {
             if (err) return next(new DatabaseUpdateError());
@@ -88,7 +99,7 @@ exports.profile.put = function (req, res, next) {
 };
 
 exports.profile.delete = function (req, res, next) {
-    var filterRemove = getFilterEditData(req.params[PARAM_ID_PROFILE], req.decoded);
+    var filterRemove = getFilterEditData(req.params[PARAM_ID_PROFILE], req.loggedUser);
     Profile
         .findOneAndRemove(filterRemove, function (err, profile) {
             if (err) return next(new DatabaseRemoveError());

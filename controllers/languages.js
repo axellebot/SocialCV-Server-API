@@ -20,15 +20,26 @@ exports.languages.get = function (req, res, next) {
 };
 
 exports.languages.post = function (req, res, next) {
-    //TODO : Languages - Create language
-    next(new NotImplementedError("Create a new Language"));
+    var language = req.body.data;
+    if (getRoleRank(req.loggedUser.role) < getRoleRank(ROLE_ADMIN)) language.user = req.loggedUser._id;
+    language = new Language(language);
+
+    language.save(function (err, languageSaved) {
+        if (err) return next(new DatabaseCreateError(err.message)());
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_SUCCESS_RESOURCE_CREATED,
+                data: languageSaved
+            });
+    });
 };
 
 exports.languages.put = function (req, res, next) {
     const languages = req.body.data;
     var languagesUpdated = [];
     Async.eachOf(languages, function (language, key, callback) {
-        const filterUpdate = getFilterEditData(language._id, req.decoded);
+        const filterUpdate = getFilterEditData(language._id, req.loggedUser);
         Language
             .findOneAndUpdate(filterUpdate, language, {new: true}, function (err, languageUpdated) {
                 if (err) return callback(err);
@@ -50,7 +61,7 @@ exports.languages.put = function (req, res, next) {
         res
             .status(HTTP_STATUS_OK)
             .json({
-                message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                message: MESSAGE_SUCCESS_RESOURCE_UPDATED,
                 data: languagesUpdated
             });
     });
@@ -78,7 +89,7 @@ exports.language.get = function (req, res, next) {
 };
 
 exports.language.put = function (req, res, next) {
-    var filterUpdate = getFilterEditData(req.params[PARAM_ID_LANGUAGE], req.decoded);
+    var filterUpdate = getFilterEditData(req.params[PARAM_ID_LANGUAGE], req.loggedUser);
     Language
         .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, language) {
             if (err) return next(new DatabaseUpdateError());
@@ -88,7 +99,7 @@ exports.language.put = function (req, res, next) {
 };
 
 exports.language.delete = function (req, res, next) {
-    var filterRemove = getFilterEditData(req.params[PARAM_ID_LANGUAGE], req.decoded);
+    var filterRemove = getFilterEditData(req.params[PARAM_ID_LANGUAGE], req.loggedUser);
     Language
         .findOneAndRemove(filterRemove, function (err, language) {
             if (err) return next(new DatabaseRemoveError());

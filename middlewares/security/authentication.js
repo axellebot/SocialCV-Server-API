@@ -18,7 +18,7 @@ module.exports = function (req, res, next) {
         //failed verification.
         if (err) return next(new FailedAuthenticationToken());
 
-        req.decoded = decoded;
+        req.loggedUser = decoded;
         return next();
     });
 };

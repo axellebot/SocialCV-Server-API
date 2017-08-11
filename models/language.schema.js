@@ -7,9 +7,9 @@ const uuid = require("../helpers").uuid;
 
 var LanguageSchema = new Schema({
     _id: {type: String, default: uuid()},
-    label: String,
-    description: String,
-    user: {type: String, ref: MODEL_NAME_USER}
+    label: {type: String, default: "", required: true},
+    description: {type: String, default: ""},
+    user: {type: String, default: null, required: true, ref: MODEL_NAME_USER}
 }, {
     timestamps: true
 });

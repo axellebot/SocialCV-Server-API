@@ -22,14 +22,26 @@ exports.get = function (req, res, next) {
 };
 exports.post = function (req, res, next) {
     const userId = req.params[PARAM_ID_USER];
-    if (!userCanEditUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
-    //TODO : OperatingSystems - Create operatingSystem for user
-    next(new NotImplementedError("Create a new operatingSystem for user : " + req.params[PARAM_ID_USER]));
+    if (!userCanEditUserData(req.loggedUser, userId)) return next(new MissingPrivilegeError());
+
+    var operatingSystem = req.body.data;
+    operatingSystem.user = userId;
+    operatingSystem = new OperatingSystem(operatingSystem);
+
+    operatingSystem.save(function (err, operatingSystemSaved) {
+        if (err) return next(new DatabaseCreateError(err.message)());
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_SUCCESS_RESOURCE_CREATED,
+                data: operatingSystemSaved
+            });
+    });
 };
 
 exports.put = function (req, res, next) {
     const userId = req.params[PARAM_ID_USER];
-    if (!userCanEditUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
+    if (!userCanEditUserData(req.loggedUser, userId)) return next(new MissingPrivilegeError());
 
     const operatingSystems = req.body.data;
     var operatingSystemsUpdated = [];
@@ -59,7 +71,7 @@ exports.put = function (req, res, next) {
         res
             .status(HTTP_STATUS_OK)
             .json({
-                message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
+                message: MESSAGE_SUCCESS_RESOURCE_UPDATED,
                 data: operatingSystemsUpdated
             });
     });
@@ -67,7 +79,7 @@ exports.put = function (req, res, next) {
 
 exports.delete = function (req, res, next) {
     const userId = req.params[PARAM_ID_USER];
-    if (!userCanEditUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
+    if (!userCanEditUserData(req.loggedUser, userId)) return next(new MissingPrivilegeError());
 
     OperatingSystem
         .remove({user: userId})
