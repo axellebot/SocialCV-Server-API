@@ -1,4 +1,4 @@
-# vitrine-server
+# curriculum-server-api
 
 ## Used Technologies
 
