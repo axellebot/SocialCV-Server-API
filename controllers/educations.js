@@ -20,15 +20,26 @@ exports.educations.get = function (req, res, next) {
 };
 
 exports.educations.post = function (req, res, next) {
-    //TODO : Educations - Create education
-    next(new NotImplementedError('Create a new education'));
+    var education = req.body.data;
+    if (getRoleRank(req.loggedUser.role) < getRoleRank(ROLE_ADMIN)) education.user = req.loggedUser._id;
+    education = new Education(education);
+
+    education.save(function (err, educationSaved) {
+        if (err) return next(new DatabaseCreateError(err.message)());
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_SUCCESS_RESOURCE_CREATED,
+                data: educationSaved
+            });
+    });
 };
 
 exports.educations.put = function (req, res, next) {
     const educations = req.body.data;
     var educationsUpdated = [];
     Async.eachOf(educations, function (education, key, callback) {
-        const filterUpdate = getFilterEditData(education._id, req.decoded);
+        const filterUpdate = getFilterEditData(education._id, req.loggedUser);
         Education
             .findOneAndUpdate(filterUpdate, education, {new: true}, function (err, educationUpdated) {
                 if (err) return callback(err);
@@ -78,7 +89,7 @@ exports.education.get = function (req, res, next) {
 };
 
 exports.education.put = function (req, res, next) {
-    const filterUpdate = getFilterEditData(req.params[PARAM_ID_EDUCATION], req.decoded);
+    const filterUpdate = getFilterEditData(req.params[PARAM_ID_EDUCATION], req.loggedUser);
     Education
         .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, education) {
             if (err) return next(new DatabaseUpdateError());
@@ -88,7 +99,7 @@ exports.education.put = function (req, res, next) {
 };
 
 exports.education.delete = function (req, res, next) {
-    const filterRemove = getFilterEditData(req.params[PARAM_ID_EDUCATION], req.decoded);
+    const filterRemove = getFilterEditData(req.params[PARAM_ID_EDUCATION], req.loggedUser);
     Education
         .findOneAndRemove(filterRemove, function (err, education) {
             if (err) return next(new DatabaseRemoveError());

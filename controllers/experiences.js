@@ -20,15 +20,26 @@ exports.experiences.get = function (req, res, next) {
 };
 
 exports.experiences.post = function (req, res, next) {
-    //TODO : Experiences - Create experience
-    next(new NotImplementedError("Create a new experience"));
+    var experience = req.body.data;
+    if (getRoleRank(req.loggedUser.role) < getRoleRank(ROLE_ADMIN)) experience.user = req.loggedUser._id;
+    experience = new Experience(experience);
+
+    experience.save(function (err, experienceSaved) {
+        if (err) return next(new DatabaseCreateError(err.message)());
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_SUCCESS_RESOURCE_CREATED,
+                data: experienceSaved
+            });
+    });
 };
 
 exports.experiences.put = function (req, res, next) {
     const experiences = req.body.data;
     var experiencesUpdated = [];
     Async.eachOf(experiences, function (experience, key, callback) {
-        const filterUpdate = getFilterEditData(experience._id, req.decoded);
+        const filterUpdate = getFilterEditData(experience._id, req.loggedUser);
         Experience
             .findOneAndUpdate(filterUpdate, experience, {new: true}, function (err, experienceUpdated) {
                 if (err) return callback(err);
@@ -78,7 +89,7 @@ exports.experience.get = function (req, res, next) {
 };
 
 exports.experience.put = function (req, res, next) {
-    const filterUpdate = getFilterEditData(req.params[PARAM_ID_EXPERIENCE], req.decoded);
+    const filterUpdate = getFilterEditData(req.params[PARAM_ID_EXPERIENCE], req.loggedUser);
     Experience
         .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, experience) {
             if (err) return next(new DatabaseUpdateError());
@@ -88,7 +99,7 @@ exports.experience.put = function (req, res, next) {
 };
 
 exports.experience.delete = function (req, res, next) {
-    const filterRemove = getFilterEditData(req.params[PARAM_ID_EXPERIENCE], req.decoded);
+    const filterRemove = getFilterEditData(req.params[PARAM_ID_EXPERIENCE], req.loggedUser);
     Experience
         .findOneAndRemove(filterRemove, function (err, experience) {
             if (err) return next(new DatabaseRemoveError());

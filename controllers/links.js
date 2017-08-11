@@ -20,15 +20,26 @@ exports.links.get = function (req, res, next) {
 };
 
 exports.links.post = function (req, res, next) {
-    //TODO : Links - Create link
-    next(new NotImplementedError("Create a new link"));
+    var link = req.body.data;
+    if (getRoleRank(req.loggedUser.role) < getRoleRank(ROLE_ADMIN)) link.user = req.loggedUser._id;
+    link = new Link(link);
+
+    link.save(function (err, linkSaved) {
+        if (err) return next(new DatabaseCreateError(err.message)());
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_SUCCESS_RESOURCE_CREATED,
+                data: linkSaved
+            });
+    });
 };
 
 exports.links.put = function (req, res, next) {
     const links = req.body.data;
     var linksUpdated = [];
     Async.eachOf(links, function (link, key, callback) {
-        const filterUpdate = getFilterEditData(link._id, req.decoded);
+        const filterUpdate = getFilterEditData(link._id, req.loggedUser);
         Link
             .findOneAndUpdate(filterUpdate, link, {new: true}, function (err, linkUpdated) {
                 if (err) return callback(err);
@@ -78,7 +89,7 @@ exports.link.get = function (req, res, next) {
 };
 
 exports.link.put = function (req, res, next) {
-    var filterUpdate = getFilterEditData(req.params[PARAM_ID_LINK], req.decoded);
+    var filterUpdate = getFilterEditData(req.params[PARAM_ID_LINK], req.loggedUser);
     Link
         .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, link) {
             if (err) return next(new DatabaseUpdateError());
@@ -88,7 +99,7 @@ exports.link.put = function (req, res, next) {
 };
 
 exports.link.delete = function (req, res, next) {
-    var filterRemove = getFilterEditData(req.params[PARAM_ID_LINK], req.decoded);
+    var filterRemove = getFilterEditData(req.params[PARAM_ID_LINK], req.loggedUser);
     Link
         .findOneAndRemove(filterRemove, function (err, link) {
             if (err) return next(new DatabaseRemoveError());

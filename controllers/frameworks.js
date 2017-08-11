@@ -20,15 +20,26 @@ exports.frameworks.get = function (req, res, next) {
 };
 
 exports.frameworks.post = function (req, res, next) {
-    //TODO : Frameworks - Create framework
-    next(new NotImplementedError("Create a new framework"));
+    var framework = req.body.data;
+    if (getRoleRank(req.loggedUser.role) < getRoleRank(ROLE_ADMIN)) framework.user = req.loggedUser._id;
+    framework = new Framework(framework);
+
+    framework.save(function (err, frameworkSaved) {
+        if (err) return next(new DatabaseCreateError(err.message)());
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_SUCCESS_RESOURCE_CREATED,
+                data: frameworkSaved
+            });
+    });
 };
 
 exports.frameworks.put = function (req, res, next) {
     const frameworks = req.body.data;
     var frameworksUpdated = [];
     Async.eachOf(frameworks, function (framework, key, callback) {
-        const filterUpdate = getFilterEditData(framework._id, req.decoded);
+        const filterUpdate = getFilterEditData(framework._id, req.loggedUser);
         Framework
             .findOneAndUpdate(filterUpdate, framework, {new: true}, function (err, frameworkUpdated) {
                 if (err) return callback(err);
@@ -77,7 +88,7 @@ exports.framework.get = function (req, res, next) {
 };
 
 exports.framework.put = function (req, res, next) {
-    var filterUpdate = getFilterEditData(req.params[PARAM_ID_FRAMEWORK], req.decoded);
+    var filterUpdate = getFilterEditData(req.params[PARAM_ID_FRAMEWORK], req.loggedUser);
     Framework
         .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, framework) {
             if (err) return next(new DatabaseUpdateError());
@@ -87,7 +98,7 @@ exports.framework.put = function (req, res, next) {
 };
 
 exports.framework.delete = function (req, res, next) {
-    var filterRemove = getFilterEditData(req.params[PARAM_ID_FRAMEWORK], req.decoded);
+    var filterRemove = getFilterEditData(req.params[PARAM_ID_FRAMEWORK], req.loggedUser);
     Framework
         .findOneAndRemove(filterRemove, function (err, framework) {
             if (err) return next(new DatabaseRemoveError());

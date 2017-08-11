@@ -22,7 +22,7 @@ exports.get = function (req, res, next) {
 };
 exports.post = function (req, res, next) {
     const userId = req.params[PARAM_ID_USER];
-    if (!userCanEditUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
+    if (!userCanEditUserData(req.loggedUser, userId)) return next(new MissingPrivilegeError());
 
     var frameworkTag = req.body.data;
     frameworkTag.user = userId;
@@ -40,7 +40,7 @@ exports.post = function (req, res, next) {
 };
 exports.put = function (req, res, next) {
     const userId = req.params[PARAM_ID_USER];
-    if (!userCanEditUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
+    if (!userCanEditUserData(req.loggedUser, userId)) return next(new MissingPrivilegeError());
 
     const frameworkTags = req.body.data;
     var frameworkTagsUpdated = [];
@@ -77,7 +77,7 @@ exports.put = function (req, res, next) {
 };
 exports.delete = function (req, res, next) {
     const userId = req.params[PARAM_ID_USER];
-    if (!userCanEditUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
+    if (!userCanEditUserData(req.loggedUser, userId)) return next(new MissingPrivilegeError());
 
     FrameworkTag
         .remove({user: userId})

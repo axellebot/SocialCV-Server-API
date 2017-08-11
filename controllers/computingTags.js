@@ -1,6 +1,7 @@
 "use strict";
 
 var getFilterEditData = require("../helpers").getFilterEditData;
+var getRoleRank = require("../helpers").getRoleRank;
 
 const ComputingTag = require('../models/computingTag.schema');
 
@@ -20,15 +21,26 @@ exports.computingTags.get = function (req, res, next) {
 };
 
 exports.computingTags.post = function (req, res, next) {
-    //TODO : ComputingTags - Create computingTag
-    next(new NotImplementedError("Create a new computingTag"));
+    var computingTag = req.body.data;
+    if (getRoleRank(req.loggedUser.role) < getRoleRank(ROLE_ADMIN)) computingTag.user = req.loggedUser._id;
+    computingTag = new ComputingTag(computingTag);
+
+    computingTag.save(function (err, computingTagSaved) {
+        if (err) return next(new DatabaseCreateError(err.message)());
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_SUCCESS_RESOURCE_CREATED,
+                data: computingTagSaved
+            });
+    });
 };
 
 exports.computingTags.put = function (req, res, next) {
     const computingTags = req.body.data;
     var computingTagsUpdated = [];
     Async.eachOf(computingTags, function (computingTag, key, callback) {
-        const filterUpdate = getFilterEditData(computingTag._id, req.decoded);
+        const filterUpdate = getFilterEditData(computingTag._id, req.loggedUser);
         ComputingTag
             .findOneAndUpdate(filterUpdate, computingTag, {new: true}, function (err, computingTagUpdated) {
                 if (err) return callback(err);
@@ -79,7 +91,7 @@ exports.computingTag.get = function (req, res, next) {
 };
 
 exports.computingTag.put = function (req, res, next) {
-    const filterUpdate = getFilterEditData(req.params[PARAM_ID_COMPUTING_TAG], req.decoded);
+    const filterUpdate = getFilterEditData(req.params[PARAM_ID_COMPUTING_TAG], req.loggedUser);
     ComputingTag
         .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, computingTag) {
             if (err) return next(new DatabaseUpdateError());
@@ -89,7 +101,7 @@ exports.computingTag.put = function (req, res, next) {
 };
 
 exports.computingTag.delete = function (req, res, next) {
-    const filterRemove = getFilterEditData(req.params[PARAM_ID_COMPUTING_TAG], req.decoded);
+    const filterRemove = getFilterEditData(req.params[PARAM_ID_COMPUTING_TAG], req.loggedUser);
     ComputingTag
         .findOneAndRemove(filterRemove, function (err, computingTag) {
             if (err) return next(new DatabaseRemoveError());

@@ -29,7 +29,7 @@ exports.users.put = function (req, res, next) {
     const users = req.body.data;
     var usersUpdated = [];
     Async.eachOf(users, function (user, key, callback) {
-        if (!userCanEditUserData(req.decoded, user._id)) return next(new MissingPrivilegeError());
+        if (!userCanEditUserData(req.loggedUser, user._id)) return next(new MissingPrivilegeError());
 
         const filterUpdate = {_id: user._id};
         User
@@ -82,7 +82,7 @@ exports.user.get = function (req, res, next) {
 
 exports.user.put = function (req, res, next) {
     const userId = req.params[PARAM_ID_USER];
-    if (!userCanEditUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
+    if (!userCanEditUserData(req.loggedUser, userId)) return next(new MissingPrivilegeError());
 
     User
         .findOneAndUpdate({_id: userId}, req.body.data, {returnNewDocument: true}, function (err, user) {
@@ -94,7 +94,7 @@ exports.user.put = function (req, res, next) {
 
 exports.user.delete = function (req, res, next) {
     const userId = req.params[PARAM_ID_USER];
-    if (!userCanEditUserData(req.decoded, userId)) return next(new MissingPrivilegeError());
+    if (!userCanEditUserData(req.loggedUser, userId)) return next(new MissingPrivilegeError());
 
     User
         .findOneAndRemove({_id: userId}, function (err, user) {

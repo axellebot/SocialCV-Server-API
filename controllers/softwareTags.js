@@ -20,15 +20,26 @@ exports.softwareTags.get = function (req, res, next) {
 };
 
 exports.softwareTags.post = function (req, res, next) {
-    //TODO : SoftwareTags - Create softwareTag
-    next(new NotImplementedError("Create a new softwareTag"));
+    var softwareTag = req.body.data;
+    if (getRoleRank(req.loggedUser.role) < getRoleRank(ROLE_ADMIN)) softwareTag.user = req.loggedUser._id;
+    softwareTag = new SoftwareTag(softwareTag);
+
+    softwareTag.save(function (err, softwareTagSaved) {
+        if (err) return next(new DatabaseCreateError(err.message)());
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_SUCCESS_RESOURCE_CREATED,
+                data: softwareTagSaved
+            });
+    });
 };
 
 exports.softwareTags.put = function (req, res, next) {
     const softwareTags = req.body.data;
     var softwareTagsUpdated = [];
     Async.eachOf(softwareTags, function (softwareTag, key, callback) {
-        const filterUpdate = getFilterEditData(softwareTag._id, req.decoded);
+        const filterUpdate = getFilterEditData(softwareTag._id, req.loggedUser);
         SoftwareTag
             .findOneAndUpdate(filterUpdate, softwareTag, {new: true}, function (err, softwareTagUpdated) {
                 if (err) return callback(err);
@@ -78,7 +89,7 @@ exports.softwareTag.get = function (req, res, next) {
 };
 
 exports.softwareTag.put = function (req, res, next) {
-    var filterUpdate = getFilterEditData(req.params[PARAM_ID_SOFTWARE_TAG], req.decoded);
+    var filterUpdate = getFilterEditData(req.params[PARAM_ID_SOFTWARE_TAG], req.loggedUser);
     SoftwareTag
         .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, softwareTag) {
             if (err) return next(new DatabaseUpdateError());
@@ -93,7 +104,7 @@ exports.softwareTag.put = function (req, res, next) {
 };
 
 exports.softwareTag.delete = function (req, res, next) {
-    var filterRemove = getFilterEditData(req.params[PARAM_ID_SOFTWARE_TAG], req.decoded);
+    var filterRemove = getFilterEditData(req.params[PARAM_ID_SOFTWARE_TAG], req.loggedUser);
     SoftwareTag
         .findOneAndRemove(filterRemove, function (err, softwareTag) {
             if (err) return next(new DatabaseRemoveError());

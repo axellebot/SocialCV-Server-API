@@ -20,15 +20,26 @@ exports.softwares.get = function (req, res, next) {
 };
 
 exports.softwares.post = function (req, res, next) {
-    //TODO : Softwares - Create software
-    next(new NotImplementedError("Create a new software"));
+    var software = req.body.data;
+    if (getRoleRank(req.loggedUser.role) < getRoleRank(ROLE_ADMIN)) software.user = req.loggedUser._id;
+    software = new Software(software);
+
+    software.save(function (err, softwareSaved) {
+        if (err) return next(new DatabaseCreateError(err.message)());
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_SUCCESS_RESOURCE_CREATED,
+                data: softwareSaved
+            });
+    });
 };
 
 exports.softwares.put = function (req, res, next) {
     const softwares = req.body.data;
     var softwaresUpdated = [];
     Async.eachOf(softwares, function (software, key, callback) {
-        const filterUpdate = getFilterEditData(software._id, req.decoded);
+        const filterUpdate = getFilterEditData(software._id, req.loggedUser);
         Software
             .findOneAndUpdate(filterUpdate, software, {new: true}, function (err, softwareUpdated) {
                 if (err) return callback(err);
@@ -78,7 +89,7 @@ exports.software.get = function (req, res, next) {
 };
 
 exports.software.put = function (req, res, next) {
-    var filterUpdate = getFilterEditData(req.params[PARAM_ID_SOFTWARE], req.decoded);
+    var filterUpdate = getFilterEditData(req.params[PARAM_ID_SOFTWARE], req.loggedUser);
     Software
         .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, software) {
             if (err) return next(new DatabaseUpdateError());
@@ -93,7 +104,7 @@ exports.software.put = function (req, res, next) {
 };
 
 exports.software.delete = function (req, res, next) {
-    var filterRemove = getFilterEditData(req.params[PARAM_ID_SOFTWARE], req.decoded);
+    var filterRemove = getFilterEditData(req.params[PARAM_ID_SOFTWARE], req.loggedUser);
     Software
         .findOneAndRemove(filterRemove, function (err, software) {
             if (err) return next(new DatabaseRemoveError());

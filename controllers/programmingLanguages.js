@@ -19,14 +19,25 @@ exports.programmingLanguages.get = function (req, res, next) {
         });
 };
 exports.programmingLanguages.post = function (req, res, next) {
-    //TODO : ProgrammingLanguages - Create programmingLanguage
-    next(new NotImplementedError("Create a new programmingLanguage"));
+    var programmingLanguage = req.body.data;
+    if (getRoleRank(req.loggedUser.role) < getRoleRank(ROLE_ADMIN)) programmingLanguage.user = req.loggedUser._id;
+    programmingLanguage = new ProgrammingLanguage(programmingLanguage);
+
+    programmingLanguage.save(function (err, programmingLanguageSaved) {
+        if (err) return next(new DatabaseCreateError(err.message)());
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_SUCCESS_RESOURCE_CREATED,
+                data: programmingLanguageSaved
+            });
+    });
 };
 exports.programmingLanguages.put = function (req, res, next) {
     const programmingLanguages = req.body.data;
     var programmingLanguagesUpdated = [];
     Async.eachOf(programmingLanguages, function (programmingLanguage, key, callback) {
-        const filterUpdate = getFilterEditData(programmingLanguage._id, req.decoded);
+        const filterUpdate = getFilterEditData(programmingLanguage._id, req.loggedUser);
         ProgrammingLanguage
             .findOneAndUpdate(filterUpdate, programmingLanguage, {new: true}, function (err, programmingLanguageUpdated) {
                 if (err) return callback(err);
@@ -75,7 +86,7 @@ exports.programmingLanguage.get = function (req, res, next) {
 };
 
 exports.programmingLanguage.put = function (req, res, next) {
-    var filterUpdate = getFilterEditData(req.params[PARAM_ID_PROGRAMMING_LANGUAGE], req.decoded);
+    var filterUpdate = getFilterEditData(req.params[PARAM_ID_PROGRAMMING_LANGUAGE], req.loggedUser);
     ProgrammingLanguage
         .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, programmingLanguage) {
             if (err) return next(new DatabaseUpdateError());
@@ -90,7 +101,7 @@ exports.programmingLanguage.put = function (req, res, next) {
 };
 
 exports.programmingLanguage.delete = function (req, res, next) {
-    var filterRemove = getFilterEditData(req.params[PARAM_ID_PROGRAMMING_LANGUAGE], req.decoded);
+    var filterRemove = getFilterEditData(req.params[PARAM_ID_PROGRAMMING_LANGUAGE], req.loggedUser);
     ProgrammingLanguage
         .findOneAndRemove(filterRemove, function (err, programmingLanguage) {
             if (err) return next(new DatabaseRemoveError());

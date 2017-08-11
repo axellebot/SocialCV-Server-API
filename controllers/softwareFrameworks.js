@@ -20,15 +20,26 @@ exports.softwareFrameworks.get = function (req, res, next) {
 };
 
 exports.softwareFrameworks.post = function (req, res, next) {
-    //TODO : SoftwareFrameworks - Create softwareFramework
-    next(new NotImplementedError("Create a new softwareFramework"));
+    var softwareFramework = req.body.data;
+    if (getRoleRank(req.loggedUser.role) < getRoleRank(ROLE_ADMIN)) softwareFramework.user = req.loggedUser._id;
+    softwareFramework = new ComputingTag(softwareFramework);
+
+    softwareFramework.save(function (err, softwareFrameworkSaved) {
+        if (err) return next(new DatabaseCreateError(err.message)());
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_SUCCESS_RESOURCE_CREATED,
+                data: softwareFrameworkSaved
+            });
+    });
 };
 
 exports.softwareFrameworks.put = function (req, res, next) {
     const softwareFrameworks = req.body.data;
     var softwareFrameworksUpdated = [];
     Async.eachOf(softwareFrameworks, function (softwareFramework, key, callback) {
-        const filterUpdate = getFilterEditData(softwareFramework._id, req.decoded);
+        const filterUpdate = getFilterEditData(softwareFramework._id, req.loggedUser);
         SoftwareFramework
             .findOneAndUpdate(filterUpdate, softwareFramework, {new: true}, function (err, softwareFrameworkUpdated) {
                 if (err) return callback(err);
@@ -78,7 +89,7 @@ exports.softwareFramework.get = function (req, res, next) {
 };
 
 exports.softwareFramework.put = function (req, res, next) {
-    var filterUpdate = getFilterEditData(req.params[PARAM_ID_SOFTWARE_FRAMEWORK], req.decoded);
+    var filterUpdate = getFilterEditData(req.params[PARAM_ID_SOFTWARE_FRAMEWORK], req.loggedUser);
     SoftwareFramework
         .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, softwareFramework) {
             if (err) return next(new DatabaseUpdateError());
@@ -93,7 +104,7 @@ exports.softwareFramework.put = function (req, res, next) {
 };
 
 exports.softwareFramework.delete = function (req, res, next) {
-    var filterRemove = getFilterEditData(req.params[PARAM_ID_SOFTWARE_FRAMEWORK], req.decoded);
+    var filterRemove = getFilterEditData(req.params[PARAM_ID_SOFTWARE_FRAMEWORK], req.loggedUser);
     SoftwareFramework
         .findOneAndRemove(filterRemove, function (err, softwareFramework) {
             if (err) return next(new DatabaseRemoveError());

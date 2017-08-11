@@ -20,15 +20,26 @@ exports.projects.get = function (req, res, next) {
 };
 
 exports.projects.post = function (req, res, next) {
-    //TODO : Projects - Create project
-    next(new NotImplementedError("Create a new project'"));
+    var project = req.body.data;
+    if (getRoleRank(req.loggedUser.role) < getRoleRank(ROLE_ADMIN)) project.user = req.loggedUser._id;
+    project = new Project(project);
+
+    project.save(function (err, projectSaved) {
+        if (err) return next(new DatabaseCreateError(err.message)());
+        res
+            .status(HTTP_STATUS_OK)
+            .json({
+                message: MESSAGE_SUCCESS_RESOURCE_CREATED,
+                data: projectSaved
+            });
+    });
 };
 
 exports.projects.put = function (req, res, next) {
     const projects = req.body.data;
     var projectsUpdated = [];
     Async.eachOf(projects, function (project, key, callback) {
-        const filterUpdate = getFilterEditData(project._id, req.decoded);
+        const filterUpdate = getFilterEditData(project._id, req.loggedUser);
         Project
             .findOneAndUpdate(filterUpdate, project, {new: true}, function (err, projectUpdated) {
                 if (err) return callback(err);
@@ -78,7 +89,7 @@ exports.project.get = function (req, res, next) {
 };
 
 exports.project.put = function (req, res, next) {
-    var filterUpdate = getFilterEditData(req.params[PARAM_ID_PROJECT], req.decoded);
+    var filterUpdate = getFilterEditData(req.params[PARAM_ID_PROJECT], req.loggedUser);
     Project
         .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, project) {
             if (err) return next(new DatabaseUpdateError());
@@ -88,7 +99,7 @@ exports.project.put = function (req, res, next) {
 };
 
 exports.project.delete = function (req, res, next) {
-    var filterRemove = getFilterEditData(req.params[PARAM_ID_PROJECT], req.decoded);
+    var filterRemove = getFilterEditData(req.params[PARAM_ID_PROJECT], req.loggedUser);
     Project
         .findOneAndRemove(filterRemove, function (err, project) {
             if (err) return next(new DatabaseRemoveError());
