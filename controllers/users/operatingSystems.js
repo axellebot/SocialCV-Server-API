@@ -29,7 +29,7 @@ exports.post = function (req, res, next) {
     operatingSystem = new OperatingSystem(operatingSystem);
 
     operatingSystem.save(function (err, operatingSystemSaved) {
-        if (err) return next(new DatabaseCreateError());
+        if (err) return next(new DatabaseCreateError(err.message)());
         res
             .status(HTTP_STATUS_OK)
             .json({

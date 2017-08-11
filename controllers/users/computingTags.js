@@ -30,7 +30,7 @@ exports.post = function (req, res, next) {
     computingTag = new ComputingTag(computingTag);
 
     computingTag.save(function (err, computingTagSaved) {
-        if (err) return next(new DatabaseCreateError());
+        if (err) return next(new DatabaseCreateError(err.message)());
         res
             .status(HTTP_STATUS_OK)
             .json({

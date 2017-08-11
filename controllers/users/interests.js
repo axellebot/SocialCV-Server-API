@@ -30,7 +30,7 @@ exports.post = function (req, res, next) {
     interest = new Interest(interest);
 
     interest.save(function (err, interestSaved) {
-        if (err) return next(new DatabaseCreateError());
+        if (err) return next(new DatabaseCreateError(err.message)());
         res
             .status(HTTP_STATUS_OK)
             .json({

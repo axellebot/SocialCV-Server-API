@@ -7,10 +7,13 @@ const uuid = require("../helpers").uuid;
 
 var FrameworkSchema = new Schema({
     _id: {type: String, default: uuid()},
-    label: String,
-    language: String,
-    tags: [{type: String, ref: MODEL_NAME_FRAMEWORK_TAG}],
-    user: {type: String, ref: MODEL_NAME_USER}
+    label: {type: String, default:"", required: true},
+    language: {type: String, default:""},
+    tags: {
+        type: [{type: String, ref: MODEL_NAME_FRAMEWORK_TAG}],
+        default: []
+    },
+    user: {type: String, default: null, required: true, ref: MODEL_NAME_USER}
 }, {
     timestamps: true
 });

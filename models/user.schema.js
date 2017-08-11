@@ -28,7 +28,8 @@ var UserSchema = new Schema({
     role: {
         type: String,
         enum: [ROLE_MEMBER, ROLE_ADMIN],
-        default: ROLE_MEMBER
+        default: ROLE_MEMBER,
+        required: true
     }
 }, {
     timestamps: true

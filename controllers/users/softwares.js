@@ -30,7 +30,7 @@ exports.post = function (req, res, next) {
     software = new Software(software);
 
     software.save(function (err, softwareSaved) {
-        if (err) return next(new DatabaseCreateError());
+        if (err) return next(new DatabaseCreateError(err.message)());
         res
             .status(HTTP_STATUS_OK)
             .json({

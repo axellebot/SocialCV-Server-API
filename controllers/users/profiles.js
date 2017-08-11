@@ -30,7 +30,7 @@ exports.post = function (req, res, next) {
     profile = new Profile(profile);
 
     profile.save(function (err, profileSaved) {
-        if (err) return next(new DatabaseCreateError());
+        if (err) return next(new DatabaseCreateError(err.message)());
         res
             .status(HTTP_STATUS_OK)
             .json({

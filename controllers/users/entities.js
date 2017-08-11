@@ -30,7 +30,7 @@ exports.post = function (req, res, next) {
     entity = new Entity(entity);
 
     entity.save(function (err, entitySaved) {
-        if (err) return next(new DatabaseCreateError());
+        if (err) return next(new DatabaseCreateError(err.message));
         res
             .status(HTTP_STATUS_OK)
             .json({

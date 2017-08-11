@@ -30,7 +30,7 @@ exports.post = function (req, res, next) {
     education = new Education(education);
 
     education.save(function (err, educationSaved) {
-        if (err) return next(new DatabaseCreateError());
+        if (err) return next(new DatabaseCreateError(err.message)());
         res
             .status(HTTP_STATUS_OK)
             .json({

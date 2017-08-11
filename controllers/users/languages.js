@@ -30,7 +30,7 @@ exports.post = function (req, res, next) {
     language = new Language(language);
 
     language.save(function (err, languageSaved) {
-        if (err) return next(new DatabaseCreateError());
+        if (err) return next(new DatabaseCreateError(err.message)());
         res
             .status(HTTP_STATUS_OK)
             .json({

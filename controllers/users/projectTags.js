@@ -30,7 +30,7 @@ exports.post = function (req, res, next) {
     projectTag = new ProjectTag(projectTag);
 
     projectTag.save(function (err, projectTagSaved) {
-        if (err) return next(new DatabaseCreateError());
+        if (err) return next(new DatabaseCreateError(err.message)());
         res
             .status(HTTP_STATUS_OK)
             .json({

@@ -7,8 +7,8 @@ const uuid = require("../helpers").uuid;
 
 var SoftwareTagSchema = new Schema({
     _id: {type: String, default: uuid()},
-    label: String,
-    user: {type: String, ref: MODEL_NAME_USER}
+    label: {type: String, default: "", required: true},
+    user: {type: String, default: null, required: true, ref: MODEL_NAME_USER}
 }, {
     timestamps: true
 });

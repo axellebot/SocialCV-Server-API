@@ -30,7 +30,7 @@ exports.post = function (req, res, next) {
     linkTag = new LinkTag(linkTag);
 
     linkTag.save(function (err, linkTagSaved) {
-        if (err) return next(new DatabaseCreateError());
+        if (err) return next(new DatabaseCreateError(err.message)());
         res
             .status(HTTP_STATUS_OK)
             .json({

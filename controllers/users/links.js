@@ -30,7 +30,7 @@ exports.post = function (req, res, next) {
     link = new Link(link);
 
     link.save(function (err, linkSaved) {
-        if (err) return next(new DatabaseCreateError());
+        if (err) return next(new DatabaseCreateError(err.message)());
         res
             .status(HTTP_STATUS_OK)
             .json({

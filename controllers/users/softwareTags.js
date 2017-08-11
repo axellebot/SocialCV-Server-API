@@ -30,7 +30,7 @@ exports.post = function (req, res, next) {
     softwareTag = new SoftwareTag(softwareTag);
 
     softwareTag.save(function (err, softwareTagSaved) {
-        if (err) return next(new DatabaseCreateError());
+        if (err) return next(new DatabaseCreateError(err.message)());
         res
             .status(HTTP_STATUS_OK)
             .json({

@@ -30,7 +30,7 @@ exports.post = function (req, res, next) {
     framework = new Framework(framework);
 
     framework.save(function (err, frameworkSaved) {
-        if (err) return next(new DatabaseCreateError());
+        if (err) return next(new DatabaseCreateError(err.message)());
         res
             .status(HTTP_STATUS_OK)
             .json({
