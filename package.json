@@ -1,5 +1,5 @@
 {
-  "name": "vitrine-server",
+  "name": "curriculum-server-api",
   "version": "0.0.0",
   "private": true,
   "scripts": {
