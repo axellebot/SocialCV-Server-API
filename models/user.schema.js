@@ -15,6 +15,16 @@ const uuid = require("../helpers").uuid;
 
 var UserSchema = new Schema({
     _id: {type: String, default: uuid()},
+    firstName: {
+        type: String,
+        default: "",
+        required: true
+    },
+    lastName: {
+        type: String,
+        default: "",
+        required: true
+    },
     email: {
         type: String,
         lowercase: true,
@@ -44,4 +54,4 @@ UserSchema.pre('save', saltPassword);
 //add middleware to verify the password
 UserSchema.methods.verifyPassword = verifyPassword;
 
-module.exports = mongoose.model(MODEL_NAME_USER, UserSchema, COLLECTION_NAME_USER, COLLECTION_NAME_USER);
+module.exports = mongoose.model(MODEL_NAME_USER, UserSchema, COLLECTION_NAME_USER);
