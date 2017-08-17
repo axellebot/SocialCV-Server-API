@@ -80,7 +80,7 @@ exports.login.post = function (req, res, next) {
                 if (err) return next(new AppError(err));
                 if (!isMatch) return next(new WrongPasswordError());
 
-                const userInfo = setUserInfo(user);
+                const userInfo = getUserPublicInfo(user);
 
                 const token = jwt.sign(userInfo, config.secret, {
                     expiresIn: 1440 // expires in 1 hour
