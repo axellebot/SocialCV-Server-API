@@ -5,13 +5,10 @@ const
     bcrypt = require('bcrypt');
 
 // Set user info from request
-module.exports.setUserInfo = function (user) {
-    const getUserInfo = {
-        _id: user._id,
-        email: user.email,
-        role: user.role
-    };
-    return getUserInfo;
+module.exports.getUserPublicInfo = function (user) {
+    var userCopy = user.toJSON();
+    delete userCopy.password;
+    return userCopy;
 };
 
 function getRoleRank(checkRole) {
@@ -28,7 +25,7 @@ function getRoleRank(checkRole) {
             role = -1;
     }
     return role;
-};
+}
 
 module.exports.getRoleRank = getRoleRank;
 

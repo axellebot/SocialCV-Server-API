@@ -3,7 +3,7 @@
 var jwt = require('jsonwebtoken');
 
 //helpers
-const setUserInfo = require('../helpers').setUserInfo;
+const getUserPublicInfo = require('../helpers').getUserPublicInfo;
 
 const User = require('../models/user.schema');
 
@@ -55,7 +55,7 @@ exports.register.post = function (req, res, next) {
 
             // Respond with JWT if user was created
 
-            const userInfo = setUserInfo(user);
+            const userInfo = getUserPublicInfo(user);
 
             res.status(HTTP_STATUS_CREATED).json({
                 error: false,
