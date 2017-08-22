@@ -116,7 +116,7 @@ module.exports = function (req, res, next) {
 
     req.query = req.query || {};
     var options = {};
-    options.blacklist = [];
+    options.blacklist = ['token'];
 
     req.queryParsed.filter = getFilter(req.query, options);
 

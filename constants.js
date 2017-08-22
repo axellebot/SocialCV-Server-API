@@ -72,25 +72,25 @@ global.PATH_SOFTWARE_TAGS = "/softwareTags";
 global.PATH_USERS = "/users";
 
 //Parameters
-global.PARAM_ID_COMPUTING_TAG = "ComputingTagId";
-global.PARAM_ID_EDUCATION = "EducationId";
-global.PARAM_ID_ENTITY = "EntityId";
-global.PARAM_ID_EXPERIENCE = "ExperienceId";
-global.PARAM_ID_FRAMEWORK = "FrameworkId";
-global.PARAM_ID_FRAMEWORK_TAG = "FrameworkTagId";
-global.PARAM_ID_INTEREST = "InterestId";
-global.PARAM_ID_LANGUAGE = "LanguageId";
-global.PARAM_ID_LINK = "LinkId";
-global.PARAM_ID_LINK_TAG = "LinkTagId";
-global.PARAM_ID_OPERATING_SYSTEM = "OperatingSystemId";
-global.PARAM_ID_PROFILE = "ProfileId";
-global.PARAM_ID_PROGRAMMING_LANGUAGE = "ProgrammingLanguageId";
-global.PARAM_ID_PROJECT = "ProjectId";
-global.PARAM_ID_PROJECT_TAG = "ProjectTagId";
-global.PARAM_ID_SOFTWARE_FRAMEWORK = "SoftwareFrameworkId";
-global.PARAM_ID_SOFTWARE = "SoftwareId";
-global.PARAM_ID_SOFTWARE_TAG = "SoftwareTagId";
-global.PARAM_ID_USER = "UserId";
+global.PARAM_ID_COMPUTING_TAG = "computingTagId";
+global.PARAM_ID_EDUCATION = "educationId";
+global.PARAM_ID_ENTITY = "entityId";
+global.PARAM_ID_EXPERIENCE = "experienceId";
+global.PARAM_ID_FRAMEWORK = "frameworkId";
+global.PARAM_ID_FRAMEWORK_TAG = "frameworkTagId";
+global.PARAM_ID_INTEREST = "interestId";
+global.PARAM_ID_LANGUAGE = "languageId";
+global.PARAM_ID_LINK = "linkId";
+global.PARAM_ID_LINK_TAG = "linkTagId";
+global.PARAM_ID_OPERATING_SYSTEM = "operatingSystemId";
+global.PARAM_ID_PROFILE = "profileId";
+global.PARAM_ID_PROGRAMMING_LANGUAGE = "programmingLanguageId";
+global.PARAM_ID_PROJECT = "projectId";
+global.PARAM_ID_PROJECT_TAG = "projectTagId";
+global.PARAM_ID_SOFTWARE_FRAMEWORK = "softwareFrameworkId";
+global.PARAM_ID_SOFTWARE = "softwareId";
+global.PARAM_ID_SOFTWARE_TAG = "softwareTagId";
+global.PARAM_ID_USER = "userId";
 
 //Messages
 global.MESSAGE_SUCCESS_RESOURCE_DELETED = "Resource deleted.";
