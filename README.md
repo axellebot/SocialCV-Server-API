@@ -24,7 +24,7 @@ Don't forget to use the Date type for date string with `ISODate(<String>)` funct
 Use timestamp fields (create, update, ...)
 
 ```
-    Copyright 2016 Axel LE BOT
+    Copyright 2017 Axel LE BOT
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
