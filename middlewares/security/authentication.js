@@ -19,6 +19,11 @@ module.exports = function (req, res, next) {
         if (err) return next(new FailedAuthenticationToken());
 
         req.loggedUser = decoded;
+
+        delete req.body.token;
+        delete req.query.token;
+        delete req.headers['x-access-token'];
+
         return next();
     });
 };
