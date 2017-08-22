@@ -1,7 +1,8 @@
 "use strict";
 
 var getFilterEditData = require("../../helpers").getFilterEditData,
-    userCanEditUserData = require("../../helpers").userCanEditUserData;
+    userCanEditUserData = require("../../helpers").userCanEditUserData,
+    getUserPublicInfo = require("../../helpers").getUserPublicInfo;
 
 const User = require('../../models/user.schema');
 
@@ -16,6 +17,10 @@ exports.users.get = function (req, res, next) {
         .sort(req.queryParsed.cursor.sort)
         .exec(function (err, users) {
             if (err) return next(new DatabaseFindError());
+            //Remove secret data from users
+            users.forEach(function (item, index) {
+                users[index] = getUserPublicInfo(item);
+            });
             res.status(HTTP_STATUS_OK).json({data: users});
         });
 };
@@ -76,7 +81,7 @@ exports.user.get = function (req, res, next) {
         .exec(function (err, user) {
             if (err) return next(new DatabaseFindError());
             if (!user) return next(new NotFoundError(MODEL_NAME_USER));
-            res.status(HTTP_STATUS_OK).json({data: user});
+            res.status(HTTP_STATUS_OK).json({data: getUserPublicInfo(user)});
         });
 };
 
