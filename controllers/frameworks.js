@@ -1,6 +1,8 @@
 "use strict";
 
-var getFilterEditData = require("../helpers").getFilterEditData;
+var getFilterEditData = require("../helpers").getFilterEditData,
+    getRoleRank = require("../helpers").getRoleRank,
+    getPageCount = require("../helpers").getPageCount;
 
 const Framework = require('../models/framework.schema');
 
@@ -15,7 +17,12 @@ exports.frameworks.get = function (req, res, next) {
         .sort(req.queryParsed.cursor.sort)
         .exec(function (err, frameworks) {
             if (err) return next(new DatabaseFindError());
-            res.json(new SelectDocumentsResponse(frameworks));
+            Framework
+                .count(req.queryParsed.filter)
+                .exec(function (err, count) {
+                    if (err) return next(new DatabaseCountError());
+                    res.json(new SelectDocumentsResponse(frameworks, count, getPageCount(count, req.queryParsed.cursor.limit)));
+                });
         });
 };
 

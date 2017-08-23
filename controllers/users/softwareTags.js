@@ -1,6 +1,7 @@
 "use strict";
 
-var userCanEditUserData = require("../../helpers").userCanEditUserData;
+var userCanEditUserData = require("../../helpers").userCanEditUserData,
+    getPageCount = require("../../helpers").getPageCount;
 
 const SoftwareTag = require('../../models/softwareTag.schema');
 
@@ -17,7 +18,12 @@ exports.get = function (req, res, next) {
         .sort(req.queryParsed.cursor.sort)
         .exec(function (err, softwareTags) {
             if (err) return next(new DatabaseFindError());
-            res.json(new SelectDocumentsResponse(softwareTags));
+            SoftwareTag
+                .count(req.queryParsed.filter)
+                .exec(function (err, count) {
+                    if (err) return next(new DatabaseCountError());
+                    res.json(new SelectDocumentsResponse(softwareTags, count, getPageCount(count, req.queryParsed.cursor.limit)));
+                });
         });
 };
 

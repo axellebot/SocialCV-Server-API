@@ -1,6 +1,7 @@
 "use strict";
 
-var userCanEditUserData = require("../../helpers").userCanEditUserData;
+var userCanEditUserData = require("../../helpers").userCanEditUserData,
+    getPageCount = require("../../helpers").getPageCount;
 
 const Project = require('../../models/project.schema');
 
@@ -17,7 +18,12 @@ exports.get = function (req, res, next) {
         .sort(req.queryParsed.cursor.sort)
         .exec(function (err, projects) {
             if (err) return next(new DatabaseFindError());
-            res.json(new SelectDocumentsResponse(projects));
+            Project
+                .count(req.queryParsed.filter)
+                .exec(function (err, count) {
+                    if (err) return next(new DatabaseCountError());
+                    res.json(new SelectDocumentsResponse(projects, count, getPageCount(count, req.queryParsed.cursor.limit)));
+                });
         });
 };
 

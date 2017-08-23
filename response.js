@@ -22,8 +22,10 @@ global.LoginResponse = class extends Response {
 };
 
 global.SelectDocumentsResponse = class extends DataResponse {
-    constructor(documents) {
+    constructor(documents, count = null, pageCount = null) {
         super(documents);
+        this.count = count;
+        this.pageCount = pageCount
     }
 };
 

@@ -1,6 +1,8 @@
 "use strict";
 
-var getFilterEditData = require("../helpers").getFilterEditData;
+var getFilterEditData = require("../helpers").getFilterEditData,
+    getRoleRank = require("../helpers").getRoleRank,
+    getPageCount = require("../helpers").getPageCount;
 
 const LinkTag = require('../models/linkTag.schema');
 
@@ -16,7 +18,12 @@ exports.linkTags.get = function (req, res, next) {
         .sort(req.queryParsed.cursor.sort)
         .exec(function (err, linkTags) {
             if (err) return next(new DatabaseFindError());
-            res.json(new SelectDocumentsResponse(linkTags));
+            LinkTag
+                .count(req.queryParsed.filter)
+                .exec(function (err, count) {
+                    if (err) return next(new DatabaseCountError());
+                    res.json(new SelectDocumentsResponse(linkTags, count, getPageCount(count, req.queryParsed.cursor.limit)));
+                });
         });
 };
 exports.linkTags.post = function (req, res, next) {

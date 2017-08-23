@@ -1,6 +1,8 @@
 "use strict";
 
-var getFilterEditData = require("../helpers").getFilterEditData;
+var getFilterEditData = require("../helpers").getFilterEditData,
+    getRoleRank = require("../helpers").getRoleRank,
+    getPageCount = require("../helpers").getPageCount;
 
 const ProgrammingLanguage = require('../models/programmingLanguage.schema');
 
@@ -15,7 +17,12 @@ exports.programmingLanguages.get = function (req, res, next) {
         .sort(req.queryParsed.cursor.sort)
         .exec(function (err, programmingLanguages) {
             if (err) return next(new DatabaseFindError());
-            res.json(new SelectDocumentsResponse(programmingLanguages));
+            ProgrammingLanguage
+                .count(req.queryParsed.filter)
+                .exec(function (err, count) {
+                    if (err) return next(new DatabaseCountError());
+                    res.json(new SelectDocumentsResponse(programmingLanguages, count, getPageCount(count, req.queryParsed.cursor.limit)));
+                });
         });
 };
 exports.programmingLanguages.post = function (req, res, next) {

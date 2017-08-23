@@ -1,6 +1,7 @@
 "use strict";
 
-var userCanEditUserData = require("../../helpers").userCanEditUserData;
+var userCanEditUserData = require("../../helpers").userCanEditUserData,
+    getPageCount = require("../../helpers").getPageCount;
 
 const ProgrammingLanguage = require('../../models/programmingLanguage.schema');
 
@@ -17,7 +18,12 @@ exports.get = function (req, res, next) {
         .sort(req.queryParsed.cursor.sort)
         .exec(function (err, programmingLanguages) {
             if (err) return next(new DatabaseFindError());
-            res.json(new SelectDocumentsResponse(programmingLanguages));
+            ProgrammingLanguage
+                .count(req.queryParsed.filter)
+                .exec(function (err, count) {
+                    if (err) return next(new DatabaseCountError());
+                    res.json(new SelectDocumentsResponse(programmingLanguages, count, getPageCount(count, req.queryParsed.cursor.limit)));
+                });
         });
 };
 

@@ -1,6 +1,8 @@
 "use strict";
 
-var getFilterEditData = require("../helpers").getFilterEditData;
+var getFilterEditData = require("../helpers").getFilterEditData,
+    getRoleRank = require("../helpers").getRoleRank,
+    getPageCount = require("../helpers").getPageCount;
 
 const OperatingSystem = require('../models/operatingSystem.schema');
 
@@ -15,7 +17,12 @@ exports.operatingSystems.get = function (req, res, next) {
         .sort(req.queryParsed.cursor.sort)
         .exec(function (err, operatingSystems) {
             if (err) return next(new DatabaseFindError());
-            res.json(new SelectDocumentsResponse(operatingSystems));
+            OperatingSystem
+                .count(req.queryParsed.filter)
+                .exec(function (err, count) {
+                    if (err) return next(new DatabaseCountError());
+                    res.json(new SelectDocumentsResponse(operatingSystems, count, getPageCount(count, req.queryParsed.cursor.limit)));
+                });
         });
 };
 

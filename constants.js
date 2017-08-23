@@ -101,6 +101,7 @@ global.MESSAGE_ERROR_RESOURCE_DELETE = "Error deleting resource";
 global.MESSAGE_ERROR_RESOURCE_UPDATE = "Error updating resource";
 global.MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE = "Resources partially updated";
 global.MESSAGE_ERROR_RESOURCES_PARTIAL_DELETE = "Resources partially deleted";
+global.MESSAGE_ERROR_DATABASE_COUNT = "Database count action error.";
 global.MESSAGE_ERROR_DATABASE_CREATE = "Database create action error.";
 global.MESSAGE_ERROR_DATABASE_SAVE = "Database save action error.";
 global.MESSAGE_ERROR_DATABASE_REMOVE = "Database remove action error.";

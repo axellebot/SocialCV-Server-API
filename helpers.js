@@ -105,3 +105,8 @@ module.exports.compareKeys = function (a, b) {
 
     return (JSON.stringify(aKeys).equals(JSON.stringify(bKeys)));
 };
+
+module.exports.getPageCount = function (itemCount, limit) {
+    console.log(itemCount, limit);
+    return Math.floor(itemCount / limit);
+};

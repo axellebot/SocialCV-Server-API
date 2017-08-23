@@ -1,6 +1,8 @@
 "use strict";
 
-var getFilterEditData = require("../helpers").getFilterEditData;
+var getFilterEditData = require("../helpers").getFilterEditData,
+    getRoleRank = require("../helpers").getRoleRank,
+    getPageCount = require("../helpers").getPageCount;
 
 const SoftwareTag = require('../models/softwareTag.schema');
 
@@ -15,7 +17,12 @@ exports.softwareTags.get = function (req, res, next) {
         .sort(req.queryParsed.cursor.sort)
         .exec(function (err, softwareTags) {
             if (err) return next(new DatabaseFindError());
-            res.json(new SelectDocumentsResponse(softwareTags));
+            SoftwareTag
+                .count(req.queryParsed.filter)
+                .exec(function (err, count) {
+                    if (err) return next(new DatabaseCountError());
+                    res.json(new SelectDocumentsResponse(softwareTags, count, getPageCount(count, req.queryParsed.cursor.limit)));
+                });
         });
 };
 

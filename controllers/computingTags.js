@@ -1,7 +1,8 @@
 "use strict";
 
-var getFilterEditData = require("../helpers").getFilterEditData;
-var getRoleRank = require("../helpers").getRoleRank;
+var getFilterEditData = require("../helpers").getFilterEditData,
+    getRoleRank = require("../helpers").getRoleRank,
+    getPageCount = require("../helpers").getPageCount;
 
 const ComputingTag = require('../models/computingTag.schema');
 
@@ -16,7 +17,12 @@ exports.computingTags.get = function (req, res, next) {
         .sort(req.queryParsed.cursor.sort)
         .exec(function (err, computingTags) {
             if (err) return next(new DatabaseFindError());
-            res.json(new SelectDocumentsResponse(computingTags));
+            ComputingTag
+                .count(req.queryParsed.filter)
+                .exec(function (err, count) {
+                    if (err) return next(new DatabaseCountError());
+                    res.json(new SelectDocumentsResponse(computingTags, count, getPageCount(count, req.queryParsed.cursor.limit)));
+                });
         });
 };
 

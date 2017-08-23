@@ -2,7 +2,9 @@
 
 var getFilterEditData = require("../../helpers").getFilterEditData,
     userCanEditUserData = require("../../helpers").userCanEditUserData,
-    getUserPublicInfo = require("../../helpers").getUserPublicInfo;
+    getUserPublicInfo = require("../../helpers").getUserPublicInfo,
+    getPageCount = require("../../helpers").getPageCount;
+
 
 const User = require('../../models/user.schema');
 
@@ -21,7 +23,12 @@ exports.users.get = function (req, res, next) {
             users.forEach(function (item, index) {
                 users[index] = getUserPublicInfo(item);
             });
-            res.json(new SelectDocumentsResponse(users));
+            User
+                .count(req.queryParsed.filter)
+                .exec(function (err, count) {
+                    if (err) return next(new DatabaseCountError());
+                    res.json(new SelectDocumentsResponse(users, count, getPageCount(count, req.queryParsed.cursor.limit)));
+                });
         });
 };
 
