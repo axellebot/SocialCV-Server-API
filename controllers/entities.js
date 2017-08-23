@@ -1,6 +1,8 @@
 "use strict";
 
-var getFilterEditData = require("../helpers").getFilterEditData;
+var getFilterEditData = require("../helpers").getFilterEditData,
+    getRoleRank = require("../helpers").getRoleRank,
+    getPageCount = require("../helpers").getPageCount;
 
 const Entity = require('../models/entity.schema');
 
@@ -15,7 +17,13 @@ exports.entities.get = function (req, res, next) {
         .sort(req.queryParsed.cursor.sort)
         .exec(function (err, entities) {
             if (err) return next(new DatabaseFindError());
-            res.status(HTTP_STATUS_OK).json({data: entities});
+            if (!entities || entities.length <= 0) return next(new NotFoundError(MODEL_NAME_ENTITY));
+            Entity
+                .count(req.queryParsed.filter)
+                .exec(function (err, count) {
+                    if (err) return next(new DatabaseCountError());
+                    res.json(new SelectDocumentsResponse(entities, count, getPageCount(count, req.queryParsed.cursor.limit)));
+                });
         });
 };
 
@@ -26,12 +34,7 @@ exports.entities.post = function (req, res, next) {
 
     entity.save(function (err, entitySaved) {
         if (err) return next(new DatabaseCreateError(err.message)());
-        res
-            .status(HTTP_STATUS_OK)
-            .json({
-                message: MESSAGE_SUCCESS_RESOURCE_CREATED,
-                data: entitySaved
-            });
+        res.json(new CreateDocumentResponse(entitySaved));
     });
 };
 
@@ -47,23 +50,8 @@ exports.entities.put = function (req, res, next) {
                 callback();
             });
     }, function (err) {
-        if (err && entitiesUpdated.length === 0) return next(new DatabaseUpdateError());
-        if (err && entitiesUpdated.length > 0) {
-            return res
-                .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
-                .json({
-                    error: true,
-                    message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
-                    data: entitiesUpdated
-                });
-        }
-
-        res
-            .status(HTTP_STATUS_OK)
-            .json({
-                message: MESSAGE_SUCCESS_RESOURCE_UPDATED,
-                data: entitiesUpdated
-            });
+        if (err) return next(new DatabaseUpdateError());
+        res.json(new UpdateDocumentsResponse(entitiesUpdated));
     });
 };
 
@@ -72,7 +60,7 @@ exports.entities.delete = function (req, res, next) {
         .remove()
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            res.json(new DeleteDocumentsResponse(JSON.parse(removed).n));
         });
 };
 
@@ -84,26 +72,26 @@ exports.entity.get = function (req, res, next) {
         .exec(function (err, entity) {
             if (err) return next(new DatabaseFindError());
             if (!entity) return next(new NotFoundError(MODEL_NAME_ENTITY));
-            res.status(HTTP_STATUS_OK).json({data: entity});
+            res.json(new SelectDocumentResponse(entity));
         });
 };
 
 exports.entity.put = function (req, res, next) {
     const filterUpdate = getFilterEditData(req.params[PARAM_ID_ENTITY], req.loggedUser);
     Entity
-        .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, entity) {
+        .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, entityUpdated) {
             if (err) return next(new DatabaseUpdateError());
-            if (!entity) return next(new NotFoundError(MODEL_NAME_ENTITY));
-            res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_UPDATED, data: entity});
+            if (!entityUpdated) return next(new NotFoundError(MODEL_NAME_ENTITY));
+            res.json(new UpdateDocumentResponse(entityUpdated));
         });
 };
 
 exports.entity.delete = function (req, res, next) {
     const filterRemove = getFilterEditData(req.params[PARAM_ID_ENTITY], req.loggedUser);
     Entity
-        .findOneAndRemove(filterRemove, function (err, entity) {
+        .findOneAndRemove(filterRemove, function (err, entityDeleted) {
             if (err) return next(new DatabaseRemoveError());
-            if (!entity) return next(new NotFoundError(MODEL_NAME_ENTITY));
-            res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_DELETED, data: entity});
+            if (!entityDeleted) return next(new NotFoundError(MODEL_NAME_ENTITY));
+            res.json(new DeleteDocumentResponse(entityDeleted));
         });
 };

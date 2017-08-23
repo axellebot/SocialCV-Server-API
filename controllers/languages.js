@@ -1,6 +1,8 @@
 "use strict";
 
-var getFilterEditData = require("../helpers").getFilterEditData;
+var getFilterEditData = require("../helpers").getFilterEditData,
+    getRoleRank = require("../helpers").getRoleRank,
+    getPageCount = require("../helpers").getPageCount;
 
 const Language = require('../models/language.schema');
 
@@ -15,7 +17,13 @@ exports.languages.get = function (req, res, next) {
         .sort(req.queryParsed.cursor.sort)
         .exec(function (err, languages) {
             if (err) return next(new DatabaseFindError());
-            res.status(HTTP_STATUS_OK).json({data: languages});
+            if (!languages || languages.length <= 0) return next(new NotFoundError(MODEL_NAME_LANGUAGE));
+            Language
+                .count(req.queryParsed.filter)
+                .exec(function (err, count) {
+                    if (err) return next(new DatabaseCountError());
+                    res.json(new SelectDocumentsResponse(languages, count, getPageCount(count, req.queryParsed.cursor.limit)));
+                });
         });
 };
 
@@ -26,12 +34,7 @@ exports.languages.post = function (req, res, next) {
 
     language.save(function (err, languageSaved) {
         if (err) return next(new DatabaseCreateError(err.message)());
-        res
-            .status(HTTP_STATUS_OK)
-            .json({
-                message: MESSAGE_SUCCESS_RESOURCE_CREATED,
-                data: languageSaved
-            });
+        res.json(new CreateDocumentResponse(languageSaved));
     });
 };
 
@@ -47,23 +50,8 @@ exports.languages.put = function (req, res, next) {
                 callback();
             });
     }, function (err) {
-        if (err && languagesUpdated.length === 0) return next(new DatabaseUpdateError());
-        if (err && languagesUpdated.length > 0) {
-            return res
-                .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
-                .json({
-                    error: true,
-                    message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
-                    data: languagesUpdated
-                });
-        }
-
-        res
-            .status(HTTP_STATUS_OK)
-            .json({
-                message: MESSAGE_SUCCESS_RESOURCE_UPDATED,
-                data: languagesUpdated
-            });
+        if (err) return next(new DatabaseUpdateError());
+        res.json(new UpdateDocumentsResponse(languagesUpdated));
     });
 };
 
@@ -72,7 +60,7 @@ exports.languages.delete = function (req, res, next) {
         .remove()
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            res.json(new DeleteDocumentsResponse(JSON.parse(removed).n));
         });
 };
 
@@ -84,26 +72,26 @@ exports.language.get = function (req, res, next) {
         .exec(function (err, language) {
             if (err) return next(new DatabaseFindError());
             if (!language) return next(new NotFoundError(MODEL_NAME_LANGUAGE));
-            res.status(HTTP_STATUS_OK).json({data: language});
+            res.json(new SelectDocumentResponse(language));
         });
 };
 
 exports.language.put = function (req, res, next) {
     var filterUpdate = getFilterEditData(req.params[PARAM_ID_LANGUAGE], req.loggedUser);
     Language
-        .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, language) {
+        .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, languageUpdated) {
             if (err) return next(new DatabaseUpdateError());
-            if (!language) return next(new NotFoundError(MODEL_NAME_LANGUAGE));
-            res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_UPDATED, data: language});
+            if (!languageUpdated) return next(new NotFoundError(MODEL_NAME_LANGUAGE));
+            res.json(new UpdateDocumentResponse(languageUpdated));
         });
 };
 
 exports.language.delete = function (req, res, next) {
     var filterRemove = getFilterEditData(req.params[PARAM_ID_LANGUAGE], req.loggedUser);
     Language
-        .findOneAndRemove(filterRemove, function (err, language) {
+        .findOneAndRemove(filterRemove, function (err, languageDeleted) {
             if (err) return next(new DatabaseRemoveError());
-            if (!language) return next(new NotFoundError(MODEL_NAME_LANGUAGE));
-            res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_DELETED, data: language});
+            if (!languageDeleted) return next(new NotFoundError(MODEL_NAME_LANGUAGE));
+            res.json(new DeleteDocumentResponse(languageDeleted));
         });
 };

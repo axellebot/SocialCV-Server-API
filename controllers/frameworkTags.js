@@ -1,6 +1,8 @@
 "use strict";
 
-var getFilterEditData = require("../helpers").getFilterEditData;
+var getFilterEditData = require("../helpers").getFilterEditData,
+    getRoleRank = require("../helpers").getRoleRank,
+    getPageCount = require("../helpers").getPageCount;
 
 const FrameworkTag = require('../models/frameworkTag.schema');
 
@@ -15,7 +17,13 @@ exports.frameworkTags.get = function (req, res, next) {
         .sort(req.queryParsed.cursor.sort)
         .exec(function (err, frameworkTags) {
             if (err) return next(new DatabaseFindError());
-            res.status(HTTP_STATUS_OK).json({data: frameworkTags});
+            if (!frameworkTags || frameworkTags.length <= 0) return next(new NotFoundError(MODEL_NAME_FRAMEWORK_TAG));
+            FrameworkTag
+                .count(req.queryParsed.filter)
+                .exec(function (err, count) {
+                    if (err) return next(new DatabaseCountError());
+                    res.json(new SelectDocumentsResponse(frameworkTags, count, getPageCount(count, req.queryParsed.cursor.limit)));
+                });
         });
 };
 
@@ -26,12 +34,7 @@ exports.frameworkTags.post = function (req, res, next) {
 
     frameworkTag.save(function (err, frameworkTagSaved) {
         if (err) return next(new DatabaseCreateError(err.message)());
-        res
-            .status(HTTP_STATUS_OK)
-            .json({
-                message: MESSAGE_SUCCESS_RESOURCE_CREATED,
-                data: frameworkTagSaved
-            });
+        res.json(new CreateDocumentResponse(frameworkTagSaved));
     });
 };
 
@@ -47,23 +50,8 @@ exports.frameworkTags.put = function (req, res, next) {
                 callback();
             });
     }, function (err) {
-        if (err && frameworkTagsUpdated.length === 0) return next(new DatabaseUpdateError());
-        if (err && frameworkTagsUpdated.length > 0) {
-            return res
-                .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
-                .json({
-                    error: true,
-                    message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
-                    data: frameworkTagsUpdated
-                });
-        }
-
-        res
-            .status(HTTP_STATUS_OK)
-            .json({
-                message: MESSAGE_SUCCESS_RESOURCE_UPDATED,
-                data: frameworkTagsUpdated
-            });
+        if (err) return next(new DatabaseUpdateError());
+        res.json(new UpdateDocumentsResponse(frameworkTagsUpdated));
     });
 };
 
@@ -72,7 +60,7 @@ exports.frameworkTags.delete = function (req, res, next) {
         .remove()
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            res.json(new DeleteDocumentsResponse(JSON.parse(removed).n));
         });
 };
 
@@ -84,26 +72,26 @@ exports.frameworkTag.get = function (req, res, next) {
         .exec(function (err, frameworkTag) {
             if (err) return next(new DatabaseFindError());
             if (!frameworkTag) return next(new NotFoundError(MODEL_NAME_FRAMEWORK_TAG));
-            res.status(HTTP_STATUS_OK).json({data: frameworkTag});
+            res.json(new SelectDocumentResponse(frameworkTag));
         });
 };
 
 exports.frameworkTag.put = function (req, res, next) {
     var filterUpdate = getFilterEditData(req.params[PARAM_ID_FRAMEWORK_TAG], req.loggedUser);
     FrameworkTag
-        .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, frameworkTag) {
+        .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, frameworkTagUpdated) {
             if (err) return next(new DatabaseUpdateError());
-            if (!frameworkTag) return next(new NotFoundError(MODEL_NAME_FRAMEWORK_TAG));
-            res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_UPDATED, data: frameworkTag});
+            if (!frameworkTagUpdated) return next(new NotFoundError(MODEL_NAME_FRAMEWORK_TAG));
+            res.json(new UpdateDocumentResponse(frameworkTagUpdated));
         });
 };
 
 exports.frameworkTag.delete = function (req, res, next) {
     var filterRemove = getFilterEditData(req.params[PARAM_ID_FRAMEWORK_TAG], req.loggedUser);
     FrameworkTag
-        .findOneAndRemove(filterRemove, function (err, frameworkTag) {
+        .findOneAndRemove(filterRemove, function (err, frameworkTagDeleted) {
             if (err) return next(new DatabaseRemoveError());
-            if (!frameworkTag) return next(new NotFoundError(MODEL_NAME_FRAMEWORK_TAG));
-            res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_DELETED, data: frameworkTag});
+            if (!frameworkTagDeleted) return next(new NotFoundError(MODEL_NAME_FRAMEWORK_TAG));
+            res.json(new DeleteDocumentResponse(frameworkTagDeleted));
         });
 };

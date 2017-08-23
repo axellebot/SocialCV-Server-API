@@ -1,6 +1,7 @@
 "use strict";
 
-var userCanEditUserData = require("../../helpers").userCanEditUserData;
+var userCanEditUserData = require("../../helpers").userCanEditUserData,
+    getPageCount = require("../../helpers").getPageCount;
 
 const ProgrammingLanguage = require('../../models/programmingLanguage.schema');
 
@@ -17,7 +18,13 @@ exports.get = function (req, res, next) {
         .sort(req.queryParsed.cursor.sort)
         .exec(function (err, programmingLanguages) {
             if (err) return next(new DatabaseFindError());
-            res.status(HTTP_STATUS_OK).json({data: programmingLanguages});
+            if (!programmingLanguages || programmingLanguages.length <= 0) return next(new NotFoundError(MODEL_NAME_PROGRAMMING_LANGUAGE));
+            ProgrammingLanguage
+                .count(req.queryParsed.filter)
+                .exec(function (err, count) {
+                    if (err) return next(new DatabaseCountError());
+                    res.json(new SelectDocumentsResponse(programmingLanguages, count, getPageCount(count, req.queryParsed.cursor.limit)));
+                });
         });
 };
 
@@ -31,12 +38,7 @@ exports.post = function (req, res, next) {
 
     programmingLanguage.save(function (err, programmingLanguageSaved) {
         if (err) return next(new DatabaseCreateError(err.message)());
-        res
-            .status(HTTP_STATUS_OK)
-            .json({
-                message: MESSAGE_SUCCESS_RESOURCE_CREATED,
-                data: programmingLanguageSaved
-            });
+        res.json(new CreateDocumentResponse(programmingLanguageSaved));
     });
 };
 
@@ -58,23 +60,8 @@ exports.put = function (req, res, next) {
                 callback();
             });
     }, function (err) {
-        if (err && programmingLanguagesUpdated.length === 0) return next(new DatabaseUpdateError());
-        if (err && programmingLanguagesUpdated.length > 0) {
-            return res
-                .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
-                .json({
-                    error: true,
-                    message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
-                    data: programmingLanguagesUpdated
-                });
-        }
-
-        res
-            .status(HTTP_STATUS_OK)
-            .json({
-                message: MESSAGE_SUCCESS_RESOURCE_UPDATED,
-                data: programmingLanguagesUpdated
-            });
+        if (err) return next(new DatabaseUpdateError());
+        res.json(new UpdateDocumentsResponse(programmingLanguagesUpdated));
     });
 };
 
@@ -85,6 +72,6 @@ exports.delete = function (req, res, next) {
         .remove({user: userId})
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            res.json(new DeleteDocumentsResponse(JSON.parse(removed).n));
         });
 };

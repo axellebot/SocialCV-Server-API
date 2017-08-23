@@ -19,12 +19,21 @@ global.AccessRestrictedError = class extends AppError {
     }
 };
 
+global.DatabaseCountError = class extends AppError {
+    constructor(message, status) {
+        super();
+        this.name = this.constructor.name;
+        this.message = message || MESSAGE_ERROR_DATABASE_COUNT;
+        this.status = status || HTTP_STATUS_INTERNAL_SERVER_ERROR;
+    }
+};
+
 global.DatabaseCreateError = class extends AppError {
     constructor(message, status) {
         super();
         this.name = this.constructor.name;
         this.message = message || MESSAGE_ERROR_DATABASE_CREATE;
-        this.status = status || HTTP_STATUS_UNAUTHORIZED;
+        this.status = status || HTTP_STATUS_INTERNAL_SERVER_ERROR;
     }
 };
 
