@@ -18,6 +18,7 @@ exports.get = function (req, res, next) {
         .sort(req.queryParsed.cursor.sort)
         .exec(function (err, links) {
             if (err) return next(new DatabaseFindError());
+            if (!links || links.length <= 0) return next(new NotFoundError(MODEL_NAME_LINK));
             Link
                 .count(req.queryParsed.filter)
                 .exec(function (err, count) {

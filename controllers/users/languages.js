@@ -18,6 +18,7 @@ exports.get = function (req, res, next) {
         .sort(req.queryParsed.cursor.sort)
         .exec(function (err, languages) {
             if (err) return next(new DatabaseFindError());
+            if (!languages || languages.length <= 0) return next(new NotFoundError(MODEL_NAME_LANGUAGE));
             Language
                 .count(req.queryParsed.filter)
                 .exec(function (err, count) {

@@ -17,6 +17,7 @@ exports.experiences.get = function (req, res, next) {
         .sort(req.queryParsed.cursor.sort)
         .exec(function (err, experiences) {
             if (err) return next(new DatabaseFindError());
+            if (!experiences || experiences.length <= 0) return next(new NotFoundError(MODEL_NAME_EXPERIENCE));
             Experience
                 .count(req.queryParsed.filter)
                 .exec(function (err, count) {

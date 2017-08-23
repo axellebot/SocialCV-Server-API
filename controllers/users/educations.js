@@ -18,6 +18,7 @@ exports.get = function (req, res, next) {
         .sort(req.queryParsed.cursor.sort)
         .exec(function (err, educations) {
             if (err) return next(new DatabaseFindError());
+            if (!educations || educations.length <= 0) return next(new NotFoundError(MODEL_NAME_EDUCATION));
             Education
                 .count(req.queryParsed.filter)
                 .exec(function (err, count) {

@@ -17,6 +17,7 @@ exports.entities.get = function (req, res, next) {
         .sort(req.queryParsed.cursor.sort)
         .exec(function (err, entities) {
             if (err) return next(new DatabaseFindError());
+            if (!entities || entities.length <= 0) return next(new NotFoundError(MODEL_NAME_ENTITY));
             Entity
                 .count(req.queryParsed.filter)
                 .exec(function (err, count) {

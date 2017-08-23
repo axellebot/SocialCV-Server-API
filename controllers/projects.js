@@ -17,6 +17,7 @@ exports.projects.get = function (req, res, next) {
         .sort(req.queryParsed.cursor.sort)
         .exec(function (err, projects) {
             if (err) return next(new DatabaseFindError());
+            if (!projects || projects.length <= 0) return next(new NotFoundError(MODEL_NAME_PROJECT));
             Project
                 .count(req.queryParsed.filter)
                 .exec(function (err, count) {

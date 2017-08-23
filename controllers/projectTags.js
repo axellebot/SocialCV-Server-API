@@ -17,6 +17,7 @@ exports.projectTags.get = function (req, res, next) {
         .sort(req.queryParsed.cursor.sort)
         .exec(function (err, projectTags) {
             if (err) return next(new DatabaseFindError());
+            if (!projectTags || projectTags.length <= 0) return next(new NotFoundError(MODEL_NAME_PROJECT_TAG));
             ProjectTag
                 .count(req.queryParsed.filter)
                 .exec(function (err, count) {

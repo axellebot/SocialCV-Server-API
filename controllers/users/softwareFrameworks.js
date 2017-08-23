@@ -18,6 +18,7 @@ exports.get = function (req, res, next) {
         .sort(req.queryParsed.cursor.sort)
         .exec(function (err, softwareFrameworks) {
             if (err) return next(new DatabaseFindError());
+            if (!softwareFrameworks || softwareFrameworks.length <= 0) return next(new NotFoundError(MODEL_NAME_SOFTWARE_FRAMEWORK));
             SoftwareFramework
                 .count(req.queryParsed.filter)
                 .exec(function (err, count) {

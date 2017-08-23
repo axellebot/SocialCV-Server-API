@@ -18,6 +18,7 @@ exports.get = function (req, res, next) {
         .sort(req.queryParsed.cursor.sort)
         .exec(function (err, softwareTags) {
             if (err) return next(new DatabaseFindError());
+            if (!softwareTags || softwareTags.length <= 0) return next(new NotFoundError(MODEL_NAME_SOFTWARE_TAG));
             SoftwareTag
                 .count(req.queryParsed.filter)
                 .exec(function (err, count) {

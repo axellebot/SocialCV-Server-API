@@ -19,6 +19,7 @@ exports.users.get = function (req, res, next) {
         .sort(req.queryParsed.cursor.sort)
         .exec(function (err, users) {
             if (err) return next(new DatabaseFindError());
+            if (!users || users.length <= 0) return next(new NotFoundError(MODEL_NAME_USER));
             //Remove secret data from users
             users.forEach(function (item, index) {
                 users[index] = getUserPublicInfo(item);

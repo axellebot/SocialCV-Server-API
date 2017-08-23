@@ -17,6 +17,7 @@ exports.operatingSystems.get = function (req, res, next) {
         .sort(req.queryParsed.cursor.sort)
         .exec(function (err, operatingSystems) {
             if (err) return next(new DatabaseFindError());
+            if (!operatingSystems || operatingSystems.length <= 0) return next(new NotFoundError(MODEL_NAME_OPERATING_SYSTEM));
             OperatingSystem
                 .count(req.queryParsed.filter)
                 .exec(function (err, count) {

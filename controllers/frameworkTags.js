@@ -17,6 +17,7 @@ exports.frameworkTags.get = function (req, res, next) {
         .sort(req.queryParsed.cursor.sort)
         .exec(function (err, frameworkTags) {
             if (err) return next(new DatabaseFindError());
+            if (!frameworkTags || frameworkTags.length <= 0) return next(new NotFoundError(MODEL_NAME_FRAMEWORK_TAG));
             FrameworkTag
                 .count(req.queryParsed.filter)
                 .exec(function (err, count) {

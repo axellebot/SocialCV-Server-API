@@ -18,6 +18,7 @@ exports.get = function (req, res, next) {
         .sort(req.queryParsed.cursor.sort)
         .exec(function (err, profiles) {
             if (err) return next(new DatabaseFindError());
+            if (!profiles || profiles.length <= 0) return next(new NotFoundError(MODEL_NAME_PROFILE));
             Profile
                 .count(req.queryParsed.filter)
                 .exec(function (err, count) {

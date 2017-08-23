@@ -18,6 +18,7 @@ exports.get = function (req, res, next) {
         .sort(req.queryParsed.cursor.sort)
         .exec(function (err, computingTags) {
             if (err) return next(new DatabaseFindError());
+            if (!computingTags || computingTags.length <= 0) return next(new NotFoundError(MODEL_NAME_COMPUTING_TAG));
             ComputingTag
                 .count(req.queryParsed.filter)
                 .exec(function (err, count) {
