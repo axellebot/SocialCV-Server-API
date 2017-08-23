@@ -57,11 +57,7 @@ exports.register.post = function (req, res, next) {
 
             const userInfo = getUserPublicInfo(user);
 
-            res.status(HTTP_STATUS_CREATED).json({
-                error: false,
-                token: generateToken(userInfo),
-                user: userInfo
-            });
+            res.json(new LoginResponse(generateToken(userInfo), userInfo));
         });
     });
 };
@@ -88,11 +84,7 @@ exports.login.post = function (req, res, next) {
 
                 if (!token) return next(new ProvidingTokenError());
 
-                res.status(HTTP_STATUS_OK).json({
-                    error: false,
-                    token: generateToken(userInfo),
-                    user: userInfo
-                });
+                res.json(new LoginResponse(generateToken(userInfo), userInfo));
             });
         })
 };

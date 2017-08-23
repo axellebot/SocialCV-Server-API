@@ -17,7 +17,7 @@ exports.get = function (req, res, next) {
         .sort(req.queryParsed.cursor.sort)
         .exec(function (err, educations) {
             if (err) return next(new DatabaseFindError());
-            res.status(HTTP_STATUS_OK).json({data: educations});
+            res.json(new SelectDocumentsResponse(educations));
         });
 };
 
@@ -31,12 +31,7 @@ exports.post = function (req, res, next) {
 
     education.save(function (err, educationSaved) {
         if (err) return next(new DatabaseCreateError(err.message)());
-        res
-            .status(HTTP_STATUS_OK)
-            .json({
-                message: MESSAGE_SUCCESS_RESOURCE_CREATED,
-                data: educationSaved
-            });
+        res.json(new CreateDocumentResponse(educationSaved));
     });
 };
 
@@ -58,23 +53,8 @@ exports.put = function (req, res, next) {
                 callback();
             });
     }, function (err) {
-        if (err && educationsUpdated.length === 0) return next(new DatabaseUpdateError());
-        if (err && educationsUpdated.length > 0) {
-            return res
-                .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
-                .json({
-                    error: true,
-                    message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
-                    data: educationsUpdated
-                });
-        }
-
-        res
-            .status(HTTP_STATUS_OK)
-            .json({
-                message: MESSAGE_SUCCESS_RESOURCE_UPDATED,
-                data: educationsUpdated
-            });
+        if (err) return next(new DatabaseUpdateError());
+        res.json(new UpdateDocumentsResponse(educationsUpdated));
     });
 };
 
@@ -86,6 +66,6 @@ exports.delete = function (req, res, next) {
         .remove({user: userId})
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            res.json(new DeleteDocumentsResponse(JSON.parse(removed).n));
         });
 };

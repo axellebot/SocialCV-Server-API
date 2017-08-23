@@ -15,7 +15,7 @@ exports.profiles.get = function (req, res, next) {
         .sort(req.queryParsed.cursor.sort)
         .exec(function (err, profiles) {
             if (err) return next(new DatabaseFindError());
-            res.status(HTTP_STATUS_OK).json({data: profiles});
+            res.json(new SelectDocumentsResponse(profiles));
         });
 };
 
@@ -26,12 +26,7 @@ exports.profiles.post = function (req, res, next) {
 
     profile.save(function (err, profileSaved) {
         if (err) return next(new DatabaseCreateError(err.message)());
-        res
-            .status(HTTP_STATUS_OK)
-            .json({
-                message: MESSAGE_SUCCESS_RESOURCE_CREATED,
-                data: profileSaved
-            });
+        res.json(new CreateDocumentResponse(profileSaved));
     });
 };
 
@@ -47,23 +42,8 @@ exports.profiles.put = function (req, res, next) {
                 callback();
             });
     }, function (err) {
-        if (err && profilesUpdated.length === 0) return next(new DatabaseUpdateError());
-        if (err && profilesUpdated.length > 0) {
-            return res
-                .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
-                .json({
-                    error: true,
-                    message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
-                    data: profilesUpdated
-                });
-        }
-
-        res
-            .status(HTTP_STATUS_OK)
-            .json({
-                message: MESSAGE_SUCCESS_RESOURCE_UPDATED,
-                data: profilesUpdated
-            });
+        if (err) return next(new DatabaseUpdateError());
+        res.json(new UpdateDocumentsResponse(profilesUpdated));
     });
 };
 
@@ -72,7 +52,7 @@ exports.profiles.delete = function (req, res, next) {
         .remove()
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            res.json(new DeleteDocumentsResponse(JSON.parse(removed).n));
         });
 };
 
@@ -84,26 +64,26 @@ exports.profile.get = function (req, res, next) {
         .exec(function (err, profile) {
             if (err) return next(new DatabaseFindError());
             if (!profile) return next(new NotFoundError(MODEL_NAME_PROFILE));
-            res.status(HTTP_STATUS_OK).json({data: profile});
+            res.json(new SelectDocumentResponse(profile));
         });
 };
 
 exports.profile.put = function (req, res, next) {
     var filterUpdate = getFilterEditData(req.params[PARAM_ID_PROFILE], req.loggedUser);
     Profile
-        .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, profile) {
+        .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, profileUpdated) {
             if (err) return next(new DatabaseUpdateError());
-            if (!profile) return next(new NotFoundError(MODEL_NAME_PROFILE));
-            return res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_UPDATED, data: profile});
+            if (!profileUpdated) return next(new NotFoundError(MODEL_NAME_PROFILE));
+            res.json(new UpdateDocumentResponse(profileUpdated));
         });
 };
 
 exports.profile.delete = function (req, res, next) {
     var filterRemove = getFilterEditData(req.params[PARAM_ID_PROFILE], req.loggedUser);
     Profile
-        .findOneAndRemove(filterRemove, function (err, profile) {
+        .findOneAndRemove(filterRemove, function (err, profileDeleted) {
             if (err) return next(new DatabaseRemoveError());
-            if (!profile) return next(new NotFoundError(MODEL_NAME_PROFILE));
-            res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_DELETED, data: profile});
+            if (!profileDeleted) return next(new NotFoundError(MODEL_NAME_PROFILE));
+            res.json(new DeleteDocumentResponse(profileDeleted));
         });
 };

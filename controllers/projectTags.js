@@ -15,7 +15,7 @@ exports.projectTags.get = function (req, res, next) {
         .sort(req.queryParsed.cursor.sort)
         .exec(function (err, projectTags) {
             if (err) return next(new DatabaseFindError());
-            res.status(HTTP_STATUS_OK).json({data: projectTags});
+            res.json(new SelectDocumentsResponse(projectTags));
         });
 };
 
@@ -26,12 +26,7 @@ exports.projectTags.post = function (req, res, next) {
 
     projectTag.save(function (err, projectTagSaved) {
         if (err) return next(new DatabaseCreateError(err.message)());
-        res
-            .status(HTTP_STATUS_OK)
-            .json({
-                message: MESSAGE_SUCCESS_RESOURCE_CREATED,
-                data: projectTagSaved
-            });
+        res.json(new CreateDocumentResponse(projectTagSaved));
     });
 };
 
@@ -47,23 +42,8 @@ exports.projectTags.put = function (req, res, next) {
                 callback();
             });
     }, function (err) {
-        if (err && projectTagsUpdated.length === 0) return next(new DatabaseUpdateError());
-        if (err && projectTagsUpdated.length > 0) {
-            return res
-                .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
-                .json({
-                    error: true,
-                    message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
-                    data: projectTagsUpdated
-                });
-        }
-
-        res
-            .status(HTTP_STATUS_OK)
-            .json({
-                message: MESSAGE_SUCCESS_RESOURCE_UPDATED,
-                data: projectTagsUpdated
-            });
+        if (err) return next(new DatabaseUpdateError());
+        res.json(new UpdateDocumentsResponse(projectTagsUpdated));
     });
 };
 
@@ -72,7 +52,7 @@ exports.projectTags.delete = function (req, res, next) {
         .remove()
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            res.json(new DeleteDocumentsResponse(JSON.parse(removed).n));
         });
 };
 
@@ -84,26 +64,26 @@ exports.projectTag.get = function (req, res, next) {
         .exec(function (err, projectTag) {
             if (err) return next(new DatabaseFindError());
             if (!projectTag) return next(new NotFoundError(MODEL_NAME_PROJECT_TAG));
-            res.status(HTTP_STATUS_OK).json({data: projectTag});
+            res.json(new SelectDocumentResponse(projectTag));
         });
 };
 
 exports.projectTag.put = function (req, res, next) {
     var filterUpdate = getFilterEditData(req.params[PARAM_ID_PROJECT_TAG], req.loggedUser);
     ProjectTag
-        .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, projectTag) {
+        .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, projectTagUpdated) {
             if (err) return next(new DatabaseUpdateError());
-            if (!projectTag) return next(new NotFoundError(MODEL_NAME_PROJECT_TAG));
-            return res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_UPDATED, data: projectTag});
+            if (!projectTagUpdated) return next(new NotFoundError(MODEL_NAME_PROJECT_TAG));
+            res.json(new UpdateDocumentResponse(projectTagUpdated));
         });
 };
 
 exports.projectTag.delete = function (req, res, next) {
     var filterRemove = getFilterEditData(req.params[PARAM_ID_PROJECT_TAG], req.loggedUser);
     ProjectTag
-        .findOneAndRemove(filterRemove, function (err, projectTag) {
+        .findOneAndRemove(filterRemove, function (err, projectTagDeleted) {
             if (err) return next(new DatabaseRemoveError());
-            if (!projectTag) return next(new NotFoundError(MODEL_NAME_PROJECT_TAG));
-            res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_DELETED, data: projectTag});
+            if (!projectTagDeleted) return next(new NotFoundError(MODEL_NAME_PROJECT_TAG));
+            res.json(new DeleteDocumentResponse(projectTagDeleted));
         });
 };

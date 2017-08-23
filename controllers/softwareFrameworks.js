@@ -15,7 +15,7 @@ exports.softwareFrameworks.get = function (req, res, next) {
         .sort(req.queryParsed.cursor.sort)
         .exec(function (err, softwareFrameworks) {
             if (err) return next(new DatabaseFindError());
-            res.status(HTTP_STATUS_OK).json({data: softwareFrameworks});
+            res.json(new SelectDocumentsResponse(softwareFrameworks));
         });
 };
 
@@ -26,12 +26,7 @@ exports.softwareFrameworks.post = function (req, res, next) {
 
     softwareFramework.save(function (err, softwareFrameworkSaved) {
         if (err) return next(new DatabaseCreateError(err.message)());
-        res
-            .status(HTTP_STATUS_OK)
-            .json({
-                message: MESSAGE_SUCCESS_RESOURCE_CREATED,
-                data: softwareFrameworkSaved
-            });
+        res.json(new CreateDocumentResponse(softwareFrameworkSaved));
     });
 };
 
@@ -47,23 +42,8 @@ exports.softwareFrameworks.put = function (req, res, next) {
                 callback();
             });
     }, function (err) {
-        if (err && softwareFrameworksUpdated.length === 0) return next(new DatabaseUpdateError());
-        if (err && softwareFrameworksUpdated.length > 0) {
-            return res
-                .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
-                .json({
-                    error: true,
-                    message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
-                    data: softwareFrameworksUpdated
-                });
-        }
-
-        res
-            .status(HTTP_STATUS_OK)
-            .json({
-                message: MESSAGE_SUCCESS_RESOURCE_UPDATED,
-                data: softwareFrameworksUpdated
-            });
+        if (err) return next(new DatabaseUpdateError());
+        res.json(new UpdateDocumentsResponse(softwareFrameworksUpdated));
     });
 };
 
@@ -72,7 +52,7 @@ exports.softwareFrameworks.delete = function (req, res, next) {
         .remove()
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            res.json(new DeleteDocumentsResponse(JSON.parse(removed).n));
         });
 };
 
@@ -84,36 +64,26 @@ exports.softwareFramework.get = function (req, res, next) {
         .exec(function (err, softwareFramework) {
             if (err) return next(new DatabaseFindError());
             if (!softwareFramework) return next(new NotFoundError(MODEL_NAME_SOFTWARE_FRAMEWORK));
-            res.status(HTTP_STATUS_OK).json({data: softwareFramework});
+            res.json(new SelectDocumentResponse(softwareFramework));
         });
 };
 
 exports.softwareFramework.put = function (req, res, next) {
     var filterUpdate = getFilterEditData(req.params[PARAM_ID_SOFTWARE_FRAMEWORK], req.loggedUser);
     SoftwareFramework
-        .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, softwareFramework) {
+        .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, softwareFrameworkUpdated) {
             if (err) return next(new DatabaseUpdateError());
-            if (!softwareFramework) return next(new NotFoundError(MODEL_NAME_SOFTWARE_FRAMEWORK));
-            res
-                .status(HTTP_STATUS_OK)
-                .json({
-                    message: MESSAGE_SUCCESS_RESOURCE_UPDATED,
-                    data: softwareFramework
-                });
+            if (!softwareFrameworkUpdated) return next(new NotFoundError(MODEL_NAME_SOFTWARE_FRAMEWORK));
+            res.json(new UpdateDocumentResponse(softwareFrameworkUpdated));
         });
 };
 
 exports.softwareFramework.delete = function (req, res, next) {
     var filterRemove = getFilterEditData(req.params[PARAM_ID_SOFTWARE_FRAMEWORK], req.loggedUser);
     SoftwareFramework
-        .findOneAndRemove(filterRemove, function (err, softwareFramework) {
+        .findOneAndRemove(filterRemove, function (err, softwareFrameworkDeleted) {
             if (err) return next(new DatabaseRemoveError());
-            if (!softwareFramework) return next(new NotFoundError(MODEL_NAME_SOFTWARE_FRAMEWORK));
-            res
-                .status(HTTP_STATUS_OK)
-                .json({
-                    message: MESSAGE_SUCCESS_RESOURCE_DELETED,
-                    data: softwareFramework
-                });
+            if (!softwareFrameworkDeleted) return next(new NotFoundError(MODEL_NAME_SOFTWARE_FRAMEWORK));
+            res.json(new DeleteDocumentResponse(softwareFrameworkDeleted));
         });
 };

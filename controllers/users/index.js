@@ -21,7 +21,7 @@ exports.users.get = function (req, res, next) {
             users.forEach(function (item, index) {
                 users[index] = getUserPublicInfo(item);
             });
-            res.status(HTTP_STATUS_OK).json({data: users});
+            res.json(new SelectDocumentsResponse(users));
         });
 };
 
@@ -44,23 +44,8 @@ exports.users.put = function (req, res, next) {
                 callback();
             });
     }, function (err) {
-        if (err && usersUpdated.length === 0) return next(new DatabaseUpdateError());
-        if (err && usersUpdated.length > 0) {
-            return res
-                .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
-                .json({
-                    error: true,
-                    message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
-                    data: usersUpdated
-                });
-        }
-
-        res
-            .status(HTTP_STATUS_OK)
-            .json({
-                message: MESSAGE_SUCCESS_RESOURCE_UPDATED,
-                data: usersUpdated
-            });
+        if (err) return next(new DatabaseUpdateError());
+        res.json(new UpdateDocumentsResponse(usersUpdated));
     });
 };
 
@@ -69,7 +54,7 @@ exports.users.delete = function (req, res, next) {
         .remove()
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            res.json(new DeleteDocumentsResponse(JSON.parse(removed).n));
         });
 };
 
@@ -81,7 +66,7 @@ exports.user.get = function (req, res, next) {
         .exec(function (err, user) {
             if (err) return next(new DatabaseFindError());
             if (!user) return next(new NotFoundError(MODEL_NAME_USER));
-            res.status(HTTP_STATUS_OK).json({data: getUserPublicInfo(user)});
+            res.json(new SelectDocumentResponse(getUserPublicInfo(user)));
         });
 };
 
@@ -90,10 +75,10 @@ exports.user.put = function (req, res, next) {
     if (!userCanEditUserData(req.loggedUser, userId)) return next(new MissingPrivilegeError());
 
     User
-        .findOneAndUpdate({_id: userId}, req.body.data, {returnNewDocument: true}, function (err, user) {
+        .findOneAndUpdate({_id: userId}, req.body.data, {returnNewDocument: true}, function (err, userUpdated) {
             if (err) return next(new DatabaseUpdateError());
-            if (!user) return next(new NotFoundError(MODEL_NAME_USER));
-            res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_UPDATED, data: user});
+            if (!userUpdated) return next(new NotFoundError(MODEL_NAME_USER));
+            res.json(new UpdateDocumentResponse(getUserPublicInfo(userUpdated)));
         });
 };
 
@@ -102,10 +87,10 @@ exports.user.delete = function (req, res, next) {
     if (!userCanEditUserData(req.loggedUser, userId)) return next(new MissingPrivilegeError());
 
     User
-        .findOneAndRemove({_id: userId}, function (err, user) {
+        .findOneAndRemove({_id: userId}, function (err, userDeleted) {
             if (err) return next(new DatabaseRemoveError());
-            if (!user) return next(new NotFoundError(MODEL_NAME_USER));
-            res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_DELETED, data: user});
+            if (!userDeleted) return next(new NotFoundError(MODEL_NAME_USER));
+            res.json(new DeleteDocumentResponse(userDeleted));
         });
 };
 

@@ -15,7 +15,7 @@ exports.operatingSystems.get = function (req, res, next) {
         .sort(req.queryParsed.cursor.sort)
         .exec(function (err, operatingSystems) {
             if (err) return next(new DatabaseFindError());
-            res.status(HTTP_STATUS_OK).json({data: operatingSystems});
+            res.json(new SelectDocumentsResponse(operatingSystems));
         });
 };
 
@@ -26,12 +26,7 @@ exports.operatingSystems.post = function (req, res, next) {
 
     operatingSystem.save(function (err, operatingSystemSaved) {
         if (err) return next(new DatabaseCreateError(err.message)());
-        res
-            .status(HTTP_STATUS_OK)
-            .json({
-                message: MESSAGE_SUCCESS_RESOURCE_CREATED,
-                data: operatingSystemSaved
-            });
+        res.json(new CreateDocumentResponse(operatingSystemSaved));
     });
 };
 
@@ -47,23 +42,8 @@ exports.operatingSystems.put = function (req, res, next) {
                 callback();
             });
     }, function (err) {
-        if (err && operatingSystemsUpdated.length === 0) return next(new DatabaseUpdateError());
-        if (err && operatingSystemsUpdated.length > 0) {
-            return res
-                .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
-                .json({
-                    error: true,
-                    message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
-                    data: operatingSystemsUpdated
-                });
-        }
-
-        res
-            .status(HTTP_STATUS_OK)
-            .json({
-                message: MESSAGE_SUCCESS_RESOURCE_UPDATED,
-                data: operatingSystemsUpdated
-            });
+        if (err) return next(new DatabaseUpdateError());
+        res.json(new UpdateDocumentsResponse(operatingSystemsUpdated));
     });
 };
 
@@ -72,7 +52,7 @@ exports.operatingSystems.delete = function (req, res, next) {
         .remove()
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            res.json(new DeleteDocumentsResponse(JSON.parse(removed).n));
         });
 };
 
@@ -84,26 +64,26 @@ exports.operatingSystem.get = function (req, res, next) {
         .exec(function (err, operatingSystem) {
             if (err) return next(new DatabaseFindError());
             if (!operatingSystem) return next(new NotFoundError(MODEL_NAME_OPERATING_SYSTEM));
-            res.status(HTTP_STATUS_OK).json({data: operatingSystem});
+            res.json(new SelectDocumentResponse(operatingSystem));
         });
 };
 
 exports.operatingSystem.put = function (req, res, next) {
     var filterUpdate = getFilterEditData(req.params[PARAM_ID_OPERATING_SYSTEM], req.loggedUser);
     OperatingSystem
-        .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, operatingSystem) {
+        .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, operatingSystemUpdated) {
             if (err) return next(new DatabaseUpdateError());
-            if (!operatingSystem) return next(new NotFoundError(MODEL_NAME_OPERATING_SYSTEM));
-            return res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_UPDATED, data: operatingSystem});
+            if (!operatingSystemUpdated) return next(new NotFoundError(MODEL_NAME_OPERATING_SYSTEM));
+            res.json(new UpdateDocumentResponse(operatingSystemUpdated));
         });
 };
 
 exports.operatingSystem.delete = function (req, res, next) {
     var filterRemove = getFilterEditData(req.params[PARAM_ID_OPERATING_SYSTEM], req.loggedUser);
     OperatingSystem
-        .findOneAndRemove(filterRemove, function (err, operatingSystem) {
+        .findOneAndRemove(filterRemove, function (err, operatingSystemDeleted) {
             if (err) return next(new DatabaseRemoveError());
-            if (!operatingSystem) return next(new NotFoundError(MODEL_NAME_OPERATING_SYSTEM));
-            return res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_DELETED, data: operatingSystem});
+            if (!operatingSystemDeleted) return next(new NotFoundError(MODEL_NAME_OPERATING_SYSTEM));
+            res.json(new DeleteDocumentResponse(operatingSystemDeleted));
         });
 };

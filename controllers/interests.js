@@ -15,7 +15,7 @@ exports.interests.get = function (req, res, next) {
         .sort(req.queryParsed.cursor.sort)
         .exec(function (err, interests) {
             if (err) return next(new DatabaseFindError());
-            res.status(HTTP_STATUS_OK).json({data: interests});
+            res.json(new SelectDocumentsResponse(interests));
         });
 };
 
@@ -26,12 +26,7 @@ exports.interests.post = function (req, res, next) {
 
     interest.save(function (err, interestSaved) {
         if (err) return next(new DatabaseCreateError(err.message)());
-        res
-            .status(HTTP_STATUS_OK)
-            .json({
-                message: MESSAGE_SUCCESS_RESOURCE_CREATED,
-                data: interestSaved
-            });
+        res.json(new CreateDocumentResponse(interestSaved));
     });
 };
 
@@ -47,23 +42,8 @@ exports.interests.put = function (req, res, next) {
                 callback();
             });
     }, function (err) {
-        if (err && interestsUpdated.length === 0) return next(new DatabaseUpdateError());
-        if (err && interestsUpdated.length > 0) {
-            return res
-                .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
-                .json({
-                    error: true,
-                    message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
-                    data: interestsUpdated
-                });
-        }
-
-        res
-            .status(HTTP_STATUS_OK)
-            .json({
-                message: MESSAGE_SUCCESS_RESOURCE_UPDATED,
-                data: interestsUpdated
-            });
+        if (err) return next(new DatabaseUpdateError());
+        res.json(new UpdateDocumentsResponse(interestsUpdated));
     });
 };
 
@@ -72,7 +52,7 @@ exports.interests.delete = function (req, res, next) {
         .remove()
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            res.json(new DeleteDocumentsResponse(JSON.parse(removed).n));
         });
 };
 
@@ -84,26 +64,26 @@ exports.interest.get = function (req, res, next) {
         .exec(function (err, interest) {
             if (err) return next(new DatabaseFindError());
             if (!interest) return next(new NotFoundError(MODEL_NAME_INTEREST));
-            res.status(HTTP_STATUS_OK).json({data: interest});
+            res.json(new SelectDocumentResponse(interest));
         });
 };
 
 exports.interest.put = function (req, res, next) {
     var filterUpdate = getFilterEditData(req.params[PARAM_ID_INTEREST], req.loggedUser);
     Interest
-        .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, interest) {
+        .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, interestUpdated) {
             if (err) return next(new DatabaseUpdateError());
-            if (!interest) return next(new NotFoundError(MODEL_NAME_INTEREST));
-            res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_UPDATED, data: interest});
+            if (!interestUpdated) return next(new NotFoundError(MODEL_NAME_INTEREST));
+            res.json(new UpdateDocumentResponse(interestUpdated));
         });
 };
 
 exports.interest.delete = function (req, res, next) {
     var filterRemove = getFilterEditData(req.params[PARAM_ID_INTEREST], req.loggedUser);
     Interest
-        .findOneAndRemove(filterRemove, function (err, interest) {
+        .findOneAndRemove(filterRemove, function (err, interestDeleted) {
             if (err) return next(new DatabaseRemoveError());
-            if (!interest) return next(new NotFoundError(MODEL_NAME_INTEREST));
-            res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_DELETED, data: interest});
+            if (!interestDeleted) return next(new NotFoundError(MODEL_NAME_INTEREST));
+            res.json(new DeleteDocumentResponse(interestDeleted));
         });
 };

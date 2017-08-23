@@ -16,7 +16,7 @@ exports.linkTags.get = function (req, res, next) {
         .sort(req.queryParsed.cursor.sort)
         .exec(function (err, linkTags) {
             if (err) return next(new DatabaseFindError());
-            res.status(HTTP_STATUS_OK).json({data: linkTags});
+            res.json(new SelectDocumentsResponse(linkTags));
         });
 };
 exports.linkTags.post = function (req, res, next) {
@@ -26,12 +26,7 @@ exports.linkTags.post = function (req, res, next) {
 
     linkTag.save(function (err, linkTagSaved) {
         if (err) return next(new DatabaseCreateError(err.message)());
-        res
-            .status(HTTP_STATUS_OK)
-            .json({
-                message: MESSAGE_SUCCESS_RESOURCE_CREATED,
-                data: linkTagSaved
-            });
+        res.json(new CreateDocumentResponse(linkTagSaved));
     });
 };
 exports.linkTags.put = function (req, res, next) {
@@ -46,23 +41,8 @@ exports.linkTags.put = function (req, res, next) {
                 callback();
             });
     }, function (err) {
-        if (err && linkTagsUpdated.length === 0) return next(new DatabaseUpdateError());
-        if (err && linkTagsUpdated.length > 0) {
-            return res
-                .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
-                .json({
-                    error: true,
-                    message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
-                    data: linkTagsUpdated
-                });
-        }
-
-        res
-            .status(HTTP_STATUS_OK)
-            .json({
-                message: MESSAGE_SUCCESS_RESOURCE_UPDATED,
-                data: linkTagsUpdated
-            });
+        if (err) return next(new DatabaseUpdateError());
+        res.json(new UpdateDocumentsResponse(linkTagsUpdated));
     });
 };
 
@@ -71,7 +51,7 @@ exports.linkTags.delete = function (req, res, next) {
         .remove()
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            return res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            res.json(new DeleteDocumentsResponse(JSON.parse(removed).n));
         });
 };
 
@@ -83,26 +63,26 @@ exports.linkTag.get = function (req, res, next) {
         .exec(function (err, linkTag) {
             if (err) return next(new DatabaseFindError());
             if (!linkTag) return next(new NotFoundError(MODEL_NAME_LINK_TAG));
-            res.status(HTTP_STATUS_OK).json({data: linkTag});
+            res.json(new SelectDocumentResponse(linkTag));
         });
 };
 
 exports.linkTag.put = function (req, res, next) {
     var filterUpdate = getFilterEditData(req.params[PARAM_ID_LINK_TAG], req.loggedUser);
     LinkTag
-        .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, linkTag) {
+        .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, linkTagUpdated) {
             if (err) return next(new DatabaseUpdateError());
-            if (!linkTag) return next(new NotFoundError(MODEL_NAME_LINK_TAG));
-            res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_UPDATED, data: linkTag});
+            if (!linkTagUpdated) return next(new NotFoundError(MODEL_NAME_LINK_TAG));
+            res.json(new UpdateDocumentResponse(linkTagUpdated));
         });
 };
 
 exports.linkTag.delete = function (req, res, next) {
     var filterRemove = getFilterEditData(req.params[PARAM_ID_LINK_TAG], req.loggedUser);
     LinkTag
-        .findOneAndRemove(filterRemove, function (err, linkTag) {
+        .findOneAndRemove(filterRemove, function (err, linkTagDeleted) {
             if (err) return next(new DatabaseRemoveError());
-            if (!linkTag) return next(new NotFoundError(MODEL_NAME_LINK_TAG));
-            res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_DELETED, data: linkTag});
+            if (!linkTagDeleted) return next(new NotFoundError(MODEL_NAME_LINK_TAG));
+            res.json(new DeleteDocumentResponse(linkTagDeleted));
         });
 };

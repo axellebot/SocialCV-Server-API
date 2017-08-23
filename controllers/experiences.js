@@ -15,7 +15,7 @@ exports.experiences.get = function (req, res, next) {
         .sort(req.queryParsed.cursor.sort)
         .exec(function (err, experiences) {
             if (err) return next(new DatabaseFindError());
-            res.status(HTTP_STATUS_OK).json({data: experiences});
+            res.json(new SelectDocumentsResponse(experiences));
         });
 };
 
@@ -26,12 +26,7 @@ exports.experiences.post = function (req, res, next) {
 
     experience.save(function (err, experienceSaved) {
         if (err) return next(new DatabaseCreateError(err.message)());
-        res
-            .status(HTTP_STATUS_OK)
-            .json({
-                message: MESSAGE_SUCCESS_RESOURCE_CREATED,
-                data: experienceSaved
-            });
+        res.json(new CreateDocumentResponse(experienceSaved));
     });
 };
 
@@ -47,23 +42,8 @@ exports.experiences.put = function (req, res, next) {
                 callback();
             });
     }, function (err) {
-        if (err && experiencesUpdated.length === 0) return next(new DatabaseUpdateError());
-        if (err && experiencesUpdated.length > 0) {
-            return res
-                .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
-                .json({
-                    error: true,
-                    message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
-                    data: experiencesUpdated
-                });
-        }
-
-        res
-            .status(HTTP_STATUS_OK)
-            .json({
-                message: MESSAGE_SUCCESS_RESOURCE_UPDATED,
-                data: experiencesUpdated
-            });
+        if (err) return next(new DatabaseUpdateError());
+        res.json(new UpdateDocumentsResponse(experiencesUpdated));
     });
 };
 
@@ -72,7 +52,7 @@ exports.experiences.delete = function (req, res, next) {
         .remove()
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            res.json(new DeleteDocumentsResponse(JSON.parse(removed).n));
         });
 };
 
@@ -84,26 +64,26 @@ exports.experience.get = function (req, res, next) {
         .exec(function (err, experience) {
             if (err) return next(new DatabaseFindError());
             if (!experience) return next(new NotFoundError(MODEL_NAME_EXPERIENCE));
-            res.status(HTTP_STATUS_OK).json({data: experience});
+            res.json(new SelectDocumentResponse(experience));
         });
 };
 
 exports.experience.put = function (req, res, next) {
     const filterUpdate = getFilterEditData(req.params[PARAM_ID_EXPERIENCE], req.loggedUser);
     Experience
-        .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, experience) {
+        .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, experienceUpdated) {
             if (err) return next(new DatabaseUpdateError());
-            if (!experience) return next(new NotFoundError(MODEL_NAME_EXPERIENCE));
-            res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_UPDATED, data: experience});
+            if (!experienceUpdated) return next(new NotFoundError(MODEL_NAME_EXPERIENCE));
+            res.json(new UpdateDocumentResponse(experienceUpdated));
         });
 };
 
 exports.experience.delete = function (req, res, next) {
     const filterRemove = getFilterEditData(req.params[PARAM_ID_EXPERIENCE], req.loggedUser);
     Experience
-        .findOneAndRemove(filterRemove, function (err, experience) {
+        .findOneAndRemove(filterRemove, function (err, experienceDeleted) {
             if (err) return next(new DatabaseRemoveError());
-            if (!experience) return next(new NotFoundError(MODEL_NAME_EXPERIENCE));
-            res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_DELETED, data: experience});
+            if (!experienceDeleted) return next(new NotFoundError(MODEL_NAME_EXPERIENCE));
+            res.json(new DeleteDocumentResponse(experienceDeleted));
         });
 };

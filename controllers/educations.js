@@ -15,7 +15,7 @@ exports.educations.get = function (req, res, next) {
         .sort(req.queryParsed.cursor.sort)
         .exec(function (err, educations) {
             if (err) return next(new DatabaseFindError());
-            res.status(HTTP_STATUS_OK).json({data: educations});
+            res.json(new SelectDocumentsResponse(educations));
         });
 };
 
@@ -26,12 +26,7 @@ exports.educations.post = function (req, res, next) {
 
     education.save(function (err, educationSaved) {
         if (err) return next(new DatabaseCreateError(err.message)());
-        res
-            .status(HTTP_STATUS_OK)
-            .json({
-                message: MESSAGE_SUCCESS_RESOURCE_CREATED,
-                data: educationSaved
-            });
+        res.json(new CreateDocumentResponse(educationSaved));
     });
 };
 
@@ -47,23 +42,8 @@ exports.educations.put = function (req, res, next) {
                 callback();
             });
     }, function (err) {
-        if (err && educationsUpdated.length === 0) return next(new DatabaseUpdateError());
-        if (err && educationsUpdated.length > 0) {
-            return res
-                .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
-                .json({
-                    error: true,
-                    message: MESSAGE_ERROR_RESOURCES_PARTIAL_UPDATE,
-                    data: educationsUpdated
-                });
-        }
-
-        res
-            .status(HTTP_STATUS_OK)
-            .json({
-                message: MESSAGE_SUCCESS_RESOURCE_UPDATED,
-                data: educationsUpdated
-            });
+        if (err) return next(new DatabaseUpdateError());
+        res.json(new UpdateDocumentsResponse(educationsUpdated));
     });
 };
 
@@ -72,7 +52,7 @@ exports.educations.delete = function (req, res, next) {
         .remove()
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
-            res.status(HTTP_STATUS_OK).json({error: false, message: `${JSON.parse(removed).n} deleted`});
+            res.json(new DeleteDocumentsResponse(JSON.parse(removed).n));
         });
 };
 
@@ -84,26 +64,26 @@ exports.education.get = function (req, res, next) {
         .exec(function (err, education) {
             if (err) return next(new DatabaseFindError());
             if (!education) return next(new NotFoundError(MODEL_NAME_EDUCATION));
-            res.status(HTTP_STATUS_OK).json({data: education});
+            res.json(new SelectDocumentResponse(education));
         });
 };
 
 exports.education.put = function (req, res, next) {
     const filterUpdate = getFilterEditData(req.params[PARAM_ID_EDUCATION], req.loggedUser);
     Education
-        .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, education) {
+        .findOneAndUpdate(filterUpdate, req.body.data, {new: true}, function (err, educationUpdated) {
             if (err) return next(new DatabaseUpdateError());
-            if (!education) return next(new NotFoundError(MODEL_NAME_EDUCATION));
-            res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_UPDATED, data: education});
+            if (!educationUpdated) return next(new NotFoundError(MODEL_NAME_EDUCATION));
+            res.json(new UpdateDocumentResponse(educationUpdated));
         });
 };
 
 exports.education.delete = function (req, res, next) {
     const filterRemove = getFilterEditData(req.params[PARAM_ID_EDUCATION], req.loggedUser);
     Education
-        .findOneAndRemove(filterRemove, function (err, education) {
+        .findOneAndRemove(filterRemove, function (err, educationDeleted) {
             if (err) return next(new DatabaseRemoveError());
-            if (!education) return next(new NotFoundError(MODEL_NAME_EDUCATION));
-            res.status(HTTP_STATUS_OK).json({message: MESSAGE_SUCCESS_RESOURCE_DELETED, data: education});
+            if (!educationDeleted) return next(new NotFoundError(MODEL_NAME_EDUCATION));
+            res.json(new DeleteDocumentResponse(educationDeleted));
         });
 };
