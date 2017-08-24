@@ -108,5 +108,5 @@ module.exports.compareKeys = function (a, b) {
 
 module.exports.getPageCount = function (itemCount, limit) {
     console.log(itemCount, limit);
-    return Math.floor(itemCount / limit);
+    return Math.ceil(itemCount / limit);
 };
