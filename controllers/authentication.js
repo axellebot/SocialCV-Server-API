@@ -21,31 +21,25 @@ function generateToken(user) {
 exports.register = {};
 exports.register.post = function (req, res, next) {
     // Check for registration errors
-    const email = req.body.email;
-    const firstName = req.body.firstName;
-    const lastName = req.body.lastName;
-    const password = req.body.password;
+    var userBody = req.body;
 
     // Return error if no email provided
-    if (!email) return next(new MissingEmailError());
+    if (!userBody.email) return next(new MissingEmailError());
 
     // Return error if full name not provided
-    if (!firstName || !lastName) return next(new MissingFullNameError());
+    if (!userBody.firstName || !userBody.lastName) return next(new MissingFullNameError());
 
     // Return error if no password provided
-    if (!password) return next(new MissingPasswordError());
+    if (!userBody.password) return next(new MissingPasswordError());
 
-    User.findOne({email}, (err, existingUser) => {
+    User.findOne({email: userBody.email}, (err, existingUser) => {
         if (err) return next(new DatabaseFindError());
 
         // If user is not unique, return error
         if (existingUser) next(new EmailAlreadyExistError());
 
         // If email is unique and password was provided, create account
-        const user = new User({
-            email,
-            password
-        });
+        const user = new User(userBody);
 
         user.save((err, user) => {
             if (err) return next(new DatabaseFindError(err));
