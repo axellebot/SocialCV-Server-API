@@ -36,7 +36,7 @@ exports.register.post = function (req, res, next) {
         if (err) return next(new DatabaseFindError());
 
         // If user is not unique, return error
-        if (existingUser) next(new EmailAlreadyExistError());
+        if (existingUser) return next(new EmailAlreadyExistError());
 
         // If email is unique and password was provided, create account
         const user = new User(userBody);
