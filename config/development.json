@@ -1,0 +1,10 @@
+{
+  "secret":"",
+  "saltWorkFactor":10,
+  "database": {
+    "uri": "mongodb://localhost:27017",
+    "name": "cv",
+    "username":"cv",
+    "password":"cv"
+  }
+}
