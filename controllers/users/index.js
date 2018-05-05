@@ -102,21 +102,7 @@ exports.user.delete = function (req, res, next) {
         });
 };
 
-exports.user.computingTags = require('./computingTags');
-exports.user.educations = require('./educations');
-exports.user.entities = require('./entities');
-exports.user.experiences = require('./experiences');
-exports.user.frameworks = require('./frameworks');
-exports.user.frameworkTags = require('./frameworkTags');
-exports.user.interests = require('./interests');
-exports.user.languages = require('./languages');
-exports.user.links = require('./links');
-exports.user.linkTags = require('./linkTags');
-exports.user.operatingSystems = require('./operatingSystems');
+exports.user.entries = require('./entries');
+exports.user.groups = require('./groups');
+exports.user.parts = require('./parts');
 exports.user.profiles = require('./profiles');
-exports.user.programmingLanguages = require('./programmingLanguages');
-exports.user.projects = require('./projects');
-exports.user.projectTags = require('./projectTags');
-exports.user.softwareFrameworks = require('./softwareFrameworks');
-exports.user.softwares = require('./softwares');
-exports.user.softwareTags = require('./softwareTags');

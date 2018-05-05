@@ -3,74 +3,71 @@
 var userCanEditUserData = require("../../helpers").userCanEditUserData,
     getPageCount = require("../../helpers").getPageCount;
 
-const LinkTag = require('../../models/linkTag.schema');
+const Part = require('../../models/part.schema');
 
-/* Links page. */
+/* Parts page. */
 exports.get = function (req, res, next) {
     var filter = req.queryParsed.filter || {};
     filter.user = req.params[PARAM_ID_USER];
 
-    LinkTag
+    Part
         .find(filter)
         .select(req.queryParsed.select)
         .limit(req.queryParsed.cursor.limit)
         .skip(req.queryParsed.cursor.skip)
         .sort(req.queryParsed.cursor.sort)
-        .exec(function (err, linkTags) {
+        .exec(function (err, parts) {
             if (err) return next(new DatabaseFindError());
-            if (!linkTags || linkTags.length <= 0) return next(new NotFoundError(MODEL_NAME_LINK_TAG));
-            LinkTag
+            if (!parts || parts.length <= 0) return next(new NotFoundError(MODEL_NAME_FRAMEWORK_TAG));
+            Part
                 .count(req.queryParsed.filter)
                 .exec(function (err, count) {
                     if (err) return next(new DatabaseCountError());
-                    res.json(new SelectDocumentsResponse(linkTags, count, getPageCount(count, req.queryParsed.cursor.limit)));
+                    res.json(new SelectDocumentsResponse(parts, count, getPageCount(count, req.queryParsed.cursor.limit)));
                 });
         });
 };
-
 exports.post = function (req, res, next) {
     const userId = req.params[PARAM_ID_USER];
     if (!userCanEditUserData(req.loggedUser, userId)) return next(new MissingPrivilegeError());
 
-    var linkTag = req.body.data;
-    linkTag.user = userId;
-    linkTag = new LinkTag(linkTag);
+    var part = req.body.data;
+    part.user = userId;
+    part = new Part(part);
 
-    linkTag.save(function (err, linkTagSaved) {
+    part.save(function (err, partSaved) {
         if (err) return next(new DatabaseCreateError(err.message)());
-        res.json(new CreateDocumentResponse(linkTagSaved));
+        res.json(new CreateDocumentResponse(partSaved));
     });
 };
-
 exports.put = function (req, res, next) {
     const userId = req.params[PARAM_ID_USER];
     if (!userCanEditUserData(req.loggedUser, userId)) return next(new MissingPrivilegeError());
 
-    const linkTags = req.body.data;
-    var linkTagsUpdated = [];
-    Async.eachOf(linkTags, function (linkTag, key, callback) {
+    const parts = req.body.data;
+    var partsUpdated = [];
+    Async.eachOf(parts, function (part, key, callback) {
         const filterUpdate = {
-            _id: linkTag._id,
+            _id: part._id,
             user: userId
         };
-        LinkTag
-            .findOneAndUpdate(filterUpdate, linkTag, {new: true}, function (err, linkTagUpdated) {
+        Part
+            .findOneAndUpdate(filterUpdate, part, {new: true}, function (err, partUpdated) {
                 if (err) return callback(err);
-                if (linkTagUpdated) linkTagsUpdated.push(linkTagUpdated);
+                if (partUpdated) partsUpdated.push(partUpdated);
                 callback();
             });
     }, function (err) {
         if (err) return next(new DatabaseUpdateError());
-        res.json(new UpdateDocumentsResponse(linkTagsUpdated));
+        res.json(new UpdateDocumentsResponse(partsUpdated));
     });
 };
-
 exports.delete = function (req, res, next) {
     const userId = req.params[PARAM_ID_USER];
     if (!userCanEditUserData(req.loggedUser, userId)) return next(new MissingPrivilegeError());
 
-    LinkTag
-        .remove({user: req.params[PARAM_ID_USER]})
+    Part
+        .remove({user: userId})
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
             res.json(new DeleteDocumentsResponse(JSON.parse(removed).n));

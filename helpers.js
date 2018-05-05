@@ -1,7 +1,6 @@
 "use strict";
 
 const
-    uuidv4 = require('uuid/v4'),
     bcrypt = require('bcrypt');
 
 // Set user info from request
@@ -55,10 +54,6 @@ module.exports.verifyPassword = function (candidatePassword, cb) {
         if (err) return cb(err);
         cb(null, isMatch);
     });
-};
-
-module.exports.uuid = function () {
-    return uuidv4
 };
 
 /**

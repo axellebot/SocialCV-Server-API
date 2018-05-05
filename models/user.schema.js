@@ -7,14 +7,12 @@ var verifyPassword = require('../helpers').verifyPassword;
 
 var Schema = mongoose.Schema;
 
-const uuid = require("../helpers").uuid;
-
 //= ===============================
 // User Schema
 //= ===============================
 
 var UserSchema = new Schema({
-    _id: {type: String, default: uuid()},
+    _id: Schema.Types.ObjectId,
     firstName: {
         type: String,
         default: "",

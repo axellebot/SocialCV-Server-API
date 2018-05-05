@@ -3,27 +3,27 @@
 var userCanEditUserData = require("../../helpers").userCanEditUserData,
     getPageCount = require("../../helpers").getPageCount;
 
-const Education = require('../../models/education.schema');
+const Group = require('../../models/group.schema');
 
-/* Educations page. */
+/* Groups page. */
 exports.get = function (req, res, next) {
     var filter = req.queryParsed.filter || {};
     filter.user = req.params[PARAM_ID_USER];
 
-    Education
+    Group
         .find(filter)
         .select(req.queryParsed.select)
         .limit(req.queryParsed.cursor.limit)
         .skip(req.queryParsed.cursor.skip)
         .sort(req.queryParsed.cursor.sort)
-        .exec(function (err, educations) {
+        .exec(function (err, groups) {
             if (err) return next(new DatabaseFindError());
-            if (!educations || educations.length <= 0) return next(new NotFoundError(MODEL_NAME_EDUCATION));
-            Education
+            if (!groups || groups.length <= 0) return next(new NotFoundError(MODEL_NAME_EDUCATION));
+            Group
                 .count(req.queryParsed.filter)
                 .exec(function (err, count) {
                     if (err) return next(new DatabaseCountError());
-                    res.json(new SelectDocumentsResponse(educations, count, getPageCount(count, req.queryParsed.cursor.limit)));
+                    res.json(new SelectDocumentsResponse(groups, count, getPageCount(count, req.queryParsed.cursor.limit)));
                 });
         });
 };
@@ -32,13 +32,13 @@ exports.post = function (req, res, next) {
     const userId = req.params[PARAM_ID_USER];
     if (!userCanEditUserData(req.loggedUser, userId)) return next(new MissingPrivilegeError());
 
-    var education = req.body.data;
-    education.user = userId;
-    education = new Education(education);
+    var group = req.body.data;
+    group.user = userId;
+    group = new Group(group);
 
-    education.save(function (err, educationSaved) {
+    group.save(function (err, groupSaved) {
         if (err) return next(new DatabaseCreateError(err.message)());
-        res.json(new CreateDocumentResponse(educationSaved));
+        res.json(new CreateDocumentResponse(groupSaved));
     });
 };
 
@@ -46,22 +46,22 @@ exports.put = function (req, res, next) {
     const userId = req.params[PARAM_ID_USER];
     if (!userCanEditUserData(req.loggedUser, userId)) return next(new MissingPrivilegeError());
 
-    const educations = req.body.data;
-    var educationsUpdated = [];
-    Async.eachOf(educations, function (education, key, callback) {
+    const groups = req.body.data;
+    var groupsUpdated = [];
+    Async.eachOf(groups, function (group, key, callback) {
         const filterUpdate = {
-            _id: education._id,
+            _id: group._id,
             user: userId
         };
-        Education
-            .findOneAndUpdate(filterUpdate, education, {new: true}, function (err, educationUpdated) {
+        Group
+            .findOneAndUpdate(filterUpdate, group, {new: true}, function (err, groupUpdated) {
                 if (err) return callback(err);
-                if (educationUpdated) educationsUpdated.push(educationUpdated);
+                if (groupUpdated) groupsUpdated.push(groupUpdated);
                 callback();
             });
     }, function (err) {
         if (err) return next(new DatabaseUpdateError());
-        res.json(new UpdateDocumentsResponse(educationsUpdated));
+        res.json(new UpdateDocumentsResponse(groupsUpdated));
     });
 };
 
@@ -69,7 +69,7 @@ exports.delete = function (req, res, next) {
     const userId = req.params[PARAM_ID_USER];
     if (!userCanEditUserData(req.loggedUser, userId)) return next(new MissingPrivilegeError());
 
-    Education
+    Group
         .remove({user: userId})
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());
