@@ -3,27 +3,27 @@
 var userCanEditUserData = require("../../helpers").userCanEditUserData,
     getPageCount = require("../../helpers").getPageCount;
 
-const Experience = require('../../models/experience.schema');
+const Entry = require('../../models/entry.schema');
 
-/* Experiences page. */
+/* Entries page. */
 exports.get = function (req, res, next) {
     var filter = req.queryParsed.filter || {};
     filter.user = req.params[PARAM_ID_USER];
 
-    Experience
+    Entry
         .find(filter)
         .select(req.queryParsed.select)
         .limit(req.queryParsed.cursor.limit)
         .skip(req.queryParsed.cursor.skip)
         .sort(req.queryParsed.cursor.sort)
-        .exec(function (err, experiences) {
+        .exec(function (err, entries) {
             if (err) return next(new DatabaseFindError());
-            if (!experiences || experiences.length <= 0) return next(new NotFoundError(MODEL_NAME_EXPERIENCE));
-            Experience
+            if (!entries || entries.length <= 0) return next(new NotFoundError(MODEL_NAME_LINK));
+            Entry
                 .count(req.queryParsed.filter)
                 .exec(function (err, count) {
                     if (err) return next(new DatabaseCountError());
-                    res.json(new SelectDocumentsResponse(experiences, count, getPageCount(count, req.queryParsed.cursor.limit)));
+                    res.json(new SelectDocumentsResponse(entries, count, getPageCount(count, req.queryParsed.cursor.limit)));
                 });
         });
 };
@@ -32,13 +32,13 @@ exports.post = function (req, res, next) {
     const userId = req.params[PARAM_ID_USER];
     if (!userCanEditUserData(req.loggedUser, userId)) return next(new MissingPrivilegeError());
 
-    var experience = req.body.data;
-    experience.user = userId;
-    experience = new Experience(experience);
+    var entry = req.body.data;
+    entry.user = userId;
+    entry = new Entry(entry);
 
-    experience.save(function (err, experienceSaved) {
+    entry.save(function (err, entrySaved) {
         if (err) return next(new DatabaseCreateError(err.message)());
-        res.json(new CreateDocumentResponse(experienceSaved));
+        res.json(new CreateDocumentResponse(entrySaved));
     });
 };
 
@@ -46,29 +46,30 @@ exports.put = function (req, res, next) {
     const userId = req.params[PARAM_ID_USER];
     if (!userCanEditUserData(req.loggedUser, userId)) return next(new MissingPrivilegeError());
 
-    const experiences = req.body.data;
-    var experiencesUpdated = [];
-    Async.eachOf(experiences, function (experience, key, callback) {
+    const entries = req.body.data;
+    var entriesUpdated = [];
+    Async.eachOf(entries, function (entry, key, callback) {
         const filterUpdate = {
-            _id: experience._id,
+            _id: entry._id,
             user: userId
         };
-        Experience
-            .findOneAndUpdate(filterUpdate, experience, {new: true}, function (err, experienceUpdated) {
+        Entry
+            .findOneAndUpdate(filterUpdate, entry, {new: true}, function (err, entryUpdated) {
                 if (err) return callback(err);
-                if (experienceUpdated) experiencesUpdated.push(experienceUpdated);
+                if (entryUpdated) entriesUpdated.push(entryUpdated);
                 callback();
             });
     }, function (err) {
         if (err) return next(new DatabaseUpdateError());
-        res.json(new UpdateDocumentsResponse(experiencesUpdated));
+        res.json(new UpdateDocumentsResponse(entriesUpdated));
     });
 };
 
 exports.delete = function (req, res, next) {
     const userId = req.params[PARAM_ID_USER];
     if (!userCanEditUserData(req.loggedUser, userId)) return next(new MissingPrivilegeError());
-    Experience
+
+    Entry
         .remove({user: userId})
         .exec(function (err, removed) {
             if (err) return next(new DatabaseRemoveError());

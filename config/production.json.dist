@@ -2,8 +2,7 @@
   "secret":"",
   "saltWorkFactor":10,
   "database": {
-    "uri": "mongodb://example.com",
-    "name": "databaseName",
+    "uri": "mongodb://example.com/dbName",
     "username":"username",
     "password":"password"
   }

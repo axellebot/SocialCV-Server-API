@@ -3,20 +3,25 @@
 var mongoose = require('../mongoose');
 var Schema = mongoose.Schema;
 
-var ProfileSchema = new Schema({
+const uuid = require("../helpers").uuid;
+
+var GroupSchema = new Schema({
     _id: Schema.Types.ObjectId,
-    title: {
+    name: {
         type: String,
         default: "",
+        required: true
     },
-    subtitle: {
-        type: String,
-        default: ""
+    part: {
+        type: Schema.Types.ObjectId,
+        default: null,
+        required: true,
+        ref: MODEL_NAME_PART
     },
-    body: {
+    entries: {
         type: [{
             type: Schema.Types.ObjectId,
-            ref: MODEL_NAME_PART
+            ref: MODEL_NAME_ENTRY
         }],
         default: []
     },
@@ -30,4 +35,4 @@ var ProfileSchema = new Schema({
     timestamps: true
 });
 
-module.exports = mongoose.model(MODEL_NAME_PROFILE, ProfileSchema, COLLECTION_NAME_PROFILE);
+module.exports = mongoose.model(MODEL_NAME_GROUP, GroupSchema, COLLECTION_NAME_GROUP);

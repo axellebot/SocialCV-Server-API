@@ -5,45 +5,17 @@ global.ROLE_ADMIN = "ROLE_ADMIN";
 global.ROLE_MEMBER = "ROLE_MEMBER";
 
 //Schema Name
-global.MODEL_NAME_COMPUTING_TAG = "ComputingTag";
-global.MODEL_NAME_EDUCATION = "Education";
-global.MODEL_NAME_ENTITY = "Entity";
-global.MODEL_NAME_EXPERIENCE = "Experience";
-global.MODEL_NAME_FRAMEWORK = "Framework";
-global.MODEL_NAME_FRAMEWORK_TAG = "FrameworkTag";
-global.MODEL_NAME_INTEREST = "Interest";
-global.MODEL_NAME_LANGUAGE = "Language";
-global.MODEL_NAME_LINK = "Link";
-global.MODEL_NAME_LINK_TAG = "LinkTag";
-global.MODEL_NAME_OPERATING_SYSTEM = "OperatingSystem";
+global.MODEL_NAME_ENTRY = "Link";
+global.MODEL_NAME_GROUP = "LinkTag";
+global.MODEL_NAME_PART = "OperatingSystem";
 global.MODEL_NAME_PROFILE = "Profile";
-global.MODEL_NAME_PROGRAMMING_LANGUAGE = "ProgrammingLanguage";
-global.MODEL_NAME_PROJECT = "Project";
-global.MODEL_NAME_PROJECT_TAG = "ProjectTag";
-global.MODEL_NAME_SOFTWARE_FRAMEWORK = "SoftwareFramework";
-global.MODEL_NAME_SOFTWARE = "Software";
-global.MODEL_NAME_SOFTWARE_TAG = "SoftwareTag";
 global.MODEL_NAME_USER = "User";
 
 //Collection Name
-global.COLLECTION_NAME_COMPUTING_TAG = "computingTags";
-global.COLLECTION_NAME_EDUCATION = "educations";
-global.COLLECTION_NAME_ENTITY = "entities";
-global.COLLECTION_NAME_EXPERIENCE = "experiences";
-global.COLLECTION_NAME_FRAMEWORK = "frameworks";
-global.COLLECTION_NAME_FRAMEWORK_TAG = "frameworkTags";
-global.COLLECTION_NAME_INTEREST = "interests";
-global.COLLECTION_NAME_LANGUAGE = "languages";
-global.COLLECTION_NAME_LINK = "links";
-global.COLLECTION_NAME_LINK_TAG = "linkTags";
-global.COLLECTION_NAME_OPERATING_SYSTEM = "operatingSystems";
+global.COLLECTION_NAME_ENTRY = "entries";
+global.COLLECTION_NAME_GROUP = "groups";
+global.COLLECTION_NAME_PART = "parts";
 global.COLLECTION_NAME_PROFILE = "profiles";
-global.COLLECTION_NAME_PROGRAMMING_LANGUAGE = "programmingLanguages";
-global.COLLECTION_NAME_PROJECT = "projects";
-global.COLLECTION_NAME_PROJECT_TAG = "projectTags";
-global.COLLECTION_NAME_SOFTWARE_FRAMEWORK = "softwareFrameworks";
-global.COLLECTION_NAME_SOFTWARE = "softwares";
-global.COLLECTION_NAME_SOFTWARE_TAG = "softwareTags";
 global.COLLECTION_NAME_USER = "users";
 
 //Paths
@@ -51,45 +23,17 @@ global.PATH_INDEX = "/";
 global.PATH_AUTHENTICATION = "/auth";
 global.PATH_REGISTER = "/register";
 global.PATH_LOGIN = "/login";
-global.PATH_COMPUTING_TAGS = "/computingTags";
-global.PATH_EDUCATIONS = "/educations";
-global.PATH_ENTITIES = "/entities";
-global.PATH_EXPERIENCES = "/experiences";
-global.PATH_FRAMEWORKS = "/frameworks";
-global.PATH_FRAMEWORK_TAGS = "/frameworkTags";
-global.PATH_INTERESTS = "/interests";
-global.PATH_LANGUAGES = "/languages";
-global.PATH_LINKS = "/links";
-global.PATH_LINK_TAGS = "/linkTags";
-global.PATH_OPERATING_SYSTEMS = "/operatingSystems";
+global.PATH_ENTRIES = "/entries";
+global.PATH_GROUPS = "/groups";
+global.PATH_PARTS = "/parts";
 global.PATH_PROFILES = "/profiles";
-global.PATH_PROGRAMMING_LANGUAGES = "/programmingLanguages";
-global.PATH_PROJECTS = "/projects";
-global.PATH_PROJECT_TAGS = "/projectTags";
-global.PATH_SOFTWARE_FRAMEWORKS = "/softwareFrameworks";
-global.PATH_SOFTWARES = "/softwares";
-global.PATH_SOFTWARE_TAGS = "/softwareTags";
 global.PATH_USERS = "/users";
 
 //Parameters
-global.PARAM_ID_COMPUTING_TAG = "computingTagId";
-global.PARAM_ID_EDUCATION = "educationId";
-global.PARAM_ID_ENTITY = "entityId";
-global.PARAM_ID_EXPERIENCE = "experienceId";
-global.PARAM_ID_FRAMEWORK = "frameworkId";
-global.PARAM_ID_FRAMEWORK_TAG = "frameworkTagId";
-global.PARAM_ID_INTEREST = "interestId";
-global.PARAM_ID_LANGUAGE = "languageId";
-global.PARAM_ID_LINK = "linkId";
-global.PARAM_ID_LINK_TAG = "linkTagId";
-global.PARAM_ID_OPERATING_SYSTEM = "operatingSystemId";
+global.PARAM_ID_ENTRY = "entryId";
+global.PARAM_ID_GROUP = "groupId";
+global.PARAM_ID_PART = "partId";
 global.PARAM_ID_PROFILE = "profileId";
-global.PARAM_ID_PROGRAMMING_LANGUAGE = "programmingLanguageId";
-global.PARAM_ID_PROJECT = "projectId";
-global.PARAM_ID_PROJECT_TAG = "projectTagId";
-global.PARAM_ID_SOFTWARE_FRAMEWORK = "softwareFrameworkId";
-global.PARAM_ID_SOFTWARE = "softwareId";
-global.PARAM_ID_SOFTWARE_TAG = "softwareTagId";
 global.PARAM_ID_USER = "userId";
 
 //Messages
