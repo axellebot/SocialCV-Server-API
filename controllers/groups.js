@@ -4,7 +4,14 @@ var getFilterEditData = require("../helpers").getFilterEditData,
     getRoleRank = require("../helpers").getRoleRank,
     getPageCount = require("../helpers").getPageCount;
 
-const Group = require('../models/group.schema');
+// Schemas
+const Group = require('../models/group.schema');// Errors
+const DatabaseFindError = require('../errors/DatabaseFindError');
+const DatabaseCountError = require('../errors/DatabaseCountError');
+const DatabaseCreateError = require('../errors/DatabaseCreateError');
+const DatabaseUpdateError = require('../errors/DatabaseUpdateError');
+const DatabaseRemoveError = require('../errors/DatabaseRemoveError');
+const NotFoundError = require('../errors/NotFoundError');
 
 /* Groups page. */
 exports.groups = {};

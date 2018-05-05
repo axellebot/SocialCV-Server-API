@@ -1,13 +1,12 @@
 "use strict";
 
+// Global Config
 global.config = require("./config");
 
 //assign constants
 require("./constants");
 //assign response to global
 require("./response");
-//assign errors to global
-require("./errors");
 
 global.Async = require("async");
 
@@ -18,7 +17,12 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
+// Errors
+const NotFoundError = require('./errors/NotFoundError')
+
+// Routers
 var router = require('./router');
+
 
 var app = express();
 

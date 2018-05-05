@@ -5,8 +5,17 @@ var getFilterEditData = require("../../helpers").getFilterEditData,
     getUserPublicInfo = require("../../helpers").getUserPublicInfo,
     getPageCount = require("../../helpers").getPageCount;
 
-
+// Schemas
 const User = require('../../models/user.schema');
+
+// Errors
+const DatabaseFindError = require('../../errors/DatabaseFindError');
+const DatabaseCountError = require('../../errors/DatabaseCountError');
+const DatabaseCreateError = require('../../errors/DatabaseCreateError');
+const DatabaseUpdateError = require('../../errors/DatabaseUpdateError');
+const DatabaseRemoveError = require('../../errors/DatabaseRemoveError');
+const NotFoundError = require('../../errors/NotFoundError');
+const MissingPrivilegeError = require('../../errors/MissingPrivilegeError');
 
 /* users page. */
 exports.users = {};

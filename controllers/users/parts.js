@@ -3,7 +3,17 @@
 var userCanEditUserData = require("../../helpers").userCanEditUserData,
     getPageCount = require("../../helpers").getPageCount;
 
+// Schemas
 const Part = require('../../models/part.schema');
+
+// Errors
+const DatabaseFindError = require('../../errors/DatabaseFindError');
+const DatabaseCountError = require('../../errors/DatabaseCountError');
+const DatabaseCreateError = require('../../errors/DatabaseCreateError');
+const DatabaseUpdateError = require('../../errors/DatabaseUpdateError');
+const DatabaseRemoveError = require('../../errors/DatabaseRemoveError');
+const NotFoundError = require('../../errors/NotFoundError');
+const MissingPrivilegeError = require('../../errors/MissingPrivilegeError');
 
 /* Parts page. */
 exports.get = function (req, res, next) {
