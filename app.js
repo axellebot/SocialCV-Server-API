@@ -5,8 +5,6 @@ global.config = require("./config");
 
 //assign constants
 require("./constants");
-//assign response to global
-require("./response");
 
 global.Async = require("async");
 

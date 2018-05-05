@@ -18,6 +18,9 @@ const UserNotFoundError = require('../errors/UserNotFoundError');
 const WrongPasswordError = require('../errors/WrongPasswordError');
 const ProvidingTokenError = require('../errors/ProvidingTokenError');
 
+// Responses
+const LoginResponse = require('../responses/LoginResponse');
+
 
 // Generate JWT
 function generateToken(user) {

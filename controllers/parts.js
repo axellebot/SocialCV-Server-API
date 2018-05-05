@@ -15,6 +15,15 @@ const DatabaseUpdateError = require('../errors/DatabaseUpdateError');
 const DatabaseRemoveError = require('../errors/DatabaseRemoveError');
 const NotFoundError = require('../errors/NotFoundError');
 
+// Responses
+const SelectDocumentsResponse = require('../responses/SelectDocumentsResponse');
+const SelectDocumentResponse = require('../responses/SelectDocumentResponse');
+const CreateDocumentResponse = require('../responses/CreateDocumentResponse');
+const UpdateDocumentsResponse = require('../responses/UpdateDocumentsResponse');
+const UpdateDocumentResponse = require('../responses/UpdateDocumentResponse');
+const DeleteDocumentsResponse = require('../responses/DeleteDocumentsResponse');
+const DeleteDocumentResponse = require('../responses/DeleteDocumentResponse');
+
 /* Entities page. */
 exports.parts = {};
 exports.parts.get = function(req, res, next) {

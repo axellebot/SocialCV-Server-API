@@ -17,6 +17,15 @@ const DatabaseRemoveError = require('../../errors/DatabaseRemoveError');
 const NotFoundError = require('../../errors/NotFoundError');
 const MissingPrivilegeError = require('../../errors/MissingPrivilegeError');
 
+// Responses
+const SelectDocumentsResponse = require('../../responses/SelectDocumentsResponse');
+const SelectDocumentResponse = require('../../responses/SelectDocumentResponse');
+const CreateDocumentResponse = require('../../responses/CreateDocumentResponse');
+const UpdateDocumentsResponse = require('../../responses/UpdateDocumentsResponse');
+const UpdateDocumentResponse = require('../../responses/UpdateDocumentResponse');
+const DeleteDocumentsResponse = require('../../responses/DeleteDocumentsResponse');
+const DeleteDocumentResponse = require('../../responses/DeleteDocumentResponse');
+
 /* users page. */
 exports.users = {};
 exports.users.get = function (req, res, next) {
