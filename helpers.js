@@ -9,17 +9,8 @@ const roles = require('./constants/roles');
 // Config
 const config = require('./config');
 
-
-// Set user info from request
-module.exports.getUserPublicInfo = function(user) {
-  var userCopy = user.toJSON();
-  delete userCopy.password;
-  return userCopy;
-};
-
 function getRoleRank(checkRole) {
   var role;
-
   switch (checkRole) {
     case roles.ROLE_ADMIN:
       role = 2;
@@ -35,34 +26,6 @@ function getRoleRank(checkRole) {
 
 module.exports.getRoleRank = getRoleRank;
 
-module.exports.saltPassword = function(next) {
-
-  var user = this;
-
-  // only hash the password if it has been modified (or is new)
-  if (!user.isModified('password')) return next();
-
-  // generate a salt
-  bcrypt.genSalt(config.saltWorkFactor, function(err, salt) {
-    if (err) return next(new Error(err));
-
-    // hash the password using our new salt
-    bcrypt.hash(user.password, salt, function(err, hash) {
-      if (err) return next(new Error(err));
-      // override the cleartext password with the hashed one
-      user.password = hash;
-      next();
-    });
-  });
-};
-
-module.exports.verifyPassword = function(candidatePassword, cb) {
-  bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
-    if (err) return cb(err);
-    cb(null, isMatch);
-  });
-};
-
 /**
  *
  * @param entityId
@@ -71,12 +34,12 @@ module.exports.verifyPassword = function(candidatePassword, cb) {
  */
 module.exports.getFilterEditData = function(entityId, loggedUser) {
   switch (loggedUser.role) {
-    case ROLE_MEMBER:
+    case roles.ROLE_MEMBER:
       return {
         _id: entityId,
         user: loggedUser._id
       };
-    case ROLE_ADMIN:
+    case roles.ROLE_ADMIN:
       return {
         _id: entityId
       };
@@ -95,7 +58,7 @@ module.exports.getFilterEditData = function(entityId, loggedUser) {
  * @returns {boolean}
  */
 module.exports.userCanEditUserData = function(user, ownerId) {
-  if (getRoleRank(user.role) >= getRoleRank(ROLE_ADMIN)) {
+  if (getRoleRank(user.role) >= getRoleRank(roles.ROLE_ADMIN)) {
     return true;
   }
   return (ownerId === user._id);

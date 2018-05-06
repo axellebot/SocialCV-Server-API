@@ -6,15 +6,15 @@ const config = require('../config');
 // Requires Packages
 const jwt = require('jsonwebtoken');
 
-// Helpers
-const getUserPublicInfo = require('../helpers').getUserPublicInfo;
-
 // Schema
 const User = require('../models/user.schema');
 
+// Constants
+const fields = require('../constants/fields')
+
 // Errors
 const MissingEmailError = require('../errors/MissingEmailError');
-const MissingFullNameError = require('../errors/MissingFullNameError');
+const MissingUsernameError = require('../errors/MissingUsernameError');
 const MissingPasswordError = require('../errors/MissingPasswordError');
 const DatabaseFindError = require('../errors/DatabaseFindError');
 const EmailAlreadyExistError = require('../errors/EmailAlreadyExistError');
@@ -27,9 +27,9 @@ const LoginResponse = require('../responses/LoginResponse');
 
 
 // Generate JWT
-function generateToken(user) {
-  return jwt.sign(user, config.secret, {
-    expiresIn: 604800 // in seconds
+function generateToken(plaintText) {
+  return jwt.sign(plaintText, config.secret, {
+    expiresIn: 172800 // 2 days
   });
 }
 
@@ -45,35 +45,37 @@ exports.register.post = function(req, res, next) {
   if (!userBody.email) return next(new MissingEmailError());
 
   // Return error if full name not provided
-  if (!userBody.firstName || !userBody.lastName) return next(new MissingFullNameError());
+  if (!userBody.username) return next(new MissingUsernameError());
 
   // Return error if no password provided
   if (!userBody.password) return next(new MissingPasswordError());
 
   User.findOne({
-    email: userBody.email
-  }, (err, existingUser) => {
-    if (err) return next(new DatabaseFindError());
+      email: userBody.email
+    })
+    .exec((err, existingUser) => {
+      if (err) return next(new DatabaseFindError());
 
-    // If user is not unique, return error
-    if (existingUser) return next(new EmailAlreadyExistError());
+      // If user is not unique, return error
+      if (existingUser) return next(new EmailAlreadyExistError());
 
-    // If email is unique and password was provided, create account
-    const user = new User(userBody);
+      // If email is unique and password was provided, create account
+      const user = new User(userBody);
 
-    user.save((err, user) => {
-      if (err) return next(new DatabaseFindError(err));
+      user.save()
+        .then((err, user) => {
+          if (err) return next(new DatabaseFindError(err));
 
-      // Subscribe member to Mailchimp list
-      // mailchimp.subscribeToNewsletter(user.email);
+          // Subscribe member to Mailchimp list
+          // mailchimp.subscribeToNewsletter(user.email);
 
-      // Respond with JWT if user was created
-
-      const userInfo = getUserPublicInfo(user);
-
-      res.json(new LoginResponse(generateToken(userInfo), userInfo));
+          // Respond with JWT if user was created
+          User.findById(user._id, fields.FIELDS_USER_PUBLIC)
+            .exec((err, user) => {
+              res.json(new LoginResponse(generateToken(user.toJSON()), user));
+            });
+        });
     });
-  });
 };
 
 //= =======================================
@@ -81,26 +83,28 @@ exports.register.post = function(req, res, next) {
 //= =======================================
 exports.login = {};
 exports.login.post = function(req, res, next) {
-  User
-    .findOne({
-      email: req.body.email
+  var login = req.body.login;
+  var plainPassword = req.body.password;
+  User.findOne({
+      $or: [{
+          email: login
+        },
+        {
+          username: login
+        }
+      ]
     })
     .exec(function(err, user) {
       if (err) return next(new DatabaseFindError());
       if (!user) return next(new UserNotFoundError());
-      user.verifyPassword(req.body.password, function(err, isMatch) {
+      user.verifyPassword(plainPassword, function(err, isMatch) {
         if (err) return next(err);
         if (!isMatch) return next(new WrongPasswordError());
 
-        const userInfo = getUserPublicInfo(user);
-
-        const token = jwt.sign(userInfo, config.secret, {
-          expiresIn: 1440 // expires in 1 hour
-        });
-
-        if (!token) return next(new ProvidingTokenError());
-
-        res.json(new LoginResponse(generateToken(userInfo), userInfo));
+        User.findById(user._id, fields.FIELDS_USER_PUBLIC)
+          .exec((err, user) => {
+            res.json(new LoginResponse(generateToken(user.toJSON()), user));
+          });
       });
     })
 };

@@ -15,7 +15,7 @@ const UserNotFoundError = require('../../errors/UserNotFoundError');
 const UserDisabledError = require('../../errors/UserDisabledError');
 
 // Schemas
-const User = require( '../../models/user.schema')
+const User = require('../../models/user.schema')
 
 /**
  * @param req
@@ -34,13 +34,13 @@ module.exports = function(req, res, next) {
     if (err) return next(new FailedAuthenticationTokenError());
 
     console.log(decoded);
-    
+
     if (decoded.exp <= moment().unix()) return next(new ExpiredAuthenticationTokenError())
-    
+
     User.findById(decoded._id, function(err, user) {
       if (!user) return next(new UserNotFoundError());
-      if(user.disabled) return next(new UserDisabledError());
-      
+      if (user.disabled===true) return next(new UserDisabledError());
+
       req.loggedUser = user;
 
       delete req.body.token;

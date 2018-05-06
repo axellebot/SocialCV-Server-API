@@ -7,7 +7,7 @@
  */
 module.exports = function(req, res, next) {
   req.queryParsed = req.queryParsed || {};
-  req.queryParsed.select = req.queryParsed.select || {};
+  req.queryParsed.select = req.queryParsed.select || "";
 
   var fields = req.query.fields;
   if (fields) {

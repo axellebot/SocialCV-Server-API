@@ -6,7 +6,8 @@ var getRoleRank = require("../../helpers").getRoleRank;
 // Errors
 const MissingPrivilegeError = require('../../errors/MissingPrivilegeError');
 
-const requireAuthentication = require('./authentication');
+// Security
+const ensureAuthentication = require('./ensureAuthentication');
 
 /**
  * @param req
@@ -15,7 +16,7 @@ const requireAuthentication = require('./authentication');
  */
 module.exports = function (requiredRole) {
     return [
-        requireAuthentication,
+        ensureAuthentication,
         function (req, res, next) {
             if (getRoleRank(req.loggedUser.role) >= getRoleRank(requiredRole)) return next();
             return next(new MissingPrivilegeError());

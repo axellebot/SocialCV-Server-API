@@ -76,7 +76,7 @@ module.exports = function(app) {
   //= ========================
 
   app.use(paths.PATH_AUTHENTICATION, routeAuth);
-
+  
   routeAuth.post(PATH_REGISTER, controllerAuthentification.register.post);
   routeAuth.post(PATH_LOGIN, controllerAuthentification.login.post);
 

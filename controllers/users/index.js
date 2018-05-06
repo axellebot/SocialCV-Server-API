@@ -6,7 +6,6 @@ const Async = require('async');
 // Helpers
 const getFilterEditData = require("../../helpers").getFilterEditData;
 const userCanEditUserData = require("../../helpers").userCanEditUserData;
-const getUserPublicInfo = require("../../helpers").getUserPublicInfo;
 const getPageCount = require("../../helpers").getPageCount;
 
 // Schemas
@@ -19,6 +18,7 @@ const models = require('../../constants/models');
 const collections = require('../../constants/collections');
 const roles = require('../../constants/roles');
 const parameters = require('../../constants/parameters');
+const fields = require('../../constants/fields');
 
 // Errors
 const DatabaseFindError = require('../../errors/DatabaseFindError');
@@ -39,22 +39,20 @@ const UpdateDocumentResponse = require('../../responses/UpdateDocumentResponse')
 const DeleteDocumentsResponse = require('../../responses/DeleteDocumentsResponse');
 const DeleteDocumentResponse = require('../../responses/DeleteDocumentResponse');
 
+
 /* users page. */
 exports.users = {};
 exports.users.get = function(req, res, next) {
   User
     .find(req.queryParsed.filter)
-    .select(req.queryParsed.select)
+    .select(req.queryParsed.select || fields.FIELDS_USER_PUBLIC)
     .limit(req.queryParsed.cursor.limit)
     .skip(req.queryParsed.cursor.skip)
     .sort(req.queryParsed.cursor.sort)
     .exec(function(err, users) {
       if (err) return next(new DatabaseFindError());
       if (!users || users.length <= 0) return next(new NotFoundError(models.MODEL_NAME_USER));
-      //Remove secret data from users
-      users.forEach(function(item, index) {
-        users[index] = getUserPublicInfo(item);
-      });
+
       User
         .count(req.queryParsed.filter)
         .exec(function(err, count) {
@@ -106,10 +104,11 @@ exports.user = {};
 exports.user.get = function(req, res, next) {
   User
     .findById(req.params[parameters.PARAM_ID_USER])
+    .select(fields.FIELDS_USER_PUBLIC)
     .exec(function(err, user) {
       if (err) return next(new DatabaseFindError());
       if (!user) return next(new NotFoundError(models.MODEL_NAME_USER));
-      res.json(new SelectDocumentResponse(getUserPublicInfo(user)));
+      res.json(new SelectDocumentResponse(user));
     });
 };
 
@@ -121,11 +120,12 @@ exports.user.put = function(req, res, next) {
     .findOneAndUpdate({
       _id: userId
     }, req.body.data, {
-      returnNewDocument: true
+      returnNewDocument: true,
+      projection: fields.FIELDS_USER_PUBLIC
     }, function(err, userUpdated) {
       if (err) return next(new DatabaseUpdateError());
       if (!userUpdated) return next(new NotFoundError(models.MODEL_NAME_USER));
-      res.json(new UpdateDocumentResponse(getUserPublicInfo(userUpdated)));
+      res.json(new UpdateDocumentResponse(userUpdated));
     });
 };
 
