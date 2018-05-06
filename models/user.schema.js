@@ -20,24 +20,23 @@ var Schema = mongoose.Schema;
 //= ===============================
 
 var UserSchema = new Schema({
-  _id: Schema.Types.ObjectId,
-  firstName: {
-    type: String,
-    default: "",
-    required: true
-  },
-  lastName: {
-    type: String,
-    default: "",
-    required: true
-  },
   email: {
     type: String,
-    lowercase: true,
     unique: true,
-    required: true
+    required: true,
+    trim: true
+  },
+  username: {
+    type: String,
+    unique: true,
+    required: true,
+    trim: true
   },
   password: {
+    type: String,
+    required: true,
+  },
+  disabled: {
     type: String,
     required: true
   },

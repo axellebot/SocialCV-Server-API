@@ -1,10 +1,14 @@
 "use strict";
 
+// Require packages
+const bcrypt = require('bcrypt');
+
+// Constants
+const roles = require('./constants/roles');
+
 // Config
 const config = require('./config');
 
-// Require packages
-const bcrypt = require('bcrypt');
 
 // Set user info from request
 module.exports.getUserPublicInfo = function(user) {
@@ -17,10 +21,10 @@ function getRoleRank(checkRole) {
   var role;
 
   switch (checkRole) {
-    case ROLE_ADMIN:
+    case roles.ROLE_ADMIN:
       role = 2;
       break;
-    case ROLE_MEMBER:
+    case roles.ROLE_MEMBER:
       role = 1;
       break;
     default:

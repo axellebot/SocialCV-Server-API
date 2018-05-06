@@ -10,7 +10,6 @@ var mongoose = require('../mongoose');
 var Schema = mongoose.Schema;
 
 var PartSchema = new Schema({
-  _id: Schema.Types.ObjectId,
   name: {
     type: String,
     default: "",
