@@ -1,6 +1,15 @@
 "use strict";
 
-var jwt = require('jsonwebtoken');
+// Require Packages
+const jwt = require('jsonwebtoken');
+
+// Config
+const config = require('../../config');
+
+// Errors
+const AccessRestrictedError = require('../../errors/AccessRestrictedError');
+const FailedAuthenticationToken = require('../../errors/FailedAuthenticationToken');
+
 
 /**
  * @param req

@@ -1,26 +1,24 @@
 "use strict";
 
-// Global Config
-global.config = require("./config");
+// Requires Packages
+const express = require('express');
+const path = require('path');
+const favicon = require('serve-favicon');
+const logger = require('morgan');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+
+// Config
+const config = require("./config");
 
 //assign constants
 require("./constants");
-
-global.Async = require("async");
-
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
 
 // Errors
 const NotFoundError = require('./errors/NotFoundError')
 
 // Routers
-var router = require('./router');
-
+const router = require('./router');
 
 var app = express();
 

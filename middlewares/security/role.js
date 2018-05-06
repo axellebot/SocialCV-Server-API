@@ -1,6 +1,10 @@
 "use strict";
 
+// Helpers
 var getRoleRank = require("../../helpers").getRoleRank;
+
+// Errors
+const MissingPrivilegeError = require('../../errors/MissingPrivilegeError');
 
 const requireAuthentication = require('./authentication');
 

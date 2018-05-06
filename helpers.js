@@ -1,59 +1,62 @@
 "use strict";
 
-const
-    bcrypt = require('bcrypt');
+// Config
+const config = require('./config');
+
+// Require packages
+const bcrypt = require('bcrypt');
 
 // Set user info from request
-module.exports.getUserPublicInfo = function (user) {
-    var userCopy = user.toJSON();
-    delete userCopy.password;
-    return userCopy;
+module.exports.getUserPublicInfo = function(user) {
+  var userCopy = user.toJSON();
+  delete userCopy.password;
+  return userCopy;
 };
 
 function getRoleRank(checkRole) {
-    var role;
+  var role;
 
-    switch (checkRole) {
-        case ROLE_ADMIN:
-            role = 2;
-            break;
-        case ROLE_MEMBER:
-            role = 1;
-            break;
-        default:
-            role = -1;
-    }
-    return role;
+  switch (checkRole) {
+    case ROLE_ADMIN:
+      role = 2;
+      break;
+    case ROLE_MEMBER:
+      role = 1;
+      break;
+    default:
+      role = -1;
+  }
+  return role;
 }
 
 module.exports.getRoleRank = getRoleRank;
 
-module.exports.saltPassword = function (next) {
+module.exports.saltPassword = function(next) {
 
-    var user = this;
+  var user = this;
 
-    // only hash the password if it has been modified (or is new)
-    if (!user.isModified('password')) return next();
+  // only hash the password if it has been modified (or is new)
+  if (!user.isModified('password')) return next();
 
-    // generate a salt
-    bcrypt.genSalt(config.saltWorkFactor, function (err, salt) {
-        if (err) return next(new Error(err));
+  // generate a salt
+  bcrypt.genSalt(config.saltWorkFactor, function(err, salt) {
+    if (err) return next(new Error(err));
 
-        // hash the password using our new salt
-        bcrypt.hash(user.password, salt, function (err, hash) {
-            if (err) return next(new Error(err));
-            // override the cleartext password with the hashed one
-            user.password = hash;
-            next();
-        });
+    // hash the password using our new salt
+    bcrypt.hash(user.password, salt, function(err, hash) {
+      if (err) return next(new Error(err));
+      // override the cleartext password with the hashed one
+      user.password = hash;
+      next();
     });
+  });
 };
 
-module.exports.verifyPassword = function (candidatePassword, cb) {
-    bcrypt.compare(candidatePassword, this.password, function (err, isMatch) {
-        if (err) return cb(err);
-        cb(null, isMatch);
-    });
+module.exports.verifyPassword = function(candidatePassword, cb) {
+  bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
+    if (err) return cb(err);
+    cb(null, isMatch);
+  });
 };
 
 /**
@@ -62,16 +65,23 @@ module.exports.verifyPassword = function (candidatePassword, cb) {
  * @param loggedUser
  * @returns {*}
  */
-module.exports.getFilterEditData = function (entityId, loggedUser) {
-    switch (loggedUser.role) {
-        case ROLE_MEMBER :
-            return {_id: entityId, user: loggedUser._id};
-        case ROLE_ADMIN:
-            return {_id: entityId};
-        default:
-            //return wrong id to avoid delting data
-            return {_id: -1};
-    }
+module.exports.getFilterEditData = function(entityId, loggedUser) {
+  switch (loggedUser.role) {
+    case ROLE_MEMBER:
+      return {
+        _id: entityId,
+        user: loggedUser._id
+      };
+    case ROLE_ADMIN:
+      return {
+        _id: entityId
+      };
+    default:
+      //return wrong id to avoid delting data
+      return {
+        _id: -1
+      };
+  }
 };
 
 /**
@@ -80,11 +90,11 @@ module.exports.getFilterEditData = function (entityId, loggedUser) {
  * @param ownerId String
  * @returns {boolean}
  */
-module.exports.userCanEditUserData = function (user, ownerId) {
-    if (getRoleRank(user.role) >= getRoleRank(ROLE_ADMIN)) {
-        return true;
-    }
-    return (ownerId === user._id);
+module.exports.userCanEditUserData = function(user, ownerId) {
+  if (getRoleRank(user.role) >= getRoleRank(ROLE_ADMIN)) {
+    return true;
+  }
+  return (ownerId === user._id);
 };
 
 /**
@@ -93,15 +103,15 @@ module.exports.userCanEditUserData = function (user, ownerId) {
  * @param b {Object}
  * @returns {boolean}
  */
-module.exports.compareKeys = function (a, b) {
-    const
-        aKeys = Object.keys(a).sort(),
-        bKeys = Object.keys(b).sort();
+module.exports.compareKeys = function(a, b) {
+  const
+    aKeys = Object.keys(a).sort(),
+    bKeys = Object.keys(b).sort();
 
-    return (JSON.stringify(aKeys).equals(JSON.stringify(bKeys)));
+  return (JSON.stringify(aKeys).equals(JSON.stringify(bKeys)));
 };
 
-module.exports.getPageCount = function (itemCount, limit) {
-    console.log(itemCount, limit);
-    return Math.ceil(itemCount / limit);
+module.exports.getPageCount = function(itemCount, limit) {
+  console.log(itemCount, limit);
+  return Math.ceil(itemCount / limit);
 };

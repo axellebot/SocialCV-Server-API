@@ -1,6 +1,10 @@
 "use strict";
 
-var jwt = require('jsonwebtoken');
+// Config
+const config = require('../config');
+
+// Requires Packages
+const jwt = require('jsonwebtoken');
 
 // Helpers
 const getUserPublicInfo = require('../helpers').getUserPublicInfo;

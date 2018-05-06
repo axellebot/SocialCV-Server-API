@@ -1,7 +1,11 @@
 "use strict";
 
-var userCanEditUserData = require("../../helpers").userCanEditUserData,
-  getPageCount = require("../../helpers").getPageCount;
+// Requires packages
+const Async = require('async');
+
+// Helpers
+const userCanEditUserData = require("../../helpers").userCanEditUserData;
+const getPageCount = require("../../helpers").getPageCount;
 
 // Schemas
 const Group = require('../../models/group.schema');

@@ -1,8 +1,12 @@
 "use strict";
 
-var getFilterEditData = require("../helpers").getFilterEditData,
-  getRoleRank = require("../helpers").getRoleRank,
-  getPageCount = require("../helpers").getPageCount;
+// Requires packages
+const Async = require('async');
+
+// Helpers
+const getFilterEditData = require("../helpers").getFilterEditData;
+const getRoleRank = require("../helpers").getRoleRank;
+const getPageCount = require("../helpers").getPageCount;
 
 // Schemas
 const Profile = require('../models/profile.schema');

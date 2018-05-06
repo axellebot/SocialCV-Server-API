@@ -1,5 +1,9 @@
 "use strict";
 
+// Errors
+const WrongQueryCursorPaginationError = require('../../errors/WrongQueryCursorPaginationError');
+const WrongQueryCursorSortError = require('../../errors/WrongQueryCursorSortError');
+
 /**
  * @param req
  * @param res
