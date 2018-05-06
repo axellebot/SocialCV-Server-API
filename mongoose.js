@@ -1,5 +1,8 @@
 "use strict";
 
+// Config
+const config = require('./config');
+
 var mongoose = require("mongoose");
 //Fixing promises
 mongoose.Promise = global.Promise;
@@ -17,7 +20,7 @@ mongoose.connect(config.database.uri, {
 	() => {
 		console.log("database opened on :", config.database.uri);
 	}, (error) => {
-		console.error("database error on :", config.database.uri,error);
+		console.error("database error on :", config.database.uri, error);
 	}
 );
 

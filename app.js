@@ -1,26 +1,32 @@
 "use strict";
 
-global.config = require("./config");
+// Requires Packages
+const express = require('express');
+const path = require('path');
+const favicon = require('serve-favicon');
+const logger = require('morgan');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
 
-//assign constants
-require("./constants");
-//assign response to global
-require("./response");
-//assign errors to global
-require("./errors");
+// Config
+const config = require("./config");
 
-global.Async = require("async");
+// Constants
+const messages = require('./constants/messages');
+const statuses = require('./constants/statuses');
+const models = require('./constants/models');
+const collections = require('./constants/collections');
+const roles = require('./constants/roles');
+const parameters = require('./constants/parameters');
+const paths = require('./constants/paths');
 
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
+// Errors
+const NotFoundError = require('./errors/NotFoundError')
 
-var router = require('./router');
+// Routers
+const router = require('./router');
 
-var app = express();
+const app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -56,10 +62,10 @@ app.use(function (err, req, res, next) {
     // set locals, only providing error in development
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') === 'development' ? err : {};
-    res.status(err.status || HTTP_STATUS_INTERNAL_SERVER_ERROR)
+    res.status(err.status || statuses.HTTP_STATUS_INTERNAL_SERVER_ERROR)
         .json({
             error: true,
-            message: err.message || MESSAGE_ERROR_APP
+            message: err.message || messages.MESSAGE_ERROR_APP
         });
 
     next();

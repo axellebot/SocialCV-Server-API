@@ -1,38 +1,42 @@
 "use strict";
 
+// Constants
+const messages = require('../constants/messages');
+const statuses = require('../constants/statuses');
+const models = require('../constants/models');
+const collections = require('../constants/collections');
+
 var mongoose = require('../mongoose');
 var Schema = mongoose.Schema;
 
-const uuid = require("../helpers").uuid;
-
 var GroupSchema = new Schema({
-    _id: Schema.Types.ObjectId,
-    name: {
-        type: String,
-        default: "",
-        required: true
-    },
-    part: {
-        type: Schema.Types.ObjectId,
-        default: null,
-        required: true,
-        ref: MODEL_NAME_PART
-    },
-    entries: {
-        type: [{
-            type: Schema.Types.ObjectId,
-            ref: MODEL_NAME_ENTRY
-        }],
-        default: []
-    },
-    user: {
-        type: Schema.Types.ObjectId,
-        default: null,
-        required: true,
-        ref: MODEL_NAME_USER
-    }
+  _id: Schema.Types.ObjectId,
+  name: {
+    type: String,
+    default: "",
+    required: true
+  },
+  part: {
+    type: Schema.Types.ObjectId,
+    default: null,
+    required: true,
+    ref: models.MODEL_NAME_PART
+  },
+  entries: {
+    type: [{
+      type: Schema.Types.ObjectId,
+      ref: models.MODEL_NAME_ENTRY
+    }],
+    default: []
+  },
+  user: {
+    type: Schema.Types.ObjectId,
+    default: null,
+    required: true,
+    ref: models.MODEL_NAME_USER
+  }
 }, {
-    timestamps: true
+  timestamps: true
 });
 
-module.exports = mongoose.model(MODEL_NAME_GROUP, GroupSchema, COLLECTION_NAME_GROUP);
+module.exports = mongoose.model(models.MODEL_NAME_GROUP, GroupSchema, collections.COLLECTION_NAME_GROUP);
