@@ -9,7 +9,15 @@ const getRoleRank = require("../helpers").getRoleRank;
 const getPageCount = require("../helpers").getPageCount;
 
 // Schemas
-const Group = require('../models/group.schema'); // Errors
+const Group = require('../models/group.schema');
+
+// Constants
+const messages = require('../constants/messages');
+const statuses = require('../constants/statuses');
+const models = require('../constants/models');
+const collections = require('../constants/collections');
+const roles = require('../constants/roles');
+const parameters = require('../constants/parameters');
 
 // Errors
 const DatabaseFindError = require('../errors/DatabaseFindError');
@@ -39,7 +47,7 @@ exports.groups.get = function(req, res, next) {
     .sort(req.queryParsed.cursor.sort)
     .exec(function(err, groups) {
       if (err) return next(new DatabaseFindError());
-      if (!groups || groups.length <= 0) return next(new NotFoundError(MODEL_NAME_PROJECT));
+      if (!groups || groups.length <= 0) return next(new NotFoundError(models.MODEL_NAME_PROJECT));
       Group
         .count(req.queryParsed.filter)
         .exec(function(err, count) {
@@ -51,7 +59,7 @@ exports.groups.get = function(req, res, next) {
 
 exports.groups.post = function(req, res, next) {
   var group = req.body.data;
-  if (getRoleRank(req.loggedUser.role) < getRoleRank(ROLE_ADMIN)) group.user = req.loggedUser._id;
+  if (getRoleRank(req.loggedUser.role) < getRoleRank(roles.ROLE_ADMIN)) group.user = req.loggedUser._id;
   group = new Group(group);
 
   group.save(function(err, groupSaved) {
@@ -92,32 +100,32 @@ exports.groups.delete = function(req, res, next) {
 exports.group = {};
 exports.group.get = function(req, res, next) {
   Group
-    .findById(req.params[PARAM_ID_PROJECT])
+    .findById(req.params[parameters.PARAM_ID_PROJECT])
     .exec(function(err, group) {
       if (err) return next(new DatabaseFindError());
-      if (!group) return next(new NotFoundError(MODEL_NAME_PROJECT));
+      if (!group) return next(new NotFoundError(models.MODEL_NAME_PROJECT));
       res.json(new SelectDocumentResponse(group));
     });
 };
 
 exports.group.put = function(req, res, next) {
-  var filterUpdate = getFilterEditData(req.params[PARAM_ID_PROJECT], req.loggedUser);
+  var filterUpdate = getFilterEditData(req.params[parameters.PARAM_ID_PROJECT], req.loggedUser);
   Group
     .findOneAndUpdate(filterUpdate, req.body.data, {
       new: true
     }, function(err, groupUpdated) {
       if (err) return next(new DatabaseUpdateError());
-      if (!groupUpdated) return next(new NotFoundError(MODEL_NAME_PROJECT));
+      if (!groupUpdated) return next(new NotFoundError(models.MODEL_NAME_PROJECT));
       res.json(new UpdateDocumentResponse(groupUpdated));
     });
 };
 
 exports.group.delete = function(req, res, next) {
-  var filterRemove = getFilterEditData(req.params[PARAM_ID_PROJECT], req.loggedUser);
+  var filterRemove = getFilterEditData(req.params[parameters.PARAM_ID_PROJECT], req.loggedUser);
   Group
     .findOneAndRemove(filterRemove, function(err, groupDeleted) {
       if (err) return next(new DatabaseRemoveError());
-      if (!groupDeleted) return next(new NotFoundError(MODEL_NAME_PROJECT));
+      if (!groupDeleted) return next(new NotFoundError(models.MODEL_NAME_PROJECT));
       res.json(new DeleteDocumentResponse(groupDeleted));
     });
 };

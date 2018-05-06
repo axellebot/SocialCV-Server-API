@@ -10,6 +10,14 @@ const getPageCount = require("../../helpers").getPageCount;
 // Schemas
 const Part = require('../../models/part.schema');
 
+// Constants
+const messages = require('../../constants/messages');
+const statuses = require('../../constants/statuses');
+const models = require('../../constants/models');
+const collections = require('../../constants/collections');
+const roles = require('../../constants/roles');
+const parameters = require('../../constants/parameters');
+
 // Errors
 const DatabaseFindError = require('../../errors/DatabaseFindError');
 const DatabaseCountError = require('../../errors/DatabaseCountError');
@@ -31,7 +39,7 @@ const DeleteDocumentResponse = require('../../responses/DeleteDocumentResponse')
 /* Parts page. */
 exports.get = function(req, res, next) {
   var filter = req.queryParsed.filter || {};
-  filter.user = req.params[PARAM_ID_USER];
+  filter.user = req.params[parameters.PARAM_ID_USER];
 
   Part
     .find(filter)
@@ -41,7 +49,7 @@ exports.get = function(req, res, next) {
     .sort(req.queryParsed.cursor.sort)
     .exec(function(err, parts) {
       if (err) return next(new DatabaseFindError());
-      if (!parts || parts.length <= 0) return next(new NotFoundError(MODEL_NAME_FRAMEWORK_TAG));
+      if (!parts || parts.length <= 0) return next(new NotFoundError(models.MODEL_NAME_FRAMEWORK_TAG));
       Part
         .count(req.queryParsed.filter)
         .exec(function(err, count) {
@@ -51,7 +59,7 @@ exports.get = function(req, res, next) {
     });
 };
 exports.post = function(req, res, next) {
-  const userId = req.params[PARAM_ID_USER];
+  const userId = req.params[parameters.PARAM_ID_USER];
   if (!userCanEditUserData(req.loggedUser, userId)) return next(new MissingPrivilegeError());
 
   var part = req.body.data;
@@ -64,7 +72,7 @@ exports.post = function(req, res, next) {
   });
 };
 exports.put = function(req, res, next) {
-  const userId = req.params[PARAM_ID_USER];
+  const userId = req.params[parameters.PARAM_ID_USER];
   if (!userCanEditUserData(req.loggedUser, userId)) return next(new MissingPrivilegeError());
 
   const parts = req.body.data;
@@ -88,7 +96,7 @@ exports.put = function(req, res, next) {
   });
 };
 exports.delete = function(req, res, next) {
-  const userId = req.params[PARAM_ID_USER];
+  const userId = req.params[parameters.PARAM_ID_USER];
   if (!userCanEditUserData(req.loggedUser, userId)) return next(new MissingPrivilegeError());
 
   Part

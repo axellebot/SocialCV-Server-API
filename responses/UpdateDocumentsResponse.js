@@ -1,7 +1,10 @@
 "use strict";
+
+const messages = require('../constants/messages');
+
 module.exports = class UpdateDocumentsResponse extends require('./DataResponse') {
     constructor(documents) {
         super(documents);
-        this.message = MESSAGE_SUCCESS_RESOURCE_UPDATED;
+        this.message = messages.MESSAGE_SUCCESS_RESOURCE_UPDATED;
     }
 };

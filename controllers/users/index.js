@@ -12,6 +12,14 @@ const getPageCount = require("../../helpers").getPageCount;
 // Schemas
 const User = require('../../models/user.schema');
 
+// Constants
+const messages = require('../../constants/messages');
+const statuses = require('../../constants/statuses');
+const models = require('../../constants/models');
+const collections = require('../../constants/collections');
+const roles = require('../../constants/roles');
+const parameters = require('../../constants/parameters');
+
 // Errors
 const DatabaseFindError = require('../../errors/DatabaseFindError');
 const DatabaseCountError = require('../../errors/DatabaseCountError');
@@ -42,7 +50,7 @@ exports.users.get = function(req, res, next) {
     .sort(req.queryParsed.cursor.sort)
     .exec(function(err, users) {
       if (err) return next(new DatabaseFindError());
-      if (!users || users.length <= 0) return next(new NotFoundError(MODEL_NAME_USER));
+      if (!users || users.length <= 0) return next(new NotFoundError(models.MODEL_NAME_USER));
       //Remove secret data from users
       users.forEach(function(item, index) {
         users[index] = getUserPublicInfo(item);
@@ -97,16 +105,16 @@ exports.users.delete = function(req, res, next) {
 exports.user = {};
 exports.user.get = function(req, res, next) {
   User
-    .findById(req.params[PARAM_ID_USER])
+    .findById(req.params[parameters.PARAM_ID_USER])
     .exec(function(err, user) {
       if (err) return next(new DatabaseFindError());
-      if (!user) return next(new NotFoundError(MODEL_NAME_USER));
+      if (!user) return next(new NotFoundError(models.MODEL_NAME_USER));
       res.json(new SelectDocumentResponse(getUserPublicInfo(user)));
     });
 };
 
 exports.user.put = function(req, res, next) {
-  const userId = req.params[PARAM_ID_USER];
+  const userId = req.params[parameters.PARAM_ID_USER];
   if (!userCanEditUserData(req.loggedUser, userId)) return next(new MissingPrivilegeError());
 
   User
@@ -116,13 +124,13 @@ exports.user.put = function(req, res, next) {
       returnNewDocument: true
     }, function(err, userUpdated) {
       if (err) return next(new DatabaseUpdateError());
-      if (!userUpdated) return next(new NotFoundError(MODEL_NAME_USER));
+      if (!userUpdated) return next(new NotFoundError(models.MODEL_NAME_USER));
       res.json(new UpdateDocumentResponse(getUserPublicInfo(userUpdated)));
     });
 };
 
 exports.user.delete = function(req, res, next) {
-  const userId = req.params[PARAM_ID_USER];
+  const userId = req.params[parameters.PARAM_ID_USER];
   if (!userCanEditUserData(req.loggedUser, userId)) return next(new MissingPrivilegeError());
 
   User
@@ -130,7 +138,7 @@ exports.user.delete = function(req, res, next) {
       _id: userId
     }, function(err, userDeleted) {
       if (err) return next(new DatabaseRemoveError());
-      if (!userDeleted) return next(new NotFoundError(MODEL_NAME_USER));
+      if (!userDeleted) return next(new NotFoundError(models.MODEL_NAME_USER));
       res.json(new DeleteDocumentResponse(userDeleted));
     });
 };

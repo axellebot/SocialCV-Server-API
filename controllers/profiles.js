@@ -11,6 +11,14 @@ const getPageCount = require("../helpers").getPageCount;
 // Schemas
 const Profile = require('../models/profile.schema');
 
+// Constants
+const messages = require('../constants/messages');
+const statuses = require('../constants/statuses');
+const models = require('../constants/models');
+const collections = require('../constants/collections');
+const roles = require('../constants/roles');
+const parameters = require('../constants/parameters');
+
 // Errors
 const DatabaseFindError = require('../errors/DatabaseFindError');
 const DatabaseCountError = require('../errors/DatabaseCountError');
@@ -39,7 +47,7 @@ exports.profiles.get = function(req, res, next) {
     .sort(req.queryParsed.cursor.sort)
     .exec(function(err, profiles) {
       if (err) return next(new DatabaseFindError());
-      if (!profiles || profiles.length <= 0) return next(new NotFoundError(MODEL_NAME_PROFILE));
+      if (!profiles || profiles.length <= 0) return next(new NotFoundError(models.MODEL_NAME_PROFILE));
       Profile
         .count(req.queryParsed.filter)
         .exec(function(err, count) {
@@ -51,7 +59,7 @@ exports.profiles.get = function(req, res, next) {
 
 exports.profiles.post = function(req, res, next) {
   var profile = req.body.data;
-  if (getRoleRank(req.loggedUser.role) < getRoleRank(ROLE_ADMIN)) profile.user = req.loggedUser._id;
+  if (getRoleRank(req.loggedUser.role) < getRoleRank(roles.ROLE_ADMIN)) profile.user = req.loggedUser._id;
   profile = new Profile(profile);
 
   profile.save(function(err, profileSaved) {
@@ -92,32 +100,32 @@ exports.profiles.delete = function(req, res, next) {
 exports.profile = {};
 exports.profile.get = function(req, res, next) {
   Profile
-    .findById(req.params[PARAM_ID_PROFILE])
+    .findById(req.params[parameters.PARAM_ID_PROFILE])
     .exec(function(err, profile) {
       if (err) return next(new DatabaseFindError());
-      if (!profile) return next(new NotFoundError(MODEL_NAME_PROFILE));
+      if (!profile) return next(new NotFoundError(models.MODEL_NAME_PROFILE));
       res.json(new SelectDocumentResponse(profile));
     });
 };
 
 exports.profile.put = function(req, res, next) {
-  var filterUpdate = getFilterEditData(req.params[PARAM_ID_PROFILE], req.loggedUser);
+  var filterUpdate = getFilterEditData(req.params[parameters.PARAM_ID_PROFILE], req.loggedUser);
   Profile
     .findOneAndUpdate(filterUpdate, req.body.data, {
       new: true
     }, function(err, profileUpdated) {
       if (err) return next(new DatabaseUpdateError());
-      if (!profileUpdated) return next(new NotFoundError(MODEL_NAME_PROFILE));
+      if (!profileUpdated) return next(new NotFoundError(parameters.MODEL_NAME_PROFILE));
       res.json(new UpdateDocumentResponse(profileUpdated));
     });
 };
 
 exports.profile.delete = function(req, res, next) {
-  var filterRemove = getFilterEditData(req.params[PARAM_ID_PROFILE], req.loggedUser);
+  var filterRemove = getFilterEditData(req.params[parameters.PARAM_ID_PROFILE], req.loggedUser);
   Profile
     .findOneAndRemove(filterRemove, function(err, profileDeleted) {
       if (err) return next(new DatabaseRemoveError());
-      if (!profileDeleted) return next(new NotFoundError(MODEL_NAME_PROFILE));
+      if (!profileDeleted) return next(new NotFoundError(models.MODEL_NAME_PROFILE));
       res.json(new DeleteDocumentResponse(profileDeleted));
     });
 };

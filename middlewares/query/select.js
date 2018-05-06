@@ -15,6 +15,5 @@ module.exports = function(req, res, next) {
     console.log("Select ", req.queryParsed.select);
     delete req.query.fields;
   }
-
   next();
 };

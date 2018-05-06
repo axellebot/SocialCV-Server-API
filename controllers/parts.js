@@ -11,6 +11,14 @@ const getPageCount = require("../helpers").getPageCount;
 // Schemas
 const Part = require('../models/part.schema');
 
+// Constants
+const messages = require('../constants/messages');
+const statuses = require('../constants/statuses');
+const models = require('../constants/models');
+const collections = require('../constants/collections');
+const roles = require('../constants/roles');
+const parameters = require('../constants/parameters');
+
 // Errors
 const DatabaseFindError = require('../errors/DatabaseFindError');
 const DatabaseCountError = require('../errors/DatabaseCountError');
@@ -39,7 +47,7 @@ exports.parts.get = function(req, res, next) {
     .sort(req.queryParsed.cursor.sort)
     .exec(function(err, parts) {
       if (err) return next(new DatabaseFindError());
-      if (!parts || parts.length <= 0) return next(new NotFoundError(MODEL_NAME_ENTITY));
+      if (!parts || parts.length <= 0) return next(new NotFoundError(models.MODEL_NAME_ENTITY));
       Part
         .count(req.queryParsed.filter)
         .exec(function(err, count) {
@@ -51,7 +59,7 @@ exports.parts.get = function(req, res, next) {
 
 exports.parts.post = function(req, res, next) {
   var part = req.body.data;
-  if (getRoleRank(req.loggedUser.role) < getRoleRank(ROLE_ADMIN)) part.user = req.loggedUser._id;
+  if (getRoleRank(req.loggedUser.role) < getRoleRank(roles.ROLE_ADMIN)) part.user = req.loggedUser._id;
   part = new Part(part);
 
   part.save(function(err, partSaved) {
@@ -92,32 +100,32 @@ exports.parts.delete = function(req, res, next) {
 exports.part = {};
 exports.part.get = function(req, res, next) {
   Part
-    .findById(req.params[PARAM_ID_ENTITY])
+    .findById(req.params[parameters.PARAM_ID_ENTITY])
     .exec(function(err, part) {
       if (err) return next(new DatabaseFindError());
-      if (!part) return next(new NotFoundError(MODEL_NAME_ENTITY));
+      if (!part) return next(new NotFoundError(models.MODEL_NAME_ENTITY));
       res.json(new SelectDocumentResponse(part));
     });
 };
 
 exports.part.put = function(req, res, next) {
-  const filterUpdate = getFilterEditData(req.params[PARAM_ID_ENTITY], req.loggedUser);
+  const filterUpdate = getFilterEditData(req.params[parameters.PARAM_ID_ENTITY], req.loggedUser);
   Part
     .findOneAndUpdate(filterUpdate, req.body.data, {
       new: true
     }, function(err, partUpdated) {
       if (err) return next(new DatabaseUpdateError());
-      if (!partUpdated) return next(new NotFoundError(MODEL_NAME_ENTITY));
+      if (!partUpdated) return next(new NotFoundError(models.MODEL_NAME_ENTITY));
       res.json(new UpdateDocumentResponse(partUpdated));
     });
 };
 
 exports.part.delete = function(req, res, next) {
-  const filterRemove = getFilterEditData(req.params[PARAM_ID_ENTITY], req.loggedUser);
+  const filterRemove = getFilterEditData(req.params[parameters.PARAM_ID_ENTITY], req.loggedUser);
   Part
     .findOneAndRemove(filterRemove, function(err, partDeleted) {
       if (err) return next(new DatabaseRemoveError());
-      if (!partDeleted) return next(new NotFoundError(MODEL_NAME_ENTITY));
+      if (!partDeleted) return next(new NotFoundError(models.MODEL_NAME_ENTITY));
       res.json(new DeleteDocumentResponse(partDeleted));
     });
 };

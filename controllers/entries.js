@@ -11,6 +11,14 @@ const getPageCount = require("../helpers").getPageCount;
 // Schemas
 const Entry = require('../models/entry.schema');
 
+// Constants
+const messages = require('../constants/messages');
+const statuses = require('../constants/statuses');
+const models = require('../constants/models');
+const collections = require('../constants/collections');
+const roles = require('../constants/roles');
+const parameters = require('../constants/parameters');
+
 // Errors
 const DatabaseFindError = require('../errors/DatabaseFindError');
 const DatabaseCountError = require('../errors/DatabaseCountError');
@@ -39,7 +47,7 @@ exports.entries.get = function(req, res, next) {
     .sort(req.queryParsed.cursor.sort)
     .exec(function(err, entries) {
       if (err) return next(new DatabaseFindError());
-      if (!entries || entries.length <= 0) return next(new NotFoundError(MODEL_NAME_LANGUAGE));
+      if (!entries || entries.length <= 0) return next(new NotFoundError(models.MODEL_NAME_LANGUAGE));
       Entry
         .count(req.queryParsed.filter)
         .exec(function(err, count) {
@@ -51,7 +59,7 @@ exports.entries.get = function(req, res, next) {
 
 exports.entries.post = function(req, res, next) {
   var entry = req.body.data;
-  if (getRoleRank(req.loggedUser.role) < getRoleRank(ROLE_ADMIN)) entry.user = req.loggedUser._id;
+  if (getRoleRank(req.loggedUser.role) < getRoleRank(roles.ROLE_ADMIN)) entry.user = req.loggedUser._id;
   entry = new Entry(entry);
 
   entry.save(function(err, entrySaved) {
@@ -92,32 +100,32 @@ exports.entries.delete = function(req, res, next) {
 exports.entry = {};
 exports.entry.get = function(req, res, next) {
   Entry
-    .findById(req.params[PARAM_ID_LANGUAGE])
+    .findById(req.params[parameters.PARAM_ID_LANGUAGE])
     .exec(function(err, entry) {
       if (err) return next(new DatabaseFindError());
-      if (!entry) return next(new NotFoundError(MODEL_NAME_LANGUAGE));
+      if (!entry) return next(new NotFoundError(models.MODEL_NAME_LANGUAGE));
       res.json(new SelectDocumentResponse(entry));
     });
 };
 
 exports.entry.put = function(req, res, next) {
-  var filterUpdate = getFilterEditData(req.params[PARAM_ID_LANGUAGE], req.loggedUser);
+  var filterUpdate = getFilterEditData(req.params[parameters.PARAM_ID_LANGUAGE], req.loggedUser);
   Entry
     .findOneAndUpdate(filterUpdate, req.body.data, {
       new: true
     }, function(err, entryUpdated) {
       if (err) return next(new DatabaseUpdateError());
-      if (!entryUpdated) return next(new NotFoundError(MODEL_NAME_LANGUAGE));
+      if (!entryUpdated) return next(new NotFoundError(models.MODEL_NAME_LANGUAGE));
       res.json(new UpdateDocumentResponse(entryUpdated));
     });
 };
 
 exports.entry.delete = function(req, res, next) {
-  var filterRemove = getFilterEditData(req.params[PARAM_ID_LANGUAGE], req.loggedUser);
+  var filterRemove = getFilterEditData(req.params[parameters.PARAM_ID_LANGUAGE], req.loggedUser);
   Entry
     .findOneAndRemove(filterRemove, function(err, entryDeleted) {
       if (err) return next(new DatabaseRemoveError());
-      if (!entryDeleted) return next(new NotFoundError(MODEL_NAME_LANGUAGE));
+      if (!entryDeleted) return next(new NotFoundError(models.MODEL_NAME_LANGUAGE));
       res.json(new DeleteDocumentResponse(entryDeleted));
     });
 };
