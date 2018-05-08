@@ -5,7 +5,6 @@ const Async = require('async');
 
 // Helpers
 const getFilterEditData = require("../helpers").getFilterEditData;
-const getRoleRank = require("../helpers").getRoleRank;
 const getPageCount = require("../helpers").getPageCount;
 
 // Schemas
@@ -40,26 +39,25 @@ const DeleteDocumentResponse = require('../responses/DeleteDocumentResponse');
 exports.groups = {};
 exports.groups.get = function(req, res, next) {
   Group
-    .find(req.queryParsed.filter)
-    .select(req.queryParsed.select)
-    .limit(req.queryParsed.cursor.limit)
-    .skip(req.queryParsed.cursor.skip)
-    .sort(req.queryParsed.cursor.sort)
+    .find(req.query.filters)
+    .select(req.query.fields)
+    .skip(req.query.offset)
+    .limit(req.query.limit)
+    .sort(req.query.sort)
     .exec(function(err, groups) {
       if (err) return next(new DatabaseFindError());
       if (!groups || groups.length <= 0) return next(new NotFoundError(models.MODEL_NAME_PROJECT));
       Group
-        .count(req.queryParsed.filter)
+        .count(req.query.filter)
         .exec(function(err, count) {
           if (err) return next(new DatabaseCountError());
-          res.json(new SelectDocumentsResponse(groups, count, getPageCount(count, req.queryParsed.cursor.limit)));
+          res.json(new SelectDocumentsResponse(groups, count, getPageCount(count, req.query.limit)));
         });
     });
 };
 
 exports.groups.post = function(req, res, next) {
   var group = req.body.data;
-  if (getRoleRank(req.loggedUser.role) < getRoleRank(roles.ROLE_ADMIN)) group.user = req.loggedUser._id;
   group = new Group(group);
 
   group.save(function(err, groupSaved) {
@@ -72,7 +70,7 @@ exports.groups.put = function(req, res, next) {
   const groups = req.body.data;
   var groupsUpdated = [];
   Async.eachOf(groups, function(group, key, callback) {
-    const filterUpdate = getFilterEditData(group._id, req.loggedUser);
+    const filterUpdate = getFilterEditData(group._id, req.user);
     Group
       .findOneAndUpdate(filterUpdate, group, {
         new: true
@@ -109,7 +107,7 @@ exports.group.get = function(req, res, next) {
 };
 
 exports.group.put = function(req, res, next) {
-  var filterUpdate = getFilterEditData(req.params[parameters.PARAM_ID_PROJECT], req.loggedUser);
+  var filterUpdate = getFilterEditData(req.params[parameters.PARAM_ID_PROJECT], req.user);
   Group
     .findOneAndUpdate(filterUpdate, req.body.data, {
       new: true
@@ -121,7 +119,7 @@ exports.group.put = function(req, res, next) {
 };
 
 exports.group.delete = function(req, res, next) {
-  var filterRemove = getFilterEditData(req.params[parameters.PARAM_ID_PROJECT], req.loggedUser);
+  var filterRemove = getFilterEditData(req.params[parameters.PARAM_ID_PROJECT], req.user);
   Group
     .findOneAndRemove(filterRemove, function(err, groupDeleted) {
       if (err) return next(new DatabaseRemoveError());

@@ -5,7 +5,6 @@ const Async = require('async');
 
 // Helpers
 const getFilterEditData = require("../helpers").getFilterEditData;
-const getRoleRank = require("../helpers").getRoleRank;
 const getPageCount = require("../helpers").getPageCount;
 
 // Schemas
@@ -40,26 +39,25 @@ const DeleteDocumentResponse = require('../responses/DeleteDocumentResponse');
 exports.parts = {};
 exports.parts.get = function(req, res, next) {
   Part
-    .find(req.queryParsed.filter)
-    .select(req.queryParsed.select)
-    .limit(req.queryParsed.cursor.limit)
-    .skip(req.queryParsed.cursor.skip)
-    .sort(req.queryParsed.cursor.sort)
+    .find(req.query.filters)
+    .select(req.query.fields)
+    .skip(req.query.offset)
+    .limit(req.query.limit)
+    .sort(req.query.sort)
     .exec(function(err, parts) {
       if (err) return next(new DatabaseFindError());
       if (!parts || parts.length <= 0) return next(new NotFoundError(models.MODEL_NAME_ENTITY));
       Part
-        .count(req.queryParsed.filter)
+        .count(req.query.filter)
         .exec(function(err, count) {
           if (err) return next(new DatabaseCountError());
-          res.json(new SelectDocumentsResponse(parts, count, getPageCount(count, req.queryParsed.cursor.limit)));
+          res.json(new SelectDocumentsResponse(parts, count, getPageCount(count, req.query.limit)));
         });
     });
 };
 
 exports.parts.post = function(req, res, next) {
   var part = req.body.data;
-  if (getRoleRank(req.loggedUser.role) < getRoleRank(roles.ROLE_ADMIN)) part.user = req.loggedUser._id;
   part = new Part(part);
 
   part.save(function(err, partSaved) {
@@ -72,7 +70,7 @@ exports.parts.put = function(req, res, next) {
   const parts = req.body.data;
   var partsUpdated = [];
   Async.eachOf(parts, function(part, key, callback) {
-    const filterUpdate = getFilterEditData(part._id, req.loggedUser);
+    const filterUpdate = getFilterEditData(part._id, req.user);
     Part
       .findOneAndUpdate(filterUpdate, part, {
         new: true
@@ -109,7 +107,7 @@ exports.part.get = function(req, res, next) {
 };
 
 exports.part.put = function(req, res, next) {
-  const filterUpdate = getFilterEditData(req.params[parameters.PARAM_ID_ENTITY], req.loggedUser);
+  const filterUpdate = getFilterEditData(req.params[parameters.PARAM_ID_ENTITY], req.user);
   Part
     .findOneAndUpdate(filterUpdate, req.body.data, {
       new: true
@@ -121,7 +119,7 @@ exports.part.put = function(req, res, next) {
 };
 
 exports.part.delete = function(req, res, next) {
-  const filterRemove = getFilterEditData(req.params[parameters.PARAM_ID_ENTITY], req.loggedUser);
+  const filterRemove = getFilterEditData(req.params[parameters.PARAM_ID_ENTITY], req.user);
   Part
     .findOneAndRemove(filterRemove, function(err, partDeleted) {
       if (err) return next(new DatabaseRemoveError());

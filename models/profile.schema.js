@@ -27,7 +27,7 @@ var ProfileSchema = new Schema({
     }],
     default: []
   },
-  user: {
+  owner: {
     type: Schema.Types.ObjectId,
     default: null,
     required: true,

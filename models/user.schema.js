@@ -35,6 +35,10 @@ var UserSchema = new Schema({
     type: String,
     required: true,
   },
+  passwordMethod: {
+    type: String,
+    required: false,
+  },
   disabled: {
     type: String,
     required: true

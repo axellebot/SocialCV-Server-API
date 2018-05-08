@@ -20,7 +20,7 @@ var EntrySchema = new Schema({
     default: "",
     required: true
   },
-  user: {
+  owner: {
     type: Schema.Types.ObjectId,
     default: null,
     required: true,

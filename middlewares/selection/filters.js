@@ -123,18 +123,11 @@ function getFilter(params, options) {
  * @param next
  */
 module.exports = function(req, res, next) {
-  req.queryParsed = req.queryParsed || {};
-  req.queryParsed.filter = req.queryParsed.filter || {};
+  req.query.filters = getFilter(req.query, {
+    blacklist: ['token', 'fields', 'sort', 'offset', 'limit']
+  });
 
-  req.query = req.query || {};
-  var options = {};
-  options.blacklist = ['token'];
-
-  req.queryParsed.filter = getFilter(req.query, options);
-
-  console.log("Query ", req.queryParsed.filter);
-
-  delete req.query;
+  console.log("Filters : ", req.query.filters);
 
   next();
 };

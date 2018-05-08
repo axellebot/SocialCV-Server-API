@@ -9,7 +9,7 @@ module.exports = class NotFoundError extends require('./AppError') {
     if (message) {
       _message = message = message + " " + messages.MESSAGE_ERROR_NOT_FOUND;
     }
-    this.status = status || statuses.HTTP_STATUS_NOT_FOUND;
+    status = status || statuses.HTTP_STATUS_NOT_FOUND;
     super(_message, status);
   }
 };

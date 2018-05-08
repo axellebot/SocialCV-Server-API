@@ -5,7 +5,6 @@ const Async = require('async');
 
 // Helpers
 const getFilterEditData = require("../../helpers").getFilterEditData;
-const userCanEditUserData = require("../../helpers").userCanEditUserData;
 const getPageCount = require("../../helpers").getPageCount;
 
 // Schemas
@@ -44,20 +43,20 @@ const DeleteDocumentResponse = require('../../responses/DeleteDocumentResponse')
 exports.users = {};
 exports.users.get = function(req, res, next) {
   User
-    .find(req.queryParsed.filter)
-    .select(req.queryParsed.select || fields.FIELDS_USER_PUBLIC)
-    .limit(req.queryParsed.cursor.limit)
-    .skip(req.queryParsed.cursor.skip)
-    .sort(req.queryParsed.cursor.sort)
+    .find(req.query.filters)
+    .select(req.query.fields || fields.FIELDS_USER_PUBLIC)
+    .skip(req.query.offset)
+    .limit(req.query.limit)
+    .sort(req.query.sort)
     .exec(function(err, users) {
       if (err) return next(new DatabaseFindError());
       if (!users || users.length <= 0) return next(new NotFoundError(models.MODEL_NAME_USER));
 
       User
-        .count(req.queryParsed.filter)
+        .count(req.query.filters)
         .exec(function(err, count) {
           if (err) return next(new DatabaseCountError());
-          res.json(new SelectDocumentsResponse(users, count, getPageCount(count, req.queryParsed.cursor.limit)));
+          res.json(new SelectDocumentsResponse(users, count, getPageCount(count, req.query.limit)));
         });
     });
 };
@@ -71,7 +70,6 @@ exports.users.put = function(req, res, next) {
   const users = req.body.data;
   var usersUpdated = [];
   Async.eachOf(users, function(user, key, callback) {
-    if (!userCanEditUserData(req.loggedUser, user._id)) return next(new MissingPrivilegeError());
 
     const filterUpdate = {
       _id: user._id
@@ -114,7 +112,6 @@ exports.user.get = function(req, res, next) {
 
 exports.user.put = function(req, res, next) {
   const userId = req.params[parameters.PARAM_ID_USER];
-  if (!userCanEditUserData(req.loggedUser, userId)) return next(new MissingPrivilegeError());
 
   User
     .findOneAndUpdate({
@@ -131,7 +128,6 @@ exports.user.put = function(req, res, next) {
 
 exports.user.delete = function(req, res, next) {
   const userId = req.params[parameters.PARAM_ID_USER];
-  if (!userCanEditUserData(req.loggedUser, userId)) return next(new MissingPrivilegeError());
 
   User
     .findOneAndRemove({

@@ -4,7 +4,6 @@
 const Async = require('async');
 
 // Helpers
-const userCanEditUserData = require("../../helpers").userCanEditUserData;
 const getPageCount = require("../../helpers").getPageCount;
 
 // Schemas
@@ -38,30 +37,29 @@ const DeleteDocumentResponse = require('../../responses/DeleteDocumentResponse')
 
 /* Groups page. */
 exports.get = function(req, res, next) {
-  var filter = req.queryParsed.filter || {};
-  filter.user = req.params[parameters.PARAM_ID_USER];
-
+  var filters = req.query.filters || {};
+  filters.user = req.params[parameters.PARAM_ID_USER];
+  
   Group
-    .find(filter)
-    .select(req.queryParsed.select)
-    .limit(req.queryParsed.cursor.limit)
-    .skip(req.queryParsed.cursor.skip)
-    .sort(req.queryParsed.cursor.sort)
+    .find(filters)
+    .select(req.query.fields)
+    .skip(req.query.offset)
+    .limit(req.query.limit)
+    .sort(req.query.sort)
     .exec(function(err, groups) {
       if (err) return next(new DatabaseFindError());
       if (!groups || groups.length <= 0) return next(new NotFoundError(models.MODEL_NAME_EDUCATION));
       Group
-        .count(req.queryParsed.filter)
+        .count(req.query.filter)
         .exec(function(err, count) {
           if (err) return next(new DatabaseCountError());
-          res.json(new SelectDocumentsResponse(groups, count, getPageCount(count, req.queryParsed.cursor.limit)));
+          res.json(new SelectDocumentsResponse(groups, count, getPageCount(count, req.query.limit)));
         });
     });
 };
 
 exports.post = function(req, res, next) {
   const userId = req.params[parameters.PARAM_ID_USER];
-  if (!userCanEditUserData(req.loggedUser, userId)) return next(new MissingPrivilegeError());
 
   var group = req.body.data;
   group.user = userId;
@@ -75,7 +73,6 @@ exports.post = function(req, res, next) {
 
 exports.put = function(req, res, next) {
   const userId = req.params[parameters.PARAM_ID_USER];
-  if (!userCanEditUserData(req.loggedUser, userId)) return next(new MissingPrivilegeError());
 
   const groups = req.body.data;
   var groupsUpdated = [];
@@ -100,7 +97,6 @@ exports.put = function(req, res, next) {
 
 exports.delete = function(req, res, next) {
   const userId = req.params[parameters.PARAM_ID_USER];
-  if (!userCanEditUserData(req.loggedUser, userId)) return next(new MissingPrivilegeError());
 
   Group
     .remove({

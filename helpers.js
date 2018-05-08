@@ -9,23 +9,6 @@ const roles = require('./constants/roles');
 // Config
 const config = require('./config');
 
-function getRoleRank(checkRole) {
-  var role;
-  switch (checkRole) {
-    case roles.ROLE_ADMIN:
-      role = 2;
-      break;
-    case roles.ROLE_MEMBER:
-      role = 1;
-      break;
-    default:
-      role = -1;
-  }
-  return role;
-}
-
-module.exports.getRoleRank = getRoleRank;
-
 /**
  *
  * @param entityId
@@ -44,24 +27,11 @@ module.exports.getFilterEditData = function(entityId, loggedUser) {
         _id: entityId
       };
     default:
-      //return wrong id to avoid delting data
+      //return wrong id to avoid deleting data
       return {
         _id: -1
       };
   }
-};
-
-/**
- *
- * @param user String
- * @param ownerId String
- * @returns {boolean}
- */
-module.exports.userCanEditUserData = function(user, ownerId) {
-  if (getRoleRank(user.role) >= getRoleRank(roles.ROLE_ADMIN)) {
-    return true;
-  }
-  return (ownerId === user._id);
 };
 
 /**

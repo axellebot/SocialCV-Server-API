@@ -42,16 +42,22 @@ exports.register.post = function(req, res, next) {
   var userBody = req.body;
 
   // Return error if no email provided
-  if (!userBody.email) return next(new MissingEmailError());
+  if (!userBody.email || userBody.email === "") return next(new MissingEmailError());
 
   // Return error if full name not provided
-  if (!userBody.username) return next(new MissingUsernameError());
+  if (!userBody.username || userBody.username === "") return next(new MissingUsernameError());
 
   // Return error if no password provided
-  if (!userBody.password) return next(new MissingPasswordError());
+  if (!userBody.password || userBody.password === "") return next(new MissingPasswordError());
 
-  User.findOne({
-      email: userBody.email
+ User.findOne({
+      $or: [{
+          email: userBody.email
+        },
+        {
+          username: userBody.username
+        }
+      ]
     })
     .exec((err, existingUser) => {
       if (err) return next(new DatabaseFindError());

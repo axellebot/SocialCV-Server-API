@@ -33,15 +33,13 @@ module.exports = function(req, res, next) {
     //failed verification.
     if (err) return next(new FailedAuthenticationTokenError());
 
-    console.log(decoded);
-
     if (decoded.exp <= moment().unix()) return next(new ExpiredAuthenticationTokenError())
-
+    
     User.findById(decoded._id, function(err, user) {
       if (!user) return next(new UserNotFoundError());
       if (user.disabled===true) return next(new UserDisabledError());
 
-      req.loggedUser = user;
+      req.user = user;
 
       delete req.body.token;
       delete req.query.token;

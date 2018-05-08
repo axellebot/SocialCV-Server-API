@@ -12,14 +12,19 @@ const parameters = require('./constants/parameters');
 const paths = require('./constants/paths');
 
 // Middlewares
-const requireRole = require('./middlewares/security/role');
+const requireRole = require('./middlewares/security/authorization');
+const requireAuthentication = require('./middlewares/security/authentication');
 const requireBodyData = require('./middlewares/body/data');
 const requireBodyDataArray = require('./middlewares/body/dataArray');
 const requireBodyDataObject = require('./middlewares/body/dataObject');
-const parseQueryCursor = require('./middlewares/query/cursor');
-const parseQuerySelect = require('./middlewares/query/select');
-const parseQueryFilter = require('./middlewares/query/filter');
-const parseQuery = [parseQueryCursor, parseQuerySelect, parseQueryFilter];
+const parseQueryFields = require('./middlewares/selection/fields');
+const parseQueryFilter = require('./middlewares/selection/filters');
+const parseQueryPagination = require('./middlewares/selection/pagination');
+const parseQuerySort = require('./middlewares/selection/sort');
+const parseQuery = [parseQueryPagination, parseQueryFields, parseQueryFilter, parseQuerySort , function(req, res, next){
+  console.log(req.query);
+  next();
+}];
 
 // Controllers
 const controllerIndex = require('./controllers/index');
@@ -76,7 +81,7 @@ module.exports = function(app) {
   //= ========================
 
   app.use(paths.PATH_AUTHENTICATION, routeAuth);
-  
+
   routeAuth.post(PATH_REGISTER, controllerAuthentification.register.post);
   routeAuth.post(PATH_LOGIN, controllerAuthentification.login.post);
 
@@ -88,7 +93,7 @@ module.exports = function(app) {
 
   routeEntries.get(PATH_INDEX, parseQuery, controllerEntries.entries.get);
   routeEntries.post(PATH_INDEX, requireRole(ROLE_MEMBER), requireBodyDataObject, controllerEntries.entries.post);
-  routeEntries.put(PATH_INDEX, requireRole(ROLE_MEMBER), requireBodyDataArray, controllerEntries.entries.put);
+  routeEntries.put(PATH_INDEX, requireRole(ROLE_ADMIN), requireBodyDataArray, controllerEntries.entries.put);
   routeEntries.delete(PATH_INDEX, requireRole(ROLE_ADMIN), controllerEntries.entries.delete);
 
   routeEntries.get(PATH_INDEX + ':' + PARAM_ID_ENTRY, controllerEntries.entry.get);
@@ -103,12 +108,12 @@ module.exports = function(app) {
 
   routeGroups.get(PATH_INDEX, parseQuery, controllerGroups.groups.get);
   routeGroups.post(PATH_INDEX, requireRole(ROLE_MEMBER), requireBodyDataObject, controllerGroups.groups.post);
-  routeGroups.put(PATH_INDEX, requireRole(ROLE_MEMBER), requireBodyDataArray, controllerGroups.groups.put);
+  routeGroups.put(PATH_INDEX, requireRole(ROLE_ADMIN), requireBodyDataArray, controllerGroups.groups.put);
   routeGroups.delete(PATH_INDEX, requireRole(ROLE_ADMIN), controllerGroups.groups.delete);
 
   routeGroups.get(PATH_INDEX + ':' + PARAM_ID_ENTRY, controllerGroups.group.get);
-  routeGroups.put(PATH_INDEX + ':' + PARAM_ID_ENTRY, requireRole(ROLE_MEMBER), requireBodyDataObject, controllerGroups.group.put);
-  routeGroups.delete(PATH_INDEX + ':' + PARAM_ID_ENTRY, requireRole(ROLE_MEMBER), controllerGroups.group.delete);
+  routeGroups.put(PATH_INDEX + ':' + PARAM_ID_ENTRY, requireRole(ROLE_ADMIN), requireBodyDataObject, controllerGroups.group.put);
+  routeGroups.delete(PATH_INDEX + ':' + PARAM_ID_ENTRY, requireRole(ROLE_ADMIN), controllerGroups.group.delete);
 
   //= ========================
   // Parts Routes
@@ -118,12 +123,12 @@ module.exports = function(app) {
 
   routeParts.get(PATH_INDEX, parseQuery, controllerParts.parts.get);
   routeParts.post(PATH_INDEX, requireRole(ROLE_MEMBER), requireBodyDataObject, controllerParts.parts.post);
-  routeParts.put(PATH_INDEX, requireRole(ROLE_MEMBER), requireBodyDataArray, controllerParts.parts.put);
+  routeParts.put(PATH_INDEX, requireRole(ROLE_ADMIN), requireBodyDataArray, controllerParts.parts.put);
   routeParts.delete(PATH_INDEX, requireRole(ROLE_ADMIN), controllerParts.parts.delete);
 
   routeParts.get(PATH_INDEX + ':' + PARAM_ID_PART, controllerParts.part.get);
-  routeParts.put(PATH_INDEX + ':' + PARAM_ID_PART, requireRole(ROLE_MEMBER), requireBodyDataObject, controllerParts.part.put);
-  routeParts.delete(PATH_INDEX + ':' + PARAM_ID_PART, requireRole(ROLE_MEMBER), controllerParts.part.delete);
+  routeParts.put(PATH_INDEX + ':' + PARAM_ID_PART, requireRole(ROLE_ADMIN), requireBodyDataObject, controllerParts.part.put);
+  routeParts.delete(PATH_INDEX + ':' + PARAM_ID_PART, requireRole(ROLE_ADMIN), controllerParts.part.delete);
 
   //= ========================
   // Profiles Routes
@@ -133,12 +138,12 @@ module.exports = function(app) {
 
   routeProfiles.get(PATH_INDEX, parseQuery, controllerProfiles.profiles.get);
   routeProfiles.post(PATH_INDEX, requireRole(ROLE_MEMBER), requireBodyDataObject, controllerProfiles.profiles.post);
-  routeProfiles.put(PATH_INDEX, requireRole(ROLE_MEMBER), requireBodyDataArray, controllerProfiles.profiles.put);
+  routeProfiles.put(PATH_INDEX, requireRole(ROLE_ADMIN), requireBodyDataArray, controllerProfiles.profiles.put);
   routeProfiles.delete(PATH_INDEX, requireRole(ROLE_ADMIN), controllerProfiles.profiles.delete);
 
   routeProfiles.get(PATH_INDEX + ':' + PARAM_ID_PROFILE, controllerProfiles.profile.get);
-  routeProfiles.put(PATH_INDEX + ':' + PARAM_ID_PROFILE, requireRole(ROLE_MEMBER), requireBodyDataObject, controllerProfiles.profile.put);
-  routeProfiles.delete(PATH_INDEX + ':' + PARAM_ID_PROFILE, requireRole(ROLE_MEMBER), controllerProfiles.profile.delete);
+  routeProfiles.put(PATH_INDEX + ':' + PARAM_ID_PROFILE, requireRole(ROLE_ADMIN), requireBodyDataObject, controllerProfiles.profile.put);
+  routeProfiles.delete(PATH_INDEX + ':' + PARAM_ID_PROFILE, requireRole(ROLE_ADMIN), controllerProfiles.profile.delete);
 
   //= ========================
   // User Routes
@@ -151,31 +156,31 @@ module.exports = function(app) {
   routeUsers.put(PATH_INDEX, requireRole(ROLE_ADMIN), requireBodyDataArray, controllerUsers.users.put);
   routeUsers.delete(PATH_INDEX, requireRole(ROLE_ADMIN), controllerUsers.users.delete);
 
-  routeUsers.get(PATH_INDEX + ':' + PARAM_ID_USER, requireRole(ROLE_MEMBER), controllerUsers.user.get);
-  routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER, requireRole(ROLE_MEMBER), requireBodyDataObject, controllerUsers.user.put);
-  routeUsers.delete(PATH_INDEX + ':' + PARAM_ID_USER, requireRole(ROLE_MEMBER), controllerUsers.user.delete);
+  routeUsers.get(PATH_INDEX + ':' + PARAM_ID_USER, requireRole(ROLE_ADMIN), controllerUsers.user.get);
+  routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER, requireRole(ROLE_ADMIN), requireBodyDataObject, controllerUsers.user.put);
+  routeUsers.delete(PATH_INDEX + ':' + PARAM_ID_USER, requireRole(ROLE_ADMIN), controllerUsers.user.delete);
 
-  //Entries Routes
+  // Entries Routes
   routeEntries.get(PATH_INDEX + ':' + PARAM_ID_USER + PATH_ENTRIES, parseQuery, controllerUsers.user.entries.get);
-  routeEntries.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_ENTRIES, requireRole(ROLE_MEMBER), requireBodyDataObject, controllerUsers.user.entries.post);
-  routeEntries.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_ENTRIES, requireRole(ROLE_MEMBER), requireBodyDataArray, controllerUsers.user.entries.put);
-  routeEntries.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_ENTRIES, requireRole(ROLE_MEMBER), controllerUsers.user.entries.delete);
+  routeEntries.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_ENTRIES, requireRole(ROLE_ADMIN), requireBodyDataObject, controllerUsers.user.entries.post);
+  routeEntries.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_ENTRIES, requireRole(ROLE_ADMIN), requireBodyDataArray, controllerUsers.user.entries.put);
+  routeEntries.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_ENTRIES, requireRole(ROLE_ADMIN), controllerUsers.user.entries.delete);
 
-  //Groups Routes
+  // Groups Routes
   routeGroups.get(PATH_INDEX + ':' + PARAM_ID_USER + PATH_GROUPS, parseQuery, controllerUsers.user.groups.get);
-  routeGroups.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_GROUPS, requireRole(ROLE_MEMBER), requireBodyDataObject, controllerUsers.user.groups.post);
-  routeGroups.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_GROUPS, requireRole(ROLE_MEMBER), requireBodyDataArray, controllerUsers.user.groups.put);
-  routeGroups.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_GROUPS, requireRole(ROLE_MEMBER), controllerUsers.user.groups.delete);
+  routeGroups.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_GROUPS, requireRole(ROLE_ADMIN), requireBodyDataObject, controllerUsers.user.groups.post);
+  routeGroups.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_GROUPS, requireRole(ROLE_ADMIN), requireBodyDataArray, controllerUsers.user.groups.put);
+  routeGroups.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_GROUPS, requireRole(ROLE_ADMIN), controllerUsers.user.groups.delete);
 
-  //Parts Routes
+  // Parts Routes
   routeParts.get(PATH_INDEX + ':' + PARAM_ID_USER + PATH_PARTS, parseQuery, controllerUsers.user.parts.get);
-  routeParts.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_PARTS, requireRole(ROLE_MEMBER), requireBodyDataObject, controllerUsers.user.parts.post);
-  routeParts.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_PARTS, requireRole(ROLE_MEMBER), requireBodyDataArray, controllerUsers.user.parts.put);
-  routeParts.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_PARTS, requireRole(ROLE_MEMBER), controllerUsers.user.parts.delete);
+  routeParts.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_PARTS, requireRole(ROLE_ADMIN), requireBodyDataObject, controllerUsers.user.parts.post);
+  routeParts.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_PARTS, requireRole(ROLE_ADMIN), requireBodyDataArray, controllerUsers.user.parts.put);
+  routeParts.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_PARTS, requireRole(ROLE_ADMIN), controllerUsers.user.parts.delete);
 
-  //Profiles Routes
+  // Profiles Routes
   routeUsers.get(PATH_INDEX + ':' + PARAM_ID_USER + PATH_PROFILES, parseQuery, controllerUsers.user.profiles.get);
-  routeUsers.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_PROFILES, requireRole(ROLE_MEMBER), requireBodyDataObject, controllerUsers.user.profiles.post);
-  routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_PROFILES, requireRole(ROLE_MEMBER), requireBodyDataArray, controllerUsers.user.profiles.put);
-  routeUsers.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_PROFILES, requireRole(ROLE_MEMBER), controllerUsers.user.profiles.delete);
+  routeUsers.post(PATH_INDEX + ':' + PARAM_ID_USER + PATH_PROFILES, requireRole(ROLE_ADMIN), requireBodyDataObject, controllerUsers.user.profiles.post);
+  routeUsers.put(PATH_INDEX + ':' + PARAM_ID_USER + PATH_PROFILES, requireRole(ROLE_ADMIN), requireBodyDataArray, controllerUsers.user.profiles.put);
+  routeUsers.delete(PATH_INDEX + ':' + PARAM_ID_USER + PATH_PROFILES, requireRole(ROLE_ADMIN), controllerUsers.user.profiles.delete);
 };

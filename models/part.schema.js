@@ -28,7 +28,7 @@ var PartSchema = new Schema({
     }],
     default: []
   },
-  user: {
+  owner: {
     type: String,
     default: null,
     required: true,

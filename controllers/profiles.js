@@ -5,7 +5,6 @@ const Async = require('async');
 
 // Helpers
 const getFilterEditData = require("../helpers").getFilterEditData;
-const getRoleRank = require("../helpers").getRoleRank;
 const getPageCount = require("../helpers").getPageCount;
 
 // Schemas
@@ -40,26 +39,25 @@ const DeleteDocumentResponse = require('../responses/DeleteDocumentResponse');
 exports.profiles = {};
 exports.profiles.get = function(req, res, next) {
   Profile
-    .find(req.queryParsed.filter)
-    .select(req.queryParsed.select)
-    .limit(req.queryParsed.cursor.limit)
-    .skip(req.queryParsed.cursor.skip)
-    .sort(req.queryParsed.cursor.sort)
+    .find(req.query.filters)
+    .select(req.query.fields)
+    .skip(req.query.offset)
+    .limit(req.query.limit)
+    .sort(req.query.sort)
     .exec(function(err, profiles) {
       if (err) return next(new DatabaseFindError());
       if (!profiles || profiles.length <= 0) return next(new NotFoundError(models.MODEL_NAME_PROFILE));
       Profile
-        .count(req.queryParsed.filter)
+        .count(req.query.filter)
         .exec(function(err, count) {
           if (err) return next(new DatabaseCountError());
-          res.json(new SelectDocumentsResponse(profiles, count, getPageCount(count, req.queryParsed.cursor.limit)));
+          res.json(new SelectDocumentsResponse(profiles, count, getPageCount(count, req.query.limit)));
         });
     });
 };
 
 exports.profiles.post = function(req, res, next) {
   var profile = req.body.data;
-  if (getRoleRank(req.loggedUser.role) < getRoleRank(roles.ROLE_ADMIN)) profile.user = req.loggedUser._id;
   profile = new Profile(profile);
 
   profile.save(function(err, profileSaved) {
@@ -72,7 +70,7 @@ exports.profiles.put = function(req, res, next) {
   const profiles = req.body.data;
   var profilesUpdated = [];
   Async.eachOf(profiles, function(profile, key, callback) {
-    const filterUpdate = getFilterEditData(profile._id, req.loggedUser);
+    const filterUpdate = getFilterEditData(profile._id, req.user);
     Profile
       .findOneAndUpdate(filterUpdate, profile, {
         new: true
@@ -109,7 +107,7 @@ exports.profile.get = function(req, res, next) {
 };
 
 exports.profile.put = function(req, res, next) {
-  var filterUpdate = getFilterEditData(req.params[parameters.PARAM_ID_PROFILE], req.loggedUser);
+  var filterUpdate = getFilterEditData(req.params[parameters.PARAM_ID_PROFILE], req.user);
   Profile
     .findOneAndUpdate(filterUpdate, req.body.data, {
       new: true
@@ -121,7 +119,7 @@ exports.profile.put = function(req, res, next) {
 };
 
 exports.profile.delete = function(req, res, next) {
-  var filterRemove = getFilterEditData(req.params[parameters.PARAM_ID_PROFILE], req.loggedUser);
+  var filterRemove = getFilterEditData(req.params[parameters.PARAM_ID_PROFILE], req.user);
   Profile
     .findOneAndRemove(filterRemove, function(err, profileDeleted) {
       if (err) return next(new DatabaseRemoveError());

@@ -5,7 +5,6 @@ const Async = require('async');
 
 // Helpers
 const getFilterEditData = require("../helpers").getFilterEditData;
-const getRoleRank = require("../helpers").getRoleRank;
 const getPageCount = require("../helpers").getPageCount;
 
 // Schemas
@@ -40,26 +39,25 @@ const DeleteDocumentResponse = require('../responses/DeleteDocumentResponse');
 exports.entries = {};
 exports.entries.get = function(req, res, next) {
   Entry
-    .find(req.queryParsed.filter)
-    .select(req.queryParsed.select)
-    .limit(req.queryParsed.cursor.limit)
-    .skip(req.queryParsed.cursor.skip)
-    .sort(req.queryParsed.cursor.sort)
+    .find(req.query.filters)
+    .select(req.query.fields)
+    .skip(req.query.offset)
+    .limit(req.query.limit)
+    .sort(req.query.sort)
     .exec(function(err, entries) {
       if (err) return next(new DatabaseFindError());
       if (!entries || entries.length <= 0) return next(new NotFoundError(models.MODEL_NAME_LANGUAGE));
       Entry
-        .count(req.queryParsed.filter)
+        .count(req.query.filter)
         .exec(function(err, count) {
           if (err) return next(new DatabaseCountError());
-          res.json(new SelectDocumentsResponse(entries, count, getPageCount(count, req.queryParsed.cursor.limit)));
+          res.json(new SelectDocumentsResponse(entries, count, getPageCount(count, req.query.limit)));
         });
     });
 };
 
 exports.entries.post = function(req, res, next) {
   var entry = req.body.data;
-  if (getRoleRank(req.loggedUser.role) < getRoleRank(roles.ROLE_ADMIN)) entry.user = req.loggedUser._id;
   entry = new Entry(entry);
 
   entry.save(function(err, entrySaved) {
@@ -72,7 +70,7 @@ exports.entries.put = function(req, res, next) {
   const entries = req.body.data;
   var entriesUpdated = [];
   Async.eachOf(entries, function(entry, key, callback) {
-    const filterUpdate = getFilterEditData(entry._id, req.loggedUser);
+    const filterUpdate = getFilterEditData(entry._id, req.user);
     Entry
       .findOneAndUpdate(filterUpdate, entry, {
         new: true
@@ -109,7 +107,7 @@ exports.entry.get = function(req, res, next) {
 };
 
 exports.entry.put = function(req, res, next) {
-  var filterUpdate = getFilterEditData(req.params[parameters.PARAM_ID_LANGUAGE], req.loggedUser);
+  var filterUpdate = getFilterEditData(req.params[parameters.PARAM_ID_LANGUAGE], req.user);
   Entry
     .findOneAndUpdate(filterUpdate, req.body.data, {
       new: true
@@ -121,7 +119,7 @@ exports.entry.put = function(req, res, next) {
 };
 
 exports.entry.delete = function(req, res, next) {
-  var filterRemove = getFilterEditData(req.params[parameters.PARAM_ID_LANGUAGE], req.loggedUser);
+  var filterRemove = getFilterEditData(req.params[parameters.PARAM_ID_LANGUAGE], req.user);
   Entry
     .findOneAndRemove(filterRemove, function(err, entryDeleted) {
       if (err) return next(new DatabaseRemoveError());
