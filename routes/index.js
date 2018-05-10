@@ -24,6 +24,13 @@ module.exports = (app) => {
   const routeAuth = express.Router();
   app.use(paths.PATH_AUTHENTICATION, routeAuth);
   require('./authentication.routes.js')(routeAuth);
+  
+  //= ========================
+  // Accounts Routes
+  //= ========================
+  const routeAccount = express.Router();
+  app.use(paths.PATH_ACCOUNT, routeAccount);
+  require('./account.routes.js')(routeAccount);
 
   //= ========================
   // Entries Routes

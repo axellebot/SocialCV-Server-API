@@ -1,8 +1,5 @@
 "use strict";
 
-// Requires packages
-const Async = require('async');
-
 // Schemas
 const Part = require('../models/part.model');
 
