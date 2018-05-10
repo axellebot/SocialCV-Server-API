@@ -15,7 +15,6 @@ const config = require("./config");
 const messages = require('./constants/messages');
 const statuses = require('./constants/statuses');
 const models = require('./constants/models');
-const collections = require('./constants/collections');
 const roles = require('./constants/roles');
 const parameters = require('./constants/parameters');
 const paths = require('./constants/paths');
@@ -24,8 +23,6 @@ const paths = require('./constants/paths');
 const NotFoundError = require('./errors/NotFoundError')
 
 // Routers
-const router = require('./router');
-
 const app = express();
 
 // view engine setup
@@ -48,7 +45,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // In production
 if (app.get('env') === 'production') {
   // Force HTTPS in production
-  app.use(function(req, res, next) {
+  app.use((req, res, next) => {
     var protocol = req.get('x-forwarded-proto');
     protocol == 'https' ? next() : res.redirect('https://' + req.hostname + req.url);
   });
@@ -62,19 +59,24 @@ app.use((req, res, next) => {
 });
 
 // Import routes to be served
-router(app);
+require('./routes')(app);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use((req, res, next) => {
   next(new NotFoundError());
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use((err, req, res, next) => {
+  if(req.app.get('env') === 'development' ){
+    console.error(err);
+  }
+  
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
-  res.status(err.status || statuses.HTTP_STATUS_INTERNAL_SERVER_ERROR)
+  res
+    .status(err.status || statuses.HTTP_STATUS_INTERNAL_SERVER_ERROR)
     .json({
       error: true,
       message: err.message || messages.MESSAGE_ERROR_APP

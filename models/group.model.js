@@ -1,10 +1,7 @@
 "use strict";
 
 // Constants
-const messages = require('../constants/messages');
-const statuses = require('../constants/statuses');
 const models = require('../constants/models');
-const collections = require('../constants/collections');
 
 var mongoose = require('../mongoose');
 var Schema = mongoose.Schema;
@@ -38,4 +35,4 @@ var GroupSchema = new Schema({
   timestamps: true
 });
 
-module.exports = mongoose.model(models.MODEL_NAME_GROUP, GroupSchema, collections.COLLECTION_NAME_GROUP);
+module.exports = mongoose.model(models.MODEL_NAME_GROUP, GroupSchema, "groups");

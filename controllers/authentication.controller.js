@@ -7,7 +7,7 @@ const config = require('../config');
 const jwt = require('jsonwebtoken');
 
 // Schema
-const User = require('../models/user.schema');
+const User = require('../models/user.model');
 
 // Constants
 const fields = require('../constants/fields')
@@ -25,7 +25,6 @@ const ProvidingTokenError = require('../errors/ProvidingTokenError');
 // Responses
 const LoginResponse = require('../responses/LoginResponse');
 
-
 // Generate JWT
 function generateToken(plaintText) {
   return jwt.sign(plaintText, config.secret, {
@@ -36,8 +35,7 @@ function generateToken(plaintText) {
 //= =======================================
 // Registration Controller
 //= =======================================
-exports.register = {};
-exports.register.post = function(req, res, next) {
+exports.register = (req, res, next) => {
   // Check for registration errors
   var userBody = req.body;
 
@@ -50,7 +48,8 @@ exports.register.post = function(req, res, next) {
   // Return error if no password provided
   if (!userBody.password || userBody.password === "") return next(new MissingPasswordError());
 
- User.findOne({
+  User
+    .findOne({
       $or: [{
           email: userBody.email
         },
@@ -59,39 +58,37 @@ exports.register.post = function(req, res, next) {
         }
       ]
     })
-    .exec((err, existingUser) => {
-      if (err) return next(new DatabaseFindError());
-
+    .exec()
+    .then((existingUser) => {
       // If user is not unique, return error
-      if (existingUser) return next(new EmailAlreadyExistError());
-
-      // If email is unique and password was provided, create account
-      const user = new User(userBody);
-
-      user.save()
-        .then((err, user) => {
-          if (err) return next(new DatabaseFindError(err));
-
-          // Subscribe member to Mailchimp list
-          // mailchimp.subscribeToNewsletter(user.email);
-
-          // Respond with JWT if user was created
-          User.findById(user._id, fields.FIELDS_USER_PUBLIC)
-            .exec((err, user) => {
-              res.json(new LoginResponse(generateToken(user.toJSON()), user));
-            });
-        });
+      if (existingUser) throw new EmailAlreadyExistError();
+      var user = new User(userBody);
+      return user.save();
+    })
+    .then((newUser) => {
+      // Respond with JWT if user was created
+      return User
+        .findById(newUser._id)
+        .select(fields.FIELDS_USER_PUBLIC)
+        .exec();
+    })
+    .then((userPublicDatas) => {
+      res.json(new LoginResponse(generateToken(userPublicDatas.toJSON()), userPublicDatas));
+    })
+    .catch((err) => {
+      next(err)
     });
 };
 
 //= =======================================
 // Login Controller
 //= =======================================
-exports.login = {};
-exports.login.post = function(req, res, next) {
+exports.login = (req, res, next) => {
   var login = req.body.login;
   var plainPassword = req.body.password;
-  User.findOne({
+  var userId;
+  User
+    .findOne({
       $or: [{
           email: login
         },
@@ -100,17 +97,24 @@ exports.login.post = function(req, res, next) {
         }
       ]
     })
-    .exec(function(err, user) {
-      if (err) return next(new DatabaseFindError());
-      if (!user) return next(new UserNotFoundError());
-      user.verifyPassword(plainPassword, function(err, isMatch) {
-        if (err) return next(err);
-        if (!isMatch) return next(new WrongPasswordError());
-
-        User.findById(user._id, fields.FIELDS_USER_PUBLIC)
-          .exec((err, user) => {
-            res.json(new LoginResponse(generateToken(user.toJSON()), user));
-          });
-      });
+    .exec()
+    .then((user) => {
+      if (!user) throw new UserNotFoundError();
+      userId=user._id;
+      return user.verifyPassword(plainPassword)
+    })
+    .then((isMatch) => {
+      if (!isMatch) throw new WrongPasswordError();
+      return User
+        .findById(userId)
+        .select(fields.FIELDS_USER_PUBLIC)
+        .exec()
+    })
+    .then((userPublicDatas) => {
+      console.log(userPublicDatas);
+      res.json(new LoginResponse(generateToken(userPublicDatas.toJSON()), userPublicDatas));
+    })
+    .catch((err) => {
+      return next(err);
     })
 };

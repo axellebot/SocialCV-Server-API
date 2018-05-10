@@ -7,7 +7,7 @@ const WrongDataError = require('../../errors/WrongDataError');
 
 module.exports = [
   bodyData,
-  function(req, res, next) {
+  (req, res, next) => {
     if (!Array.isArray(req.body.data)) return next(new WrongDataError());
     next()
   }

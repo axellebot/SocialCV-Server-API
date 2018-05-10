@@ -3,10 +3,12 @@
 // Config
 const config = require('./config');
 
-var mongoose = require("mongoose");
-//Fixing promises
+const mongoose = require("mongoose");
+
+// Setup promises
 mongoose.Promise = global.Promise;
 
+// Connect
 mongoose.connect(config.database.uri, {
 	user: config.database.username,
 	pass: config.database.password,

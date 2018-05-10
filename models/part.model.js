@@ -4,7 +4,6 @@
 const messages = require('../constants/messages');
 const statuses = require('../constants/statuses');
 const models = require('../constants/models');
-const collections = require('../constants/collections');
 
 var mongoose = require('../mongoose');
 var Schema = mongoose.Schema;
@@ -38,4 +37,4 @@ var PartSchema = new Schema({
   timestamps: true
 });
 
-module.exports = mongoose.model(models.MODEL_NAME_PART, PartSchema, collections.COLLECTION_NAME_PART);
+module.exports = mongoose.model(models.MODEL_NAME_PART, PartSchema, "parts");

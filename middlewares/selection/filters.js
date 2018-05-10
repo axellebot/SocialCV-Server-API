@@ -122,7 +122,7 @@ function getFilter(params, options) {
  * @param res
  * @param next
  */
-module.exports = function(req, res, next) {
+module.exports = (req, res, next) => {
   req.query.filters = getFilter(req.query, {
     blacklist: ['token', 'fields', 'sort', 'offset', 'limit']
   });

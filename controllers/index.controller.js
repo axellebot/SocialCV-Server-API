@@ -1,5 +1,5 @@
 "use strict";
 
-exports.get = function (req, res, next) {
+exports.get = (req, res, next) => {
     res.json({title: 'Curriculum API'});
 };

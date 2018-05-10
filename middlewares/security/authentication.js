@@ -15,14 +15,14 @@ const UserNotFoundError = require('../../errors/UserNotFoundError');
 const UserDisabledError = require('../../errors/UserDisabledError');
 
 // Schemas
-const User = require('../../models/user.schema')
+const User = require('../../models/user.model')
 
 /**
  * @param req
  * @param res
  * @param next
  */
-module.exports = function(req, res, next) {
+module.exports = (req, res, next) => {
   var token = req.body.token || req.query.token || req.headers['x-access-token'];
 
   // forbidden without token
@@ -34,18 +34,22 @@ module.exports = function(req, res, next) {
     if (err) return next(new FailedAuthenticationTokenError());
 
     if (decoded.exp <= moment().unix()) return next(new ExpiredAuthenticationTokenError())
-    
-    User.findById(decoded._id, function(err, user) {
-      if (!user) return next(new UserNotFoundError());
-      if (user.disabled===true) return next(new UserDisabledError());
 
-      req.user = user;
+    User.findById(decoded._id)
+      .then((user) => {
+        if (!user) throw new UserNotFoundError();
+        if (user.disabled === true) throw new UserDisabledError();
 
-      delete req.body.token;
-      delete req.query.token;
-      delete req.headers['x-access-token'];
+        req.user = user;
 
-      return next();
-    });
+        delete req.body.token;
+        delete req.query.token;
+        delete req.headers['x-access-token'];
+
+        return next();
+      })
+      .catch((err) => {
+        next(err);
+      })
   });
 }

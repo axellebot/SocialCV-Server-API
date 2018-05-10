@@ -1,10 +1,7 @@
 "use strict";
 
 // Constants
-const messages = require('../constants/messages');
-const statuses = require('../constants/statuses');
 const models = require('../constants/models');
-const collections = require('../constants/collections');
 
 var mongoose = require('../mongoose');
 var Schema = mongoose.Schema;
@@ -36,4 +33,4 @@ var EntrySchema = new Schema({
   timestamps: true
 });
 
-module.exports = mongoose.model(models.MODEL_NAME_ENTRY, EntrySchema, collections.COLLECTION_NAME_ENTRY);
+module.exports = mongoose.model(models.MODEL_NAME_ENTRY, EntrySchema, "entries");
