@@ -42,10 +42,6 @@ module.exports = (req, res, next) => {
 
         req.user = user;
 
-        delete req.body.token;
-        delete req.query.token;
-        delete req.headers['x-access-token'];
-
         return next();
       })
       .catch((err) => {

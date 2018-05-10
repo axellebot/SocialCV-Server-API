@@ -7,6 +7,7 @@ module.exports = {
   PATH_AUTHENTICATION: "/auth",
   PATH_REGISTER: "/register",
   PATH_LOGIN: "/login",
+  PATH_TOKEN_REFRESH : "/refresh",
   PATH_ENTRIES: "/entries",
   PATH_GROUPS: "/groups",
   PATH_PARTS: "/parts",

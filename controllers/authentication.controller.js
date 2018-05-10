@@ -18,9 +18,11 @@ const MissingUsernameError = require('../errors/MissingUsernameError');
 const MissingPasswordError = require('../errors/MissingPasswordError');
 const DatabaseFindError = require('../errors/DatabaseFindError');
 const EmailAlreadyExistError = require('../errors/EmailAlreadyExistError');
+const FailedAuthenticationTokenError = require('../errors/FailedAuthenticationTokenError');
 const UserNotFoundError = require('../errors/UserNotFoundError');
 const WrongPasswordError = require('../errors/WrongPasswordError');
 const ProvidingTokenError = require('../errors/ProvidingTokenError');
+const UserDisabledError = require('../errors/UserDisabledError');
 
 // Responses
 const LoginResponse = require('../responses/LoginResponse');
@@ -73,7 +75,7 @@ exports.register = (req, res, next) => {
         .exec();
     })
     .then((userPublicDatas) => {
-      res.json(new LoginResponse(generateToken(userPublicDatas.toJSON()), userPublicDatas));
+      res.json(new LoginResponse(generateToken(userPublicDatas.toJSON(), userPublicDatas)));
     })
     .catch((err) => {
       next(err)
@@ -100,7 +102,7 @@ exports.login = (req, res, next) => {
     .exec()
     .then((user) => {
       if (!user) throw new UserNotFoundError();
-      userId=user._id;
+      userId = user._id;
       return user.verifyPassword(plainPassword)
     })
     .then((isMatch) => {
@@ -118,3 +120,29 @@ exports.login = (req, res, next) => {
       return next(err);
     })
 };
+
+//= =======================================
+// Refresh Token Controller
+//= =======================================
+exports.refreshToken = (req, res, next) => {
+  var token = req.body.token || req.query.token || req.headers['x-access-token'];
+
+  // verifies secret and checks exp
+  jwt.verify(token, config.secret, (err, decoded) => {
+    //failed verification.
+    if (err) return next(new FailedAuthenticationTokenError());
+
+    User
+      .findById(decoded._id)
+      .select(fields.FIELDS_USER_PUBLIC)
+      .exec()
+      .then((userPublicDatas) => {
+        if (!userPublicDatas) throw new UserNotFoundError();
+        if (userPublicDatas.disabled === true) throw new UserDisabledError();
+        return res.json(new LoginResponse(generateToken(userPublicDatas.toJSON()), userPublicDatas));
+      })
+      .catch((err) => {
+        next(err);
+      });
+  });
+}
