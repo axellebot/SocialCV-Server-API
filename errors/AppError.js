@@ -1,7 +1,7 @@
 "user-strict"
 
-const messages = require('../constants/messages');
-const statuses = require('../constants/statuses');
+const messages = require('@constants/messages');
+const statuses = require('@constants/statuses');
 
 module.exports = class AppError extends Error {
   // Calling parent constructor of base Error class.

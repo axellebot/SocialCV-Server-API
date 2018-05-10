@@ -7,6 +7,18 @@
     "start:dev": "NODE_ENV=development node bin/www",
     "start:prod": "NODE_ENV=production node bin/www"
   },
+  "_moduleAliases": {
+    "@root": ".", 
+    "@config": "./config",
+    "@constants": "./constants",
+    "@controllers": "./controllers",
+    "@errors": "./errors",
+    "@middlewares": "./middlewares",
+    "@models": "./models",
+    "@responses": "./responses",
+    "@routes": "./routes",
+    "@mongoose": "./mongoose.js"
+  },
   "dependencies": {
     "bcrypt": "^2.0.1",
     "body-parser": "^1.18.2",
@@ -14,6 +26,7 @@
     "debug": "^3.1.0",
     "express": "^4.16.3",
     "jsonwebtoken": "^8.2.1",
+    "module-alias": "^2.0.6",
     "moment": "^2.22.1",
     "mongoose": "^5.0.17",
     "morgan": "^1.9.0",

@@ -1,11 +1,11 @@
 "use strict";
 
 // Constants
-const messages = require('../constants/messages');
-const statuses = require('../constants/statuses');
-const models = require('../constants/models');
+const messages = require('@constants/messages');
+const statuses = require('@constants/statuses');
+const models = require('@constants/models');
 
-var mongoose = require('../mongoose');
+var mongoose = require('@mongoose');
 var Schema = mongoose.Schema;
 
 var PartSchema = new Schema({

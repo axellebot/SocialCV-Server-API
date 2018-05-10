@@ -4,13 +4,13 @@
 const bcrypt = require('bcrypt');
 
 // Config
-const config = require('../config');
+const config = require('@config');
 
 // Constants
-const models = require('../constants/models');
-const roles = require('../constants/roles');
+const models = require('@constants/models');
+const roles = require('@constants/roles');
 
-var mongoose = require('../mongoose');
+var mongoose = require('@mongoose');
 var Schema = mongoose.Schema;
 
 //= ===============================

@@ -5,17 +5,17 @@ const jwt = require('jsonwebtoken');
 const moment = require('moment');
 
 // Config
-const config = require('../../config');
+const config = require('@config');
 
 // Errors
-const AccessRestrictedError = require('../../errors/AccessRestrictedError');
-const FailedAuthenticationTokenError = require('../../errors/FailedAuthenticationTokenError');
-const ExpiredAuthenticationTokenError = require('../../errors/ExpiredAuthenticationTokenError');
-const UserNotFoundError = require('../../errors/UserNotFoundError');
-const UserDisabledError = require('../../errors/UserDisabledError');
+const AccessRestrictedError = require('@errors/AccessRestrictedError');
+const FailedAuthenticationTokenError = require('@errors/FailedAuthenticationTokenError');
+const ExpiredAuthenticationTokenError = require('@errors/ExpiredAuthenticationTokenError');
+const UserNotFoundError = require('@errors/UserNotFoundError');
+const UserDisabledError = require('@errors/UserDisabledError');
 
 // Schemas
-const User = require('../../models/user.model')
+const User = require('@models/user.model')
 
 /**
  * @param req

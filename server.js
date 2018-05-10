@@ -7,20 +7,21 @@ const favicon = require('serve-favicon');
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
+require('module-alias/register')
 
 // Config
-const config = require("./config");
+const config = require("@config");
 
 // Constants
-const messages = require('./constants/messages');
-const statuses = require('./constants/statuses');
-const models = require('./constants/models');
-const roles = require('./constants/roles');
-const parameters = require('./constants/parameters');
-const paths = require('./constants/paths');
+const messages = require('@constants/messages');
+const statuses = require('@constants/statuses');
+const models = require('@constants/models');
+const roles = require('@constants/roles');
+const parameters = require('@constants/parameters');
+const paths = require('@constants/paths');
 
 // Errors
-const NotFoundError = require('./errors/NotFoundError')
+const NotFoundError = require('@errors/NotFoundError')
 
 // Routers
 const app = express();
@@ -59,7 +60,7 @@ app.use((req, res, next) => {
 });
 
 // Import routes to be served
-require('./routes')(app);
+require('@routes')(app);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {

@@ -1,9 +1,9 @@
 "use strict";
 
 // Constants
-const models = require('../constants/models');
+const models = require('@constants/models');
 
-var mongoose = require('../mongoose');
+var mongoose = require('@mongoose');
 var Schema = mongoose.Schema;
 
 var EntrySchema = new Schema({

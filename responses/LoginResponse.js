@@ -1,5 +1,6 @@
 "use strict";
-module.exports = class LoginResponse extends require('./Response') {
+
+module.exports = class LoginResponse extends require('@responses/Response') {
     constructor(token, user) {
         super();
         this.token = token;

@@ -1,10 +1,10 @@
 "use strict";
 
 // Errors
-const MissingPrivilegeError = require('../../errors/MissingPrivilegeError');
+const MissingPrivilegeError = require('@errors/MissingPrivilegeError');
 
 // Security
-const ensureAuthentication = require('./authentication');
+const ensureAuthentication = require('@middlewares/security/authentication');
 
 /**
  * @param req

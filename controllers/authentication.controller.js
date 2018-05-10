@@ -1,31 +1,31 @@
 "use strict";
 
 // Config
-const config = require('../config');
+const config = require('@config');
 
 // Requires Packages
 const jwt = require('jsonwebtoken');
 
 // Schema
-const User = require('../models/user.model');
+const User = require('@models/user.model');
 
 // Constants
-const fields = require('../constants/fields')
+const fields = require('@constants/fields')
 
 // Errors
-const MissingEmailError = require('../errors/MissingEmailError');
-const MissingUsernameError = require('../errors/MissingUsernameError');
-const MissingPasswordError = require('../errors/MissingPasswordError');
-const DatabaseFindError = require('../errors/DatabaseFindError');
-const EmailAlreadyExistError = require('../errors/EmailAlreadyExistError');
-const FailedAuthenticationTokenError = require('../errors/FailedAuthenticationTokenError');
-const UserNotFoundError = require('../errors/UserNotFoundError');
-const WrongPasswordError = require('../errors/WrongPasswordError');
-const ProvidingTokenError = require('../errors/ProvidingTokenError');
-const UserDisabledError = require('../errors/UserDisabledError');
+const MissingEmailError = require('@errors/MissingEmailError');
+const MissingUsernameError = require('@errors/MissingUsernameError');
+const MissingPasswordError = require('@errors/MissingPasswordError');
+const DatabaseFindError = require('@errors/DatabaseFindError');
+const EmailAlreadyExistError = require('@errors/EmailAlreadyExistError');
+const FailedAuthenticationTokenError = require('@errors/FailedAuthenticationTokenError');
+const UserNotFoundError = require('@errors/UserNotFoundError');
+const WrongPasswordError = require('@errors/WrongPasswordError');
+const ProvidingTokenError = require('@errors/ProvidingTokenError');
+const UserDisabledError = require('@errors/UserDisabledError');
 
 // Responses
-const LoginResponse = require('../responses/LoginResponse');
+const LoginResponse = require('@responses/LoginResponse');
 
 // Generate JWT
 function generateToken(plaintText) {

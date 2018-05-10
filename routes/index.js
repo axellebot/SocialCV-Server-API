@@ -4,10 +4,10 @@
 const express = require('express');
 
 // Constants
-const paths = require('../constants/paths');
+const paths = require('@constants/paths');
 
 // Controllers
-const controllerIndex = require('../controllers/index.controller.js');
+const controllerIndex = require('@controllers/index.controller.js');
 
 module.exports = (app) => {
   //= ========================

@@ -1,7 +1,7 @@
 "use strict";
 
 // Errors
-const WrongQueryCursorSortError = require('../../errors/WrongQueryCursorSortError');
+const WrongQueryCursorSortError = require('@errors/WrongQueryCursorSortError');
 
 /**
  * @param req
