@@ -1,5 +1,5 @@
 {
-  "secret":"",
+  "secret":"thisisasecret",
   "saltWorkFactor":10,
   "database": {
     "uri": "mongodb://example.com/dbName",

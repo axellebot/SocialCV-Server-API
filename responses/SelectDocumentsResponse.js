@@ -1,9 +1,8 @@
 "use strict";
 
-module.exports = class SelectDocumentsResponse extends require('./DataResponse') {
-    constructor(documents, count = null, pageCount = null) {
+module.exports = class SelectDocumentsResponse extends require('@responses/DataResponse') {
+    constructor(documents, total = null) {
         super(documents);
-        this.count = count;
-        this.pageCount = pageCount
+        this.total = total;
     }
 };

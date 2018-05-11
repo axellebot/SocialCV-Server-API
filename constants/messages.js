@@ -24,6 +24,8 @@ module.exports = {
   MESSAGE_ERROR_EMAIL_ADDRESS_ALREADY_EXIST: "E-mail already in use.",
   MESSAGE_ERROR_PROVIDING_TOKEN: "Can't provide token.",
   MESSAGE_ERROR_FAILED_AUTHENTICATION_TOKEN: "Failed to authenticate token.",
+  MESSAGE_ERROR_EXPIRED_AUTHENTICATION_TOKEN: "Expired token.",
+  MESSAGE_ERROR_USER_DISABLED: "User account disabled.",
   MESSAGE_ERROR_USER_NOT_FOUND: "User not found.",
   MESSAGE_ERROR_WRONG_DATA: "Wrong data.",
   MESSAGE_ERROR_WRONG_PASSWORD: "Wrong password.",

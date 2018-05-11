@@ -1,9 +1,9 @@
 "use strict";
 
-const messages = require('../constants/messages');
-const statuses = require('../constants/statuses');
+const messages = require('@constants/messages');
+const statuses = require('@constants/statuses');
 
-module.exports = class MissingPasswordError extends require('./AppError') {
+module.exports = class MissingPasswordError extends require('@errors/AppError') {
   constructor(message, status) {
     message = message || messages.MESSAGE_ERROR_MISSING_PASSWORD;
     status = status || statuses.HTTP_STATUS_UNPROCESSABLE_ENTITY;

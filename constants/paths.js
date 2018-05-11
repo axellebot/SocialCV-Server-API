@@ -3,9 +3,11 @@
 // Paths
 module.exports = {
   PATH_INDEX: "/",
+  PATH_ACCOUNT : "/me",
   PATH_AUTHENTICATION: "/auth",
   PATH_REGISTER: "/register",
   PATH_LOGIN: "/login",
+  PATH_TOKEN_REFRESH : "/refresh",
   PATH_ENTRIES: "/entries",
   PATH_GROUPS: "/groups",
   PATH_PARTS: "/parts",

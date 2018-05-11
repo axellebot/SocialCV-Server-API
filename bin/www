@@ -6,7 +6,7 @@
 // Require Packages
 const http = require('http');
 
-const app = require('../app');
+const app = require('../server');
 const debug = require('debug')('SocialCV-server-api:server');
 
 /**
