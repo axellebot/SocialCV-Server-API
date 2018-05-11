@@ -9,10 +9,20 @@ var ProfileSchema = new Schema({
   title: {
     type: String,
     default: "",
+    required: true
   },
   subtitle: {
     type: String,
-    default: ""
+    default: "",
+    required: true
+  },
+  parts: {
+    type: [{
+      type: Schema.Types.ObjectId,
+      ref: models.MODEL_NAME_PART
+    }],
+    required: true,
+    default: []
   },
   owner: {
     type: Schema.Types.ObjectId,

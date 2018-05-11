@@ -14,21 +14,18 @@ var PartSchema = new Schema({
     default: "",
     required: true
   },
-  profile: {
-    type: Schema.Types.ObjectId,
-    default: null,
-    required: true,
-    ref: models.MODEL_NAME_PROFILE
-  },
   groups: {
     type: [{
       type: Schema.Types.ObjectId,
+      default: null,
+      required: true,
       ref: models.MODEL_NAME_GROUP
     }],
+    required: true,
     default: []
   },
   owner: {
-    type: String,
+    type: Schema.Types.ObjectId,
     default: null,
     required: true,
     ref: models.MODEL_NAME_USER

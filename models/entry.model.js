@@ -23,12 +23,6 @@ var EntrySchema = new Schema({
     required: true,
     ref: models.MODEL_NAME_USER
   },
-  group: {
-    type: Schema.Types.ObjectId,
-    default: null,
-    required: true,
-    ref: models.MODEL_NAME_GROUP
-  }
 }, {
   timestamps: true
 });

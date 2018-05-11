@@ -48,6 +48,16 @@ var UserSchema = new Schema({
     enum: [roles.ROLE_MEMBER, roles.ROLE_ADMIN],
     default: roles.ROLE_MEMBER,
     required: true
+  },
+  profiles: {
+    type: [{
+      type: Schema.Types.ObjectId,
+      default: null,
+      required: true,
+      ref: models.MODEL_NAME_PROFILE
+    }],
+    required: true,
+    default: []
   }
 }, {
   timestamps: true

@@ -31,7 +31,7 @@ const DeleteDocumentsResponse = require('@responses/DeleteDocumentsResponse');
 const DeleteDocumentResponse = require('@responses/DeleteDocumentResponse');
 
 
-exports.findAccount = (req, res, next) => {
+exports.findUser = (req, res, next) => {
   const id = req.user._id;
 
   User
@@ -40,6 +40,35 @@ exports.findAccount = (req, res, next) => {
     .then((user) => {
       if (!user) throw new NotFoundError(models.MODEL_NAME_USER);
       res.json(new SelectDocumentResponse(user));
+    })
+    .catch((err) => {
+      next(err);
+    });
+}
+
+
+
+exports.findFull = (req, res, next) => {
+  const id = req.user._id;
+
+  User
+    .findById(id)
+    .select(fields.FIELDS_USER_PUBLIC)
+    .populate({
+      path: 'profiles',
+      populate: {
+        path: 'parts',
+        populate: {
+          path: 'groups',
+          populate: {
+            path: 'entries'
+          }
+        }
+      }
+    })
+    .then((userPopulate) => {
+      if (!userPopulate) throw new NotFoundError(models.MODEL_NAME_USER);
+      res.json(new SelectDocumentResponse(userPopulate));
     })
     .catch((err) => {
       next(err);

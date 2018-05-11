@@ -17,5 +17,6 @@ const parseQuerySelection = require('@middlewares/selection');
 const ctrlAccount = require('@controllers/account.controller.js');
 
 module.exports = (router) => {
-  router.get('/', requireAuthentication, ctrlAccount.findAccount);
+  router.get('/', requireAuthentication, ctrlAccount.findUser);
+  router.get('/full',requireAuthentication,ctrlAccount.findFull);
 };
