@@ -3,10 +3,10 @@
 // Constants
 const parameters = require('@constants/parameters');
 const paths = require('@constants/paths');
-const roles = require('@constants/roles');
+const perms = require('@constants/permissions');
 
 // Middlewares
-const requireRole = require('@middlewares/security/authorization');
+const hasPerms = require('@middlewares/security/RBAC');
 const requireAuthentication = require('@middlewares/security/authentication');
 const requireBodyData = require('@middlewares/body/data');
 const requireBodyDataArray = require('@middlewares/body/dataArray');
@@ -14,15 +14,15 @@ const requireBodyDataObject = require('@middlewares/body/dataObject');
 const parseQuerySelection = require('@middlewares/selection');
 
 // Controllers
-const controllerUsers = require('@controllers/profiles.controller.js');
+const ctrlUsers = require('@controllers/users.controller.js');
 
 module.exports = (router) => {
-  router.get('/', requireRole(roles.ROLE_ADMIN), parseQuerySelection, controllerUsers.findMany);
-  router.post('/', requireRole(roles.ROLE_ADMIN), requireBodyDataObject, controllerUsers.createOne);
-  router.put('/', requireRole(roles.ROLE_ADMIN), requireBodyDataArray, controllerUsers.updateMany);
-  router.delete('/', requireRole(roles.ROLE_ADMIN), controllerUsers.deleteAll);
+  router.get('/', hasPerms(perms.PERMISSION_SCOPE_USERS, perms.PERMISSION_CRUD_READ), parseQuerySelection, ctrlUsers.findMany);
+  router.post('/', hasPerms(perms.PERMISSION_SCOPE_USERS, perms.PERMISSION_CRUD_WRITE), requireBodyDataObject, ctrlUsers.createOne);
+  router.put('/', hasPerms(perms.PERMISSION_SCOPE_USERS, perms.PERMISSION_CRUD_WRITE), requireBodyDataArray, ctrlUsers.updateMany);
+  router.delete('/', hasPerms(perms.PERMISSION_SCOPE_USERS, perms.PERMISSION_CRUD_DELETE), ctrlUsers.deleteAll);
 
-  router.get('/' + ':' + parameters.PARAM_ID_USER, requireRole(roles.ROLE_ADMIN), controllerUsers.findOne);
-  router.put('/' + ':' + parameters.PARAM_ID_USER, requireRole(roles.ROLE_ADMIN), requireBodyDataObject, controllerUsers.updateOne);
-  router.delete('/' + ':' + parameters.PARAM_ID_USER, requireRole(roles.ROLE_ADMIN), controllerUsers.deleteOne);
+  router.get('/' + ':' + parameters.PARAM_ID_USER, hasPerms(perms.PERMISSION_SCOPE_USERS, perms.PERMISSION_CRUD_READ), ctrlUsers.findOne);
+  router.put('/' + ':' + parameters.PARAM_ID_USER, hasPerms(perms.PERMISSION_SCOPE_USERS, perms.PERMISSION_CRUD_WRITE), requireBodyDataObject, ctrlUsers.updateOne);
+  router.delete('/' + ':' + parameters.PARAM_ID_USER, hasPerms(perms.PERMISSION_SCOPE_USERS, perms.PERMISSION_CRUD_DELETE), ctrlUsers.deleteOne);
 };

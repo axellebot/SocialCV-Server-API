@@ -1,7 +1,19 @@
 "use strict";
 
 module.exports = {
-  PERMISSION_ALL: "all",
-  PERMISSION_OWN: "own",
-  PERMISSION_NONE: "none"
+  PERMISSION_SCOPE_ENTRIES : "entries",
+  PERMISSION_SCOPE_GROUPS : "groups",
+  PERMISSION_SCOPE_PARTS : "parts",
+  PERMISSION_SCOPE_PERMISSIONS : "permissions",
+  PERMISSION_SCOPE_PROFILES : "profiles",
+  PERMISSION_SCOPE_USERS : "users",
+  
+  PERMISSION_CRUD_READ : "read",
+  PERMISSION_CRUD_WRITE : "write",
+  PERMISSION_CRUD_DELETE : "delete",
+  
+  PERMISSION_TYPE_ALL: "all",
+  PERMISSION_TYPE_OWN: "own",
+  PERMISSION_TYPE_NONE: "none",
+  
 }

@@ -28,7 +28,7 @@ const UpdateDocumentResponse = require('@responses/UpdateDocumentResponse');
 const DeleteDocumentsResponse = require('@responses/DeleteDocumentsResponse');
 const DeleteDocumentResponse = require('@responses/DeleteDocumentResponse');
 
-exports.createOne = (req, res, next) => {
+module.exports.createOne = (req, res, next) => {
   var profile = req.body.data;
   profile = new Profile(profile);
 
@@ -90,7 +90,7 @@ exports.deleteOne = (req, res, next) => {
     });
 };
 
-exports.findMany = (req, res, next) => {
+module.exports.findMany = (req, res, next) => {
   var returnedProfiles;
 
   Profile

@@ -81,7 +81,7 @@ exports.deleteOne = (req, res, next) => {
     });
 };
 
-exports.findAll = (req, res, next) => {
+exports.findMany = (req, res, next) => {
   var returnedUsers;
 
   User

@@ -20,24 +20,20 @@ var PermissionSchema = new Schema({
     default: "ROLE_PUBLIC",
     required: true
   },
-  collections: {
-    type: [{
-      name: {
-        type: String,
-        required: true
+  scopes: {
+
+    type: Schema.Types.Mixed,
+    body: {
+      type: {
+        read: permissionsSchema,
+        write: permissionsSchema,
+        delete: permissionsSchema
       },
-      can: {
-        type: {
-          read: permissionsSchema,
-          write: permissionsSchema,
-          delete: permissionsSchema
-        },
-        required: true,
-        default: {},
-      }
-    }],
+      required: true,
+      default: {},
+    },
     required: true,
-    default: []
+    default: {}
   },
 }, {
   timestamps: true
