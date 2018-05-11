@@ -11,6 +11,7 @@ module.exports = {
   PATH_ENTRIES: "/entries",
   PATH_GROUPS: "/groups",
   PATH_PARTS: "/parts",
+  PATH_PERMISSION: "/permissions",
   PATH_PROFILES: "/profiles",
   PATH_USERS: "/users"
 };
