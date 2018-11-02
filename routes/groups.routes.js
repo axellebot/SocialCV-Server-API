@@ -17,12 +17,12 @@ const parseQuerySelection = require('@middlewares/selection');
 const controllerGroups = require('@controllers/groups.controller.js');
 
 module.exports = (router) => {
-  router.get('/', hasPerms(perms.PERMISSION_SCOPE_GROUPS,perms.PERMISSION_CRUD_READ),parseQuerySelection, controllerGroups.findMany);
-  router.post('/', hasPerms(perms.PERMISSION_SCOPE_GROUPS,perms.PERMISSION_CRUD_WRITE), requireBodyDataObject, controllerGroups.createOne);
-  router.put('/', hasPerms(perms.PERMISSION_SCOPE_GROUPS,perms.PERMISSION_CRUD_WRITE), requireBodyDataArray, controllerGroups.updateMany);
-  router.delete('/', hasPerms(perms.PERMISSION_SCOPE_GROUPS,perms.PERMISSION_CRUD_DELETE), controllerGroups.deleteAll);
+  router.get('/', hasPerms(perms.PERMISSION_SCOPE_GROUPS,perms.PERMISSION_ACTION_READ),parseQuerySelection, controllerGroups.findMany);
+  router.post('/', hasPerms(perms.PERMISSION_SCOPE_GROUPS,perms.PERMISSION_ACTION_CREATE), requireBodyDataObject, controllerGroups.createOne);
+  router.put('/', hasPerms(perms.PERMISSION_SCOPE_GROUPS,perms.PERMISSION_ACTION_UPDATE), requireBodyDataArray, controllerGroups.updateMany);
+  router.delete('/', hasPerms(perms.PERMISSION_SCOPE_GROUPS,perms.PERMISSION_ACTION_DELETE), controllerGroups.deleteAll);
 
-  router.get('/' + ':' + parameters.PARAM_ID_GROUP,  hasPerms(perms.PERMISSION_SCOPE_GROUPS,perms.PERMISSION_CRUD_READ),controllerGroups.findOne);
-  router.put('/' + ':' + parameters.PARAM_ID_GROUP,  hasPerms(perms.PERMISSION_SCOPE_GROUPS,perms.PERMISSION_CRUD_WRITE), requireBodyDataObject, controllerGroups.updateOne);
-  router.delete('/' + ':' + parameters.PARAM_ID_GROUP, hasPerms(perms.PERMISSION_SCOPE_GROUPS,perms.PERMISSION_CRUD_DELETE), controllerGroups.deleteOne);
+  router.get('/' + ':' + parameters.PARAM_ID_GROUP,  hasPerms(perms.PERMISSION_SCOPE_GROUPS,perms.PERMISSION_ACTION_READ),controllerGroups.findOne);
+  router.put('/' + ':' + parameters.PARAM_ID_GROUP,  hasPerms(perms.PERMISSION_SCOPE_GROUPS,perms.PERMISSION_ACTION_UPDATE), requireBodyDataObject, controllerGroups.updateOne);
+  router.delete('/' + ':' + parameters.PARAM_ID_GROUP, hasPerms(perms.PERMISSION_SCOPE_GROUPS,perms.PERMISSION_ACTION_DELETE), controllerGroups.deleteOne);
 };

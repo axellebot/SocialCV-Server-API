@@ -17,12 +17,12 @@ const parseQuerySelection = require('@middlewares/selection');
 const ctrlUsers = require('@controllers/users.controller.js');
 
 module.exports = (router) => {
-  router.get('/', hasPerms(perms.PERMISSION_SCOPE_USERS, perms.PERMISSION_CRUD_READ), parseQuerySelection, ctrlUsers.findMany);
-  router.post('/', hasPerms(perms.PERMISSION_SCOPE_USERS, perms.PERMISSION_CRUD_WRITE), requireBodyDataObject, ctrlUsers.createOne);
-  router.put('/', hasPerms(perms.PERMISSION_SCOPE_USERS, perms.PERMISSION_CRUD_WRITE), requireBodyDataArray, ctrlUsers.updateMany);
-  router.delete('/', hasPerms(perms.PERMISSION_SCOPE_USERS, perms.PERMISSION_CRUD_DELETE), ctrlUsers.deleteAll);
+  router.get('/', hasPerms(perms.PERMISSION_SCOPE_USERS, perms.PERMISSION_ACTION_READ), parseQuerySelection, ctrlUsers.findMany);
+  router.post('/', hasPerms(perms.PERMISSION_SCOPE_USERS, perms.PERMISSION_ACTION_CREATE), requireBodyDataObject, ctrlUsers.createOne);
+  router.put('/', hasPerms(perms.PERMISSION_SCOPE_USERS, perms.PERMISSION_ACTION_UPDATE), requireBodyDataArray, ctrlUsers.updateMany);
+  router.delete('/', hasPerms(perms.PERMISSION_SCOPE_USERS, perms.PERMISSION_ACTION_DELETE), ctrlUsers.deleteAll);
 
-  router.get('/' + ':' + parameters.PARAM_ID_USER, hasPerms(perms.PERMISSION_SCOPE_USERS, perms.PERMISSION_CRUD_READ), ctrlUsers.findOne);
-  router.put('/' + ':' + parameters.PARAM_ID_USER, hasPerms(perms.PERMISSION_SCOPE_USERS, perms.PERMISSION_CRUD_WRITE), requireBodyDataObject, ctrlUsers.updateOne);
-  router.delete('/' + ':' + parameters.PARAM_ID_USER, hasPerms(perms.PERMISSION_SCOPE_USERS, perms.PERMISSION_CRUD_DELETE), ctrlUsers.deleteOne);
+  router.get('/' + ':' + parameters.PARAM_ID_USER, hasPerms(perms.PERMISSION_SCOPE_USERS, perms.PERMISSION_ACTION_READ), ctrlUsers.findOne);
+  router.put('/' + ':' + parameters.PARAM_ID_USER, hasPerms(perms.PERMISSION_SCOPE_USERS, perms.PERMISSION_ACTION_UPDATE), requireBodyDataObject, ctrlUsers.updateOne);
+  router.delete('/' + ':' + parameters.PARAM_ID_USER, hasPerms(perms.PERMISSION_SCOPE_USERS, perms.PERMISSION_ACTION_DELETE), ctrlUsers.deleteOne);
 };

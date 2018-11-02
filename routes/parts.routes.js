@@ -17,12 +17,12 @@ const parseQuerySelection = require('@middlewares/selection');
 const ctrlParts = require('@controllers/parts.controller.js');
 
 module.exports = (router) => {
-  router.get('/', hasPerms(perms.PERMISSION_SCOPE_PARTS, perms.PERMISSION_CRUD_READ), parseQuerySelection, ctrlParts.findMany);
-  router.post('/', hasPerms(perms.PERMISSION_SCOPE_PARTS, perms.PERMISSION_CRUD_WRITE), requireBodyDataObject, ctrlParts.createOne);
-  router.put('/', hasPerms(perms.PERMISSION_SCOPE_PARTS, perms.PERMISSION_CRUD_WRITE), requireBodyDataArray, ctrlParts.updateMany);
-  router.delete('/', hasPerms(perms.PERMISSION_SCOPE_PARTS, perms.PERMISSION_CRUD_DELETE), ctrlParts.deleteAll);
+  router.get('/', hasPerms(perms.PERMISSION_SCOPE_PARTS, perms.PERMISSION_ACTION_READ), parseQuerySelection, ctrlParts.findMany);
+  router.post('/', hasPerms(perms.PERMISSION_SCOPE_PARTS, perms.PERMISSION_ACTION_CREATE), requireBodyDataObject, ctrlParts.createOne);
+  router.put('/', hasPerms(perms.PERMISSION_SCOPE_PARTS, perms.PERMISSION_ACTION_UPDATE), requireBodyDataArray, ctrlParts.updateMany);
+  router.delete('/', hasPerms(perms.PERMISSION_SCOPE_PARTS, perms.PERMISSION_ACTION_DELETE), ctrlParts.deleteAll);
 
-  router.get('/' + ':' + parameters.PARAM_ID_PART, hasPerms(perms.PERMISSION_SCOPE_PARTS, perms.PERMISSION_CRUD_READ), ctrlParts.findOne);
-  router.put('/' + ':' + parameters.PARAM_ID_PART, hasPerms(perms.PERMISSION_SCOPE_PARTS, perms.PERMISSION_CRUD_WRITE), requireBodyDataObject, ctrlParts.updateOne);
-  router.delete('/' + ':' + parameters.PARAM_ID_PART, hasPerms(perms.PERMISSION_SCOPE_PARTS, perms.PERMISSION_CRUD_DELETE), ctrlParts.deleteOne);
+  router.get('/' + ':' + parameters.PARAM_ID_PART, hasPerms(perms.PERMISSION_SCOPE_PARTS, perms.PERMISSION_ACTION_READ), ctrlParts.findOne);
+  router.put('/' + ':' + parameters.PARAM_ID_PART, hasPerms(perms.PERMISSION_SCOPE_PARTS, perms.PERMISSION_ACTION_UPDATE), requireBodyDataObject, ctrlParts.updateOne);
+  router.delete('/' + ':' + parameters.PARAM_ID_PART, hasPerms(perms.PERMISSION_SCOPE_PARTS, perms.PERMISSION_ACTION_DELETE), ctrlParts.deleteOne);
 };

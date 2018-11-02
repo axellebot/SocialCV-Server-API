@@ -23,18 +23,19 @@ module.exports = (scopeName, permCRUD) => {
         perm: permCRUD,
         user: req.user
       });
+      
       if (!req.user || !req.user.permission) return next(new MissingPrivilegeError());
 
-      const scopes = req.user.permission.scopes;
-      const scope = scopes[scopeName];
+      const scope = req.user.permission.scopes[scopeName];
+      
       if (!scope) return next(new MissingPrivilegeError());
 
-      if (scope && scope[permCRUD]) {
+      if (scope[permCRUD]) {
         console.info({
           scope: scope
         });
         const permType = scope[permCRUD];
-        if (permType === permissions.PERMISSION_TYPE_NONE) return next(new MissingPrivilegeError());
+        if (permType === permissions.PERMISSION_POSSESSION_NONE) return next(new MissingPrivilegeError());
         return next();
       }
       return next(new MissingPrivilegeError())

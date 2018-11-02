@@ -17,12 +17,12 @@ const parseQuerySelection = require('@middlewares/selection');
 const ctrlPermissions = require('@controllers/permissions.controller.js');
 
 module.exports = (router) => {
-  router.get('/', hasPerms(perms.PERMISSION_SCOPE_PERMISSIONS, perms.PERMISSION_CRUD_READ), parseQuerySelection, ctrlPermissions.findMany);
-  router.post('/', hasPerms(perms.PERMISSION_SCOPE_PERMISSIONS, perms.PERMISSION_CRUD_WRITE), requireBodyDataObject, ctrlPermissions.createOne);
-  router.put('/', hasPerms(perms.PERMISSION_SCOPE_PERMISSIONS, perms.PERMISSION_CRUD_WRITE), requireBodyDataArray, ctrlPermissions.updateMany);
-  router.delete('/', hasPerms(perms.PERMISSION_SCOPE_PERMISSIONS, perms.PERMISSION_CRUD_DELETE), ctrlPermissions.deleteAll);
+  router.get('/', hasPerms(perms.PERMISSION_SCOPE_PERMISSIONS, perms.PERMISSION_ACTION_READ), parseQuerySelection, ctrlPermissions.findMany);
+  router.post('/', hasPerms(perms.PERMISSION_SCOPE_PERMISSIONS, perms.PERMISSION_ACTION_CREATE), requireBodyDataObject, ctrlPermissions.createOne);
+  router.put('/', hasPerms(perms.PERMISSION_SCOPE_PERMISSIONS, perms.PERMISSION_ACTION_UPDATE), requireBodyDataArray, ctrlPermissions.updateMany);
+  router.delete('/', hasPerms(perms.PERMISSION_SCOPE_PERMISSIONS, perms.PERMISSION_ACTION_DELETE), ctrlPermissions.deleteAll);
 
-  router.get('/' + ':' + parameters.PARAM_ID_PERMISSION, hasPerms(perms.PERMISSION_SCOPE_PERMISSIONS, perms.PERMISSION_CRUD_READ), ctrlPermissions.findOne);
-  router.put('/' + ':' + parameters.PARAM_ID_PERMISSION, hasPerms(perms.PERMISSION_SCOPE_PERMISSIONS, perms.PERMISSION_CRUD_WRITE), requireBodyDataObject, ctrlPermissions.updateOne);
-  router.delete('/' + ':' + parameters.PARAM_ID_PERMISSION, hasPerms(perms.PERMISSION_SCOPE_PERMISSIONS, perms.PERMISSION_CRUD_DELETE), ctrlPermissions.deleteOne);
+  router.get('/' + ':' + parameters.PARAM_ID_PERMISSION, hasPerms(perms.PERMISSION_SCOPE_PERMISSIONS, perms.PERMISSION_ACTION_READ), ctrlPermissions.findOne);
+  router.put('/' + ':' + parameters.PARAM_ID_PERMISSION, hasPerms(perms.PERMISSION_SCOPE_PERMISSIONS, perms.PERMISSION_ACTION_UPDATE), requireBodyDataObject, ctrlPermissions.updateOne);
+  router.delete('/' + ':' + parameters.PARAM_ID_PERMISSION, hasPerms(perms.PERMISSION_SCOPE_PERMISSIONS, perms.PERMISSION_ACTION_DELETE), ctrlPermissions.deleteOne);
 };

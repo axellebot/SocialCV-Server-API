@@ -17,12 +17,12 @@ const parseQuerySelection = require('@middlewares/selection');
 const ctrlEntries = require('@controllers/entries.controller.js');
 
 module.exports = (router) => {
-  router.get('/', hasPerms(perms.PERMISSION_SCOPE_ENTRIES, perms.PERMISSION_CRUD_READ), parseQuerySelection, ctrlEntries.findMany);
-  router.post('/', hasPerms(perms.PERMISSION_SCOPE_ENTRIES, perms.PERMISSION_CRUD_WRITE), requireBodyDataObject, ctrlEntries.createOne);
-  router.put('/', hasPerms(perms.PERMISSION_SCOPE_ENTRIES, perms.PERMISSION_CRUD_WRITE), requireBodyDataArray, ctrlEntries.updateMany);
-  router.delete('/', hasPerms(perms.PERMISSION_SCOPE_ENTRIES, perms.PERMISSION_CRUD_DELETE), ctrlEntries.deleteAll);
+  router.get('/', hasPerms(perms.PERMISSION_SCOPE_ENTRIES, perms.PERMISSION_ACTION_READ), parseQuerySelection, ctrlEntries.findMany);
+  router.post('/', hasPerms(perms.PERMISSION_SCOPE_ENTRIES, perms.PERMISSION_ACTION_CREATE), requireBodyDataObject, ctrlEntries.createOne);
+  router.put('/', hasPerms(perms.PERMISSION_SCOPE_ENTRIES, perms.PERMISSION_ACTION_UPDATE), requireBodyDataArray, ctrlEntries.updateMany);
+  router.delete('/', hasPerms(perms.PERMISSION_SCOPE_ENTRIES, perms.PERMISSION_ACTION_DELETE), ctrlEntries.deleteAll);
 
-  router.get('/' + ':' + parameters.PARAM_ID_ENTRY, hasPerms(perms.PERMISSION_SCOPE_ENTRIES, perms.PERMISSION_CRUD_READ), ctrlEntries.findOne);
-  router.put('/' + ':' + parameters.PARAM_ID_ENTRY, hasPerms(perms.PERMISSION_SCOPE_ENTRIES, perms.PERMISSION_CRUD_WRITE), requireBodyDataObject, ctrlEntries.updateOne);
-  router.delete('/' + ':' + parameters.PARAM_ID_ENTRY, hasPerms(perms.PERMISSION_SCOPE_ENTRIES, perms.PERMISSION_CRUD_DELETE), ctrlEntries.deleteOne);
+  router.get('/' + ':' + parameters.PARAM_ID_ENTRY, hasPerms(perms.PERMISSION_SCOPE_ENTRIES, perms.PERMISSION_ACTION_READ), ctrlEntries.findOne);
+  router.put('/' + ':' + parameters.PARAM_ID_ENTRY, hasPerms(perms.PERMISSION_SCOPE_ENTRIES, perms.PERMISSION_ACTION_UPDATE), requireBodyDataObject, ctrlEntries.updateOne);
+  router.delete('/' + ':' + parameters.PARAM_ID_ENTRY, hasPerms(perms.PERMISSION_SCOPE_ENTRIES, perms.PERMISSION_ACTION_DELETE), ctrlEntries.deleteOne);
 };
