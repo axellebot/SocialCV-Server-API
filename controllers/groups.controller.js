@@ -28,13 +28,14 @@ const UpdateDocumentResponse = require('@responses/UpdateDocumentResponse');
 const DeleteDocumentsResponse = require('@responses/DeleteDocumentsResponse');
 const DeleteDocumentResponse = require('@responses/DeleteDocumentResponse');
 
+// One
 exports.findOne = (req, res, next) => {
-  var id = req.params[parameters.PARAM_ID_GROUP];
+  const id = req.params[parameters.PARAM_ID_GROUP];
   console.log(req.params);
   Group
     .findById(id)
     .then((group) => {
-      if (!group) throw new NotFoundError(models.MODEL_NAME_GROUP);
+      if (!group) throw NotFoundError(models.MODEL_NAME_GROUP);
       res.json(new SelectDocumentResponse(group));
     })
     .catch((err) => {
@@ -43,7 +44,7 @@ exports.findOne = (req, res, next) => {
 };
 
 exports.createOne = (req, res, next) => {
-  var group = new Group(req.body.data);
+  const group = new Group(req.body.data);
 
   group.save()
     .then((groupSaved) => {
@@ -55,14 +56,14 @@ exports.createOne = (req, res, next) => {
 };
 
 exports.updateOne = (req, res, next) => {
-  var id = req.params[parameters.PARAM_ID_GROUP];
-  
+  const id = req.params[parameters.PARAM_ID_GROUP];
+
   Group
     .findByIdAndUpdate(id, req.body.data, {
       new: true
     })
     .then((groupUpdated) => {
-      if (!groupUpdated) throw next(new NotFoundError(models.MODEL_NAME_GROUP));
+      if (!groupUpdated) throw new NotFoundError(models.MODEL_NAME_GROUP);
       res.json(new UpdateDocumentResponse(groupUpdated));
     })
     .catch((err) => {
@@ -71,14 +72,14 @@ exports.updateOne = (req, res, next) => {
 };
 
 exports.deleteOne = (req, res, next) => {
-  var id = req.params[parameters.PARAM_ID_GROUP];
-  
+  const id = req.params[parameters.PARAM_ID_GROUP];
+
   Group
     .findOneAndRemove({
       _id: id
     })
     .then((groupDeleted) => {
-      if (!groupDeleted) throw next(new NotFoundError(models.MODEL_NAME_GROUP));
+      if (!groupDeleted) throw new NotFoundError(models.MODEL_NAME_GROUP);
       res.json(new DeleteDocumentResponse(groupDeleted));
     })
     .catch((err) => {
@@ -86,6 +87,7 @@ exports.deleteOne = (req, res, next) => {
     });
 };
 
+// Many
 exports.findMany = (req, res, next) => {
   var returnedGroups;
   Group
@@ -95,9 +97,9 @@ exports.findMany = (req, res, next) => {
     .limit(req.query.limit)
     .sort(req.query.sort)
     .then((groups) => {
-      if (!groups || groups.length <= 0) return next(new NotFoundError(models.MODEL_NAME_GROUP));
+      if (!groups || groups.length <= 0) throw new NotFoundError(models.MODEL_NAME_GROUP);
       returnedGroups = groups;
-      return Group.count(req.query.filter)
+      return Group.count(req.query.filters)
     })
     .then((total) => {
       res.json(new SelectDocumentsResponse(returnedGroups, total));
@@ -105,7 +107,6 @@ exports.findMany = (req, res, next) => {
     .catch((err) => {
       next(err);
     });
-
 };
 
 exports.updateMany = (req, res, next) => {
@@ -114,4 +115,11 @@ exports.updateMany = (req, res, next) => {
 
 exports.deleteAll = (req, res, next) => {
   next(new NotImplementedError())
+};
+
+// Others
+exports.filterEntriesOfOne = (req, res, next) => {
+  const id = req.params[parameters.PARAM_ID_GROUP];
+  req.query.filters.group = id;
+  next();
 };

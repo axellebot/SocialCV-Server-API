@@ -43,7 +43,7 @@ exports.findOne = (req, res, next) => {
 };
 
 exports.createOne = (req, res, next) => {
-  var part = new Part(req.body.data);
+  const part = new Part(req.body.data);
 
   part.save()
     .then((partSaved) => {
@@ -101,7 +101,7 @@ exports.findMany = (req, res, next) => {
       if (!parts || parts.length <= 0) throw new NotFoundError(models.MODEL_NAME_PART);
       returnedParts = parts;
       return Part
-        .count(req.query.filter);
+        .count(req.query.filters);
     })
     .then((total) => {
       res.json(new SelectDocumentsResponse(returnedParts, total));
@@ -117,4 +117,12 @@ exports.updateMany = (req, res, next) => {
 
 exports.deleteAll = (req, res, next) => {
   next(new NotImplementedError())
+};
+
+
+// Others
+exports.filterGroupsOfOne = (req, res, next) => {
+  const id = req.params[parameters.PARAM_ID_PART];
+  req.query.filters.part = id;
+  next();
 };

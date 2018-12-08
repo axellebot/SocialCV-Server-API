@@ -12,6 +12,17 @@ var GroupSchema = new Schema({
     default: "",
     required: true
   },
+  type: {
+    type: String,
+    default: "",
+    required: true
+  },
+  part:{
+    type: Schema.Types.ObjectId,
+    default: null,
+    required: true,
+    ref: models.MODEL_NAME_PART
+  },
   entries: {
     type: [{
       type: Schema.Types.ObjectId,

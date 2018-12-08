@@ -17,6 +17,12 @@ var EntrySchema = new Schema({
     default: "",
     required: true
   },
+  group:{
+    type: Schema.Types.ObjectId,
+    default: null,
+    required: true,
+    ref: models.MODEL_NAME_GROUP
+  },
   owner: {
     type: Schema.Types.ObjectId,
     default: null,

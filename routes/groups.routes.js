@@ -14,15 +14,18 @@ const requireBodyDataObject = require('@middlewares/body/dataObject');
 const parseQuerySelection = require('@middlewares/selection');
 
 // Controllers
-const controllerGroups = require('@controllers/groups.controller.js');
+const ctrlGroups = require('@controllers/groups.controller.js');
+const ctrlEntries = require('@controllers/entries.controller.js');
 
 module.exports = (router) => {
-  router.get('/', hasPerms(perms.PERMISSION_SCOPE_GROUPS,perms.PERMISSION_ACTION_READ),parseQuerySelection, controllerGroups.findMany);
-  router.post('/', hasPerms(perms.PERMISSION_SCOPE_GROUPS,perms.PERMISSION_ACTION_CREATE), requireBodyDataObject, controllerGroups.createOne);
-  router.put('/', hasPerms(perms.PERMISSION_SCOPE_GROUPS,perms.PERMISSION_ACTION_UPDATE), requireBodyDataArray, controllerGroups.updateMany);
-  router.delete('/', hasPerms(perms.PERMISSION_SCOPE_GROUPS,perms.PERMISSION_ACTION_DELETE), controllerGroups.deleteAll);
+  router.get('/', hasPerms(perms.PERMISSION_SCOPE_GROUPS, perms.PERMISSION_ACTION_READ), parseQuerySelection, ctrlGroups.findMany);
+  router.post('/', hasPerms(perms.PERMISSION_SCOPE_GROUPS, perms.PERMISSION_ACTION_CREATE), requireBodyDataObject, ctrlGroups.createOne);
+  router.put('/', hasPerms(perms.PERMISSION_SCOPE_GROUPS, perms.PERMISSION_ACTION_UPDATE), requireBodyDataArray, ctrlGroups.updateMany);
+  router.delete('/', hasPerms(perms.PERMISSION_SCOPE_GROUPS, perms.PERMISSION_ACTION_DELETE), ctrlGroups.deleteAll);
 
-  router.get('/' + ':' + parameters.PARAM_ID_GROUP,  hasPerms(perms.PERMISSION_SCOPE_GROUPS,perms.PERMISSION_ACTION_READ),controllerGroups.findOne);
-  router.put('/' + ':' + parameters.PARAM_ID_GROUP,  hasPerms(perms.PERMISSION_SCOPE_GROUPS,perms.PERMISSION_ACTION_UPDATE), requireBodyDataObject, controllerGroups.updateOne);
-  router.delete('/' + ':' + parameters.PARAM_ID_GROUP, hasPerms(perms.PERMISSION_SCOPE_GROUPS,perms.PERMISSION_ACTION_DELETE), controllerGroups.deleteOne);
+  router.get('/' + ':' + parameters.PARAM_ID_GROUP, hasPerms(perms.PERMISSION_SCOPE_GROUPS, perms.PERMISSION_ACTION_READ), ctrlGroups.findOne);
+  router.put('/' + ':' + parameters.PARAM_ID_GROUP, hasPerms(perms.PERMISSION_SCOPE_GROUPS, perms.PERMISSION_ACTION_UPDATE), requireBodyDataObject, ctrlGroups.updateOne);
+  router.delete('/' + ':' + parameters.PARAM_ID_GROUP, hasPerms(perms.PERMISSION_SCOPE_GROUPS, perms.PERMISSION_ACTION_DELETE), ctrlGroups.deleteOne);
+  
+  router.get('/' + ':' + parameters.PARAM_ID_GROUP + paths.PATH_ENTRIES, hasPerms(perms.PERMISSION_SCOPE_GROUPS, perms.PERMISSION_ACTION_READ),parseQuerySelection, ctrlGroups.filterEntriesOfOne, hasPerms(perms.PERMISSION_SCOPE_ENTRIES, perms.PERMISSION_ACTION_READ), ctrlEntries.findMany);
 };
