@@ -100,8 +100,7 @@ exports.findMany = (req, res, next) => {
     .then((parts) => {
       if (!parts || parts.length <= 0) throw new NotFoundError(models.MODEL_NAME_PART);
       returnedParts = parts;
-      return Part
-        .count(req.query.filters);
+      return Part.countDocuments(req.query.filters);
     })
     .then((total) => {
       res.json(new SelectDocumentsResponse(returnedParts, total));

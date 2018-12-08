@@ -99,7 +99,7 @@ exports.findMany = (req, res, next) => {
     .then((groups) => {
       if (!groups || groups.length <= 0) throw new NotFoundError(models.MODEL_NAME_GROUP);
       returnedGroups = groups;
-      return Group.count(req.query.filters)
+      return Group.countDocuments(req.query.filters)
     })
     .then((total) => {
       res.json(new SelectDocumentsResponse(returnedGroups, total));

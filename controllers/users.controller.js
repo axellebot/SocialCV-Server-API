@@ -93,7 +93,7 @@ exports.findMany = (req, res, next) => {
     .then((users) => {
       if (!users || users.length <= 0) throw new NotFoundError(models.MODEL_NAME_USER);
       returnedUsers = users;
-      return User.count(req.query.filters)
+      return User.countDocuments(req.query.filters)
     })
     .then((count) => {
       res.json(new SelectDocumentsResponse(returnedUsers, count));

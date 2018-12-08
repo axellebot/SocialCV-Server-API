@@ -103,7 +103,7 @@ exports.findMany = (req, res, next) => {
     .then((profiles) => {
       if (!profiles || profiles.length <= 0) throw new NotFoundError(models.MODEL_NAME_PROFILE);
       returnedProfiles = profiles;
-      return Profile.count(req.query.filters);
+      return Profile.countDocuments(req.query.filters);
     })
     .then((total) => {
       res.json(new SelectDocumentsResponse(returnedProfiles, total));

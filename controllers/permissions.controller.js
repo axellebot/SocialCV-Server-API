@@ -102,7 +102,7 @@ exports.findMany = (req, res, next) => {
     .then((permissions) => {
       if (!permissions || permissions.length <= 0) throw new NotFoundError(models.MODEL_NAME_PERMISSION);
       returnedPermissions = permissions;
-      return Permission.count(req.query.filters);
+      return Permission.countDocuments(req.query.filters);
     })
     .then((total) => {
       res.json(new SelectDocumentsResponse(returnedPermissions, total));
