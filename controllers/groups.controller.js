@@ -42,6 +42,12 @@ exports.findOne = (req, res, next) => {
     });
 };
 
+exports.findEntriesOfOne = (req, res, next) => {
+  var id = req.params[parameters.PARAM_ID_GROUP];
+  req.query.filters.group = id;
+  next();
+};
+
 exports.createOne = (req, res, next) => {
   var group = new Group(req.body.data);
 
@@ -56,7 +62,7 @@ exports.createOne = (req, res, next) => {
 
 exports.updateOne = (req, res, next) => {
   var id = req.params[parameters.PARAM_ID_GROUP];
-  
+
   Group
     .findByIdAndUpdate(id, req.body.data, {
       new: true
@@ -72,7 +78,7 @@ exports.updateOne = (req, res, next) => {
 
 exports.deleteOne = (req, res, next) => {
   var id = req.params[parameters.PARAM_ID_GROUP];
-  
+
   Group
     .findOneAndRemove({
       _id: id
