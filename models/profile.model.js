@@ -16,6 +16,16 @@ var ProfileSchema = new Schema({
     default: "",
     required: true
   },
+  picture:{
+    type : String,
+    default : "",
+    required : true
+  },
+  cover:{
+    type : String,
+    default : "",
+    required : true
+  },
   parts: {
     type: [{
       type: Schema.Types.ObjectId,

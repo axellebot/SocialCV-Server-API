@@ -1,7 +1,4 @@
-"user strict";
-// Roles
-
-module.exports = { // Roles
+module.exports = {
   ROLE_ADMIN: "ROLE_ADMIN",
   ROLE_MEMBER: "ROLE_MEMBER",
-};
+}

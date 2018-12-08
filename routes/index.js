@@ -54,6 +54,13 @@ module.exports = (app) => {
   require('./parts.routes.js')(routeParts);
 
   //= ========================
+  // Permissions Routes
+  //= ========================
+  const routePermissions = express.Router();
+  app.use(paths.PATH_PERMISSION, routePermissions);
+  require('./permissions.routes.js')(routePermissions);
+  
+  //= ========================
   // Profiles Routes
   //= ========================
   const routeProfiles = express.Router();

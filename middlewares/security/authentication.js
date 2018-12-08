@@ -1,5 +1,9 @@
 "use strict";
 
+/*
+  Role Based Access Control
+*/
+
 // Require Packages
 const jwt = require('jsonwebtoken');
 const moment = require('moment');
@@ -36,6 +40,7 @@ module.exports = (req, res, next) => {
     if (decoded.exp <= moment().unix()) return next(new ExpiredAuthenticationTokenError())
 
     User.findById(decoded._id)
+      .populate("permission")
       .then((user) => {
         if (!user) throw new UserNotFoundError();
         if (user.disabled === true) throw new UserDisabledError();

@@ -39,15 +39,19 @@ var UserSchema = new Schema({
     required: false,
   },
   disabled: {
-    type: String,
+    type: Boolean,
     required: true,
-    default: false
+    default: true
   },
-  role: {
-    type: String,
-    enum: [roles.ROLE_MEMBER, roles.ROLE_ADMIN],
-    default: roles.ROLE_MEMBER,
+  permission: {
+    type: Schema.Types.ObjectId,
+    ref: models.MODEL_NAME_PERMISSION,
     required: true
+  },
+  picture:{
+    type : String,
+    default : "",
+    required : true
   },
   profiles: {
     type: [{
