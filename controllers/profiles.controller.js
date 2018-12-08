@@ -28,9 +28,9 @@ const UpdateDocumentResponse = require('@responses/UpdateDocumentResponse');
 const DeleteDocumentsResponse = require('@responses/DeleteDocumentsResponse');
 const DeleteDocumentResponse = require('@responses/DeleteDocumentResponse');
 
-module.exports.createOne = (req, res, next) => {
-  var profile = req.body.data;
-  profile = new Profile(profile);
+// One
+exports.createOne = (req, res, next) => {
+  const profile = new Profile(req.body.data);
 
   profile
     .save()
@@ -43,7 +43,7 @@ module.exports.createOne = (req, res, next) => {
 };
 
 exports.findOne = (req, res, next) => {
-  var id = req.params[parameters.PARAM_ID_PROFILE];
+  const id = req.params[parameters.PARAM_ID_PROFILE];
 
   Profile
     .findById(id)
@@ -57,7 +57,7 @@ exports.findOne = (req, res, next) => {
 };
 
 exports.updateOne = (req, res, next) => {
-  var id = req.params[parameters.PARAM_ID_PROFILE];
+  const id = req.params[parameters.PARAM_ID_PROFILE];
 
   Profile
     .findOneAndUpdate({
@@ -75,7 +75,7 @@ exports.updateOne = (req, res, next) => {
 };
 
 exports.deleteOne = (req, res, next) => {
-  var id = req.params[parameters.PARAM_ID_PROFILE];
+  const id = req.params[parameters.PARAM_ID_PROFILE];
 
   Profile
     .findOneAndRemove({
@@ -90,7 +90,8 @@ exports.deleteOne = (req, res, next) => {
     });
 };
 
-module.exports.findMany = (req, res, next) => {
+// Many
+exports.findMany = (req, res, next) => {
   var returnedProfiles;
 
   Profile
@@ -102,7 +103,7 @@ module.exports.findMany = (req, res, next) => {
     .then((profiles) => {
       if (!profiles || profiles.length <= 0) throw new NotFoundError(models.MODEL_NAME_PROFILE);
       returnedProfiles = profiles;
-      return Profile.count(req.query.filter);
+      return Profile.count(req.query.filters);
     })
     .then((total) => {
       res.json(new SelectDocumentsResponse(returnedProfiles, total));
@@ -118,4 +119,11 @@ exports.updateMany = (req, res, next) => {
 
 exports.deleteAll = (req, res, next) => {
   return next(new NotImplementedError("Delete all Profiles"));
+};
+
+// Others
+exports.filterPartsOfOne = (req, res, next) => {
+  const id = req.params[parameters.PARAM_ID_PROFILE];
+  req.query.filters.profile = id;
+  next();
 };

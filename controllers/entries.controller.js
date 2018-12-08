@@ -34,7 +34,7 @@ exports.findOne = (req, res, next) => {
   Entry
     .findById(id)
     .then((entry) => {
-      if (!entry) throw next(new NotFoundError(models.MODEL_NAME_ENTRY));
+      if (!entry) throw new NotFoundError(models.MODEL_NAME_ENTRY);
       res.json(new SelectDocumentResponse(entry));
     })
     .catch((err) => {
@@ -64,7 +64,7 @@ exports.updateOne = (req, res, next) => {
       new: true
     })
     .then((entryUpdated) => {
-      if (!entryUpdated) throw next(new NotFoundError(models.MODEL_NAME_ENTRY));
+      if (!entryUpdated) throw new NotFoundError(models.MODEL_NAME_ENTRY);
       res.json(new UpdateDocumentResponse(entryUpdated));
     })
     .catch((err) => {

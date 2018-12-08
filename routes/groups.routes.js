@@ -27,5 +27,5 @@ module.exports = (router) => {
   router.put('/' + ':' + parameters.PARAM_ID_GROUP, hasPerms(perms.PERMISSION_SCOPE_GROUPS, perms.PERMISSION_ACTION_UPDATE), requireBodyDataObject, ctrlGroups.updateOne);
   router.delete('/' + ':' + parameters.PARAM_ID_GROUP, hasPerms(perms.PERMISSION_SCOPE_GROUPS, perms.PERMISSION_ACTION_DELETE), ctrlGroups.deleteOne);
   
-  router.get('/' + ':' + parameters.PARAM_ID_GROUP + paths.PATH_ENTRIES, hasPerms(perms.PERMISSION_SCOPE_GROUPS, perms.PERMISSION_ACTION_READ),parseQuerySelection, ctrlGroups.findEntriesOfOne, hasPerms(perms.PERMISSION_SCOPE_ENTRIES, perms.PERMISSION_ACTION_READ), ctrlEntries.findMany);
+  router.get('/' + ':' + parameters.PARAM_ID_GROUP + paths.PATH_ENTRIES, hasPerms(perms.PERMISSION_SCOPE_GROUPS, perms.PERMISSION_ACTION_READ),parseQuerySelection, ctrlGroups.filterEntriesOfOne, hasPerms(perms.PERMISSION_SCOPE_ENTRIES, perms.PERMISSION_ACTION_READ), ctrlEntries.findMany);
 };

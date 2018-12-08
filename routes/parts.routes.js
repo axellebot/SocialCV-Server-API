@@ -15,6 +15,7 @@ const parseQuerySelection = require('@middlewares/selection');
 
 // Controllers
 const ctrlParts = require('@controllers/parts.controller.js');
+const ctrlGroups = require('@controllers/groups.controller.js');
 
 module.exports = (router) => {
   router.get('/', hasPerms(perms.PERMISSION_SCOPE_PARTS, perms.PERMISSION_ACTION_READ), parseQuerySelection, ctrlParts.findMany);
@@ -25,4 +26,6 @@ module.exports = (router) => {
   router.get('/' + ':' + parameters.PARAM_ID_PART, hasPerms(perms.PERMISSION_SCOPE_PARTS, perms.PERMISSION_ACTION_READ), ctrlParts.findOne);
   router.put('/' + ':' + parameters.PARAM_ID_PART, hasPerms(perms.PERMISSION_SCOPE_PARTS, perms.PERMISSION_ACTION_UPDATE), requireBodyDataObject, ctrlParts.updateOne);
   router.delete('/' + ':' + parameters.PARAM_ID_PART, hasPerms(perms.PERMISSION_SCOPE_PARTS, perms.PERMISSION_ACTION_DELETE), ctrlParts.deleteOne);
+
+  router.get('/' + ':' + parameters.PARAM_ID_PART + paths.PATH_GROUPS, hasPerms(perms.PERMISSION_SCOPE_PARTS, perms.PERMISSION_ACTION_READ), parseQuerySelection, ctrlParts.filterGroupsOfOne, hasPerms(perms.PERMISSION_SCOPE_GROUPS, perms.PERMISSION_ACTION_READ), ctrlGroups.findMany);
 };
