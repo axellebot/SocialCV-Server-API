@@ -83,7 +83,6 @@ exports.deleteOne = (req, res, next) => {
 
 exports.findMany = (req, res, next) => {
   var returnedUsers;
-
   User
     .find(req.query.filters)
     .select(req.query.fields || fields.FIELDS_USER_PUBLIC)

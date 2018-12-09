@@ -46,8 +46,6 @@ exports.findUser = (req, res, next) => {
     });
 }
 
-
-
 exports.findFull = (req, res, next) => {
   const id = req.user._id;
 
@@ -74,3 +72,10 @@ exports.findFull = (req, res, next) => {
       next(err);
     });
 }
+
+// Others
+exports.filterProfilesOfOne = (req, res, next) => {
+  const id = req.user._id;
+  req.query.filters.owner = id;
+  next();
+};
