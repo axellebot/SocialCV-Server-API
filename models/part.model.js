@@ -19,6 +19,11 @@ var PartSchema = new Schema({
     default: "",
     required: true
   },
+  order:{
+    type: Number,
+    default: 0.0,
+    required: true
+  },
   profile:{
     type: Schema.Types.ObjectId,
     default: null,
