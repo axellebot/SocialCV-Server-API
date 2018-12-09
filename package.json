@@ -8,10 +8,11 @@
     "start:prod": "NODE_ENV=production node bin/www"
   },
   "_moduleAliases": {
-    "@root": ".", 
+    "@root": ".",
     "@config": "./config",
     "@constants": "./constants",
     "@controllers": "./controllers",
+    "@routes": "./routes",
     "@errors": "./errors",
     "@middlewares": "./middlewares",
     "@models": "./models",

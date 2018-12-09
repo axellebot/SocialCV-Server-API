@@ -17,60 +17,61 @@ module.exports = (app) => {
   app.use(paths.PATH_INDEX, routeIndex);
   
   routeIndex.get('/', controllerIndex.get);
+  routeIndex.post('/', controllerIndex.get);
 
   //= ========================
   // Auth Routes
   //= ========================
   const routeAuth = express.Router();
   app.use(paths.PATH_AUTHENTICATION, routeAuth);
-  require('./authentication.routes.js')(routeAuth);
+  require('@routes/authentication.routes.js')(routeAuth);
   
   //= ========================
   // Accounts Routes
   //= ========================
   const routeAccount = express.Router();
   app.use(paths.PATH_ACCOUNT, routeAccount);
-  require('./account.routes.js')(routeAccount);
+  require('@routes/account.routes.js')(routeAccount);
 
   //= ========================
   // Entries Routes
   //= ========================
   const routeEntries = express.Router();
   app.use(paths.PATH_ENTRIES, routeEntries);
-  require('./entries.routes.js')(routeEntries);
+  require('@routes/entries.routes.js')(routeEntries);
 
   //= ========================
   // Groups Routes
   //= ========================
   const routeGroups = express.Router();
   app.use(paths.PATH_GROUPS, routeGroups);
-  require('./groups.routes.js')(routeGroups);
+  require('@routes/groups.routes.js')(routeGroups);
 
   //= ========================
   // Parts Routes
   //= ========================
   const routeParts = express.Router();
   app.use(paths.PATH_PARTS, routeParts);
-  require('./parts.routes.js')(routeParts);
+  require('@routes/parts.routes.js')(routeParts);
 
   //= ========================
   // Permissions Routes
   //= ========================
   const routePermissions = express.Router();
   app.use(paths.PATH_PERMISSION, routePermissions);
-  require('./permissions.routes.js')(routePermissions);
+  require('@routes/permissions.routes.js')(routePermissions);
   
   //= ========================
   // Profiles Routes
   //= ========================
   const routeProfiles = express.Router();
   app.use(paths.PATH_PROFILES, routeProfiles);
-  require('./profiles.routes.js')(routeProfiles);
+  require('@routes/profiles.routes.js')(routeProfiles);
 
   //= ========================
   // User Routes
   //= ========================
   const routeUsers = express.Router();
   app.use(paths.PATH_USERS, routeUsers);
-  require('./users.routes.js')(routeUsers);
+  require('@routes/users.routes.js')(routeUsers);
 };

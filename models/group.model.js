@@ -17,6 +17,11 @@ var GroupSchema = new Schema({
     default: "",
     required: true
   },
+  order:{
+    type: Number,
+    default: 0.0,
+    required: true
+  },
   part:{
     type: Schema.Types.ObjectId,
     default: null,
