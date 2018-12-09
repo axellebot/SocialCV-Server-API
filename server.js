@@ -9,9 +9,6 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 require('module-alias/register')
 
-// Config
-const config = require("@config");
-
 // Constants
 const messages = require('@constants/messages');
 const statuses = require('@constants/statuses');
@@ -22,6 +19,7 @@ const paths = require('@constants/paths');
 
 // Errors
 const NotFoundError = require('@errors/NotFoundError')
+const WrongProtocolError = require('@errors/WrongProtocolError')
 
 // Routers
 const app = express();
@@ -42,15 +40,6 @@ app.use(bodyParser.urlencoded({
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// In production
-if (app.get('env') === 'production') {
-  // Force HTTPS in production
-  app.use((req, res, next) => {
-    var protocol = req.get('x-forwarded-proto');
-    protocol == 'https' ? next() : res.redirect('https://' + req.hostname + req.url);
-  });
-}
-
 //Authorize CORS
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
@@ -68,10 +57,10 @@ app.use((req, res, next) => {
 
 // error handler
 app.use((err, req, res, next) => {
-  if(req.app.get('env') === 'development' ){
+  if (req.app.get('env') === 'development') {
     console.error(err);
   }
-  
+
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
@@ -80,6 +69,7 @@ app.use((err, req, res, next) => {
     .json({
       error: true,
       message: err.message || messages.MESSAGE_ERROR_APP
+
     });
   next();
 });
