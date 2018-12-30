@@ -1,12 +1,13 @@
 "use strict";
 
+var mongoose = require('@mongoose');
+var Schema = mongoose.Schema;
+
 // Constants
 const messages = require('@constants/messages');
 const statuses = require('@constants/statuses');
 const models = require('@constants/models');
-
-var mongoose = require('@mongoose');
-var Schema = mongoose.Schema;
+const part_types = require('@constants/part_types');
 
 var PartSchema = new Schema({
   name: {
@@ -16,22 +17,24 @@ var PartSchema = new Schema({
   },
   type: {
     type: String,
-    default: "",
+    enum: [part_types.PART_TYPE_LIST_HORIZONTAL, part_types.PART_TYPE_LIST_VERTICAL],
+    default: part_types.PART_TYPE_LIST_VERTICAL,
     required: true
   },
-  order:{
+  order: {
     type: Number,
     default: 0.0,
     required: true
   },
-  profile:{
+  profile: {
     type: Schema.Types.ObjectId,
     default: null,
     required: true,
     ref: models.MODEL_NAME_PROFILE
   },
   groups: {
-    type: [{
+    type: Schema.Types.Mixed,
+    body: [{
       type: Schema.Types.ObjectId,
       default: null,
       required: true,

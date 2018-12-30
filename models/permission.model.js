@@ -17,11 +17,10 @@ const permissionsSchema = {
 var PermissionSchema = new Schema({
   role: {
     type: String,
-    default: "ROLE_PUBLIC",
+    default: permissions.ROLE_PUBLIC,
     required: true
   },
   scopes: {
-
     type: Schema.Types.Mixed,
     body: {
       type: {

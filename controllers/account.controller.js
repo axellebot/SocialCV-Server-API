@@ -7,7 +7,6 @@ const User = require('../models/user.model');
 const messages = require('@constants/messages');
 const statuses = require('@constants/statuses');
 const models = require('@constants/models');
-const roles = require('@constants/roles');
 const parameters = require('@constants/parameters');
 const fields = require('@constants/fields');
 

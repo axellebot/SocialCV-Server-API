@@ -1,10 +1,11 @@
 "use strict";
 
-// Constants
-const models = require('@constants/models');
-
 var mongoose = require('@mongoose');
 var Schema = mongoose.Schema;
+
+// Constants
+const models = require('@constants/models');
+const group_types = require('@constants/group_types');
 
 var GroupSchema = new Schema({
   name: {
@@ -14,26 +15,28 @@ var GroupSchema = new Schema({
   },
   type: {
     type: String,
-    default: "",
+    enum: [group_types.GROUP_TYPE_LIST_HORIZONTAL, group_types.GROUP_TYPE_LIST_VERTICAL, group_types.GROUP_TYPE_GRID_HORIZONTAL, group_types.GROUP_TYPE_GRID_VERTICAL],
+    default: group_types.GROUP_TYPE_LIST_VERTICAL,
     required: true
   },
-  order:{
+  order: {
     type: Number,
     default: 0.0,
     required: true
   },
-  part:{
+  part: {
     type: Schema.Types.ObjectId,
     default: null,
     required: true,
     ref: models.MODEL_NAME_PART
   },
   entries: {
-    type: [{
+    type: Schema.Types.Mixed,
+    body: [{
       type: Schema.Types.ObjectId,
       ref: models.MODEL_NAME_ENTRY
     }],
-    required:true,
+    required: true,
     default: []
   },
   owner: {

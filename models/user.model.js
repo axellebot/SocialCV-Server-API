@@ -8,7 +8,6 @@ const config = require('@config');
 
 // Constants
 const models = require('@constants/models');
-const roles = require('@constants/roles');
 
 var mongoose = require('@mongoose');
 var Schema = mongoose.Schema;

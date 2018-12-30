@@ -1,10 +1,11 @@
 "use strict";
 
-// Constants
-const models = require('@constants/models');
-
 var mongoose = require('@mongoose');
 var Schema = mongoose.Schema;
+
+// Constants
+const models = require('@constants/models');
+const entry_types = require('@constants/entry_types');
 
 var EntrySchema = new Schema({
   name: {
@@ -14,15 +15,16 @@ var EntrySchema = new Schema({
   },
   type: {
     type: String,
+    enum: [entry_types.ENTRY_TYPE_MAP, entry_types.ENTRY_TYPE_EVENT, entry_types.ENTRY_TYPE_TAG],
     default: "",
     required: true
   },
-  order:{
+  order: {
     type: Number,
     default: 0.0,
     required: true
   },
-  group:{
+  group: {
     type: Schema.Types.ObjectId,
     default: null,
     required: true,
