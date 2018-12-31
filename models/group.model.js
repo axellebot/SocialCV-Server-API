@@ -5,7 +5,13 @@ var Schema = mongoose.Schema;
 
 // Constants
 const models = require('@constants/models');
-const group_types = require('@constants/group_types');
+
+const GROUP_TYPE_LIST_HORIZONTAL = "GROUP_TYPE_LIST_HORIZONTAL";
+const GROUP_TYPE_LIST_VERTICAL = "GROUP_TYPE_LIST_VERTICAL";
+const GROUP_TYPE_GRID_HORIZONTAL = "GROUP_TYPE_GRID_HORIZONTAL";
+const GROUP_TYPE_GRID_VERTICAL = "GROUP_TYPE_GRID_VERTICAL";
+
+const GROUP_TYPE_ENUM = [GROUP_TYPE_LIST_HORIZONTAL, GROUP_TYPE_LIST_VERTICAL, GROUP_TYPE_GRID_HORIZONTAL, GROUP_TYPE_GRID_VERTICAL];
 
 var GroupSchema = new Schema({
   name: {
@@ -15,8 +21,8 @@ var GroupSchema = new Schema({
   },
   type: {
     type: String,
-    enum: [group_types.GROUP_TYPE_LIST_HORIZONTAL, group_types.GROUP_TYPE_LIST_VERTICAL, group_types.GROUP_TYPE_GRID_HORIZONTAL, group_types.GROUP_TYPE_GRID_VERTICAL],
-    default: group_types.GROUP_TYPE_LIST_VERTICAL,
+    enum: GROUP_TYPE_ENUM,
+    default: GROUP_TYPE_LIST_VERTICAL,
     required: true
   },
   order: {

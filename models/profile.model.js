@@ -5,7 +5,12 @@ var Schema = mongoose.Schema;
 
 // Constants
 const models = require('@constants/models');
-const profile_types = require('@constants/profile_types');
+
+const PROFILE_TYPE_1 = "PROFILE_TYPE_MAIN";
+const PROFILE_TYPE_2 = "PROFILE_TYPE_HEADER_MAIN";
+const PROFILE_TYPE_3 = "PROFILE_TYPE_MAIN_SIDE";
+const PROFILE_TYPE_4 = "PROFILE_TYPE_HEADER_MAIN_SIDE";
+const PROFILE_TYPE_ENUM = [PROFILE_TYPE_1, PROFILE_TYPE_2, PROFILE_TYPE_3, PROFILE_TYPE_4];
 
 var ProfileSchema = new Schema({
   title: {
@@ -30,8 +35,8 @@ var ProfileSchema = new Schema({
   },
   type: {
     type: String,
-    enum: [profile_types.PROFILE_TYPE_1, profile_types.PROFILE_TYPE_2, profile_types.PROFILE_TYPE_3, profile_types.PROFILE_TYPE_4],
-    default: profile_types.PROFILE_TYPE_1,
+    enum: PROFILE_TYPE_ENUM,
+    default: PROFILE_TYPE_1,
     required: true
   },
   parts: {

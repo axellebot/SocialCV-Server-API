@@ -5,7 +5,12 @@ var Schema = mongoose.Schema;
 
 // Constants
 const models = require('@constants/models');
-const entry_types = require('@constants/entry_types');
+
+const ENTRY_TYPE_MAP = "map";
+const ENTRY_TYPE_EVENT = "event";
+const ENTRY_TYPE_TAG = "tag";
+
+const ENTRY_TYPE_ENUM = [ENTRY_TYPE_MAP, ENTRY_TYPE_EVENT, ENTRY_TYPE_TAG];
 
 var EntrySchema = new Schema({
   name: {
@@ -15,8 +20,8 @@ var EntrySchema = new Schema({
   },
   type: {
     type: String,
-    enum: [entry_types.ENTRY_TYPE_MAP, entry_types.ENTRY_TYPE_EVENT, entry_types.ENTRY_TYPE_TAG],
-    default: "",
+    enum: ENTRY_TYPE_ENUM,
+    default: ENTRY_TYPE_MAP,
     required: true
   },
   order: {

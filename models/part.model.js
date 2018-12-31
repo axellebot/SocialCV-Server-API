@@ -7,7 +7,10 @@ var Schema = mongoose.Schema;
 const messages = require('@constants/messages');
 const statuses = require('@constants/statuses');
 const models = require('@constants/models');
-const part_types = require('@constants/part_types');
+
+const PART_TYPE_LIST_HORIZONTAL= "PART_TYPE_LIST_HORIZONTAL";
+  const PART_TYPE_LIST_VERTICAL= "PART_TYPE_LIST_VERTICAL";
+const PART_TYPE_ENUM = [PART_TYPE_LIST_HORIZONTAL,PART_TYPE_LIST_VERTICAL];
 
 var PartSchema = new Schema({
   name: {
@@ -17,8 +20,8 @@ var PartSchema = new Schema({
   },
   type: {
     type: String,
-    enum: [part_types.PART_TYPE_LIST_HORIZONTAL, part_types.PART_TYPE_LIST_VERTICAL],
-    default: part_types.PART_TYPE_LIST_VERTICAL,
+    enum: PART_TYPE_ENUM,
+    default: PART_TYPE_LIST_VERTICAL,
     required: true
   },
   order: {
