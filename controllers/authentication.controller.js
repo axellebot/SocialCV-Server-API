@@ -9,9 +9,6 @@ const jwt = require('jsonwebtoken');
 // Schema
 const User = require('@models/user.model');
 
-// Constants
-const fields = require('@constants/fields')
-
 // Errors
 const MissingEmailError = require('@errors/MissingEmailError');
 const MissingUsernameError = require('@errors/MissingUsernameError');
@@ -71,11 +68,10 @@ exports.register = (req, res, next) => {
       // Respond with JWT if user was created
       return User
         .findById(newUser._id)
-        .select(fields.FIELDS_USER_PUBLIC)
         .exec();
     })
-    .then((userPublicDatas) => {
-      res.json(new LoginResponse(generateToken(userPublicDatas.toJSON(), userPublicDatas)));
+    .then((user) => {
+      res.json(new LoginResponse(generateToken(user.publicData(), user.publicData())));
     })
     .catch((err) => {
       next(err)
@@ -109,12 +105,11 @@ exports.login = (req, res, next) => {
       if (!isMatch) throw new WrongPasswordError();
       return User
         .findById(userId)
-        .select(fields.FIELDS_USER_PUBLIC)
         .exec()
     })
-    .then((userPublicDatas) => {
-      console.log(userPublicDatas);
-      res.json(new LoginResponse(generateToken(userPublicDatas.toJSON()), userPublicDatas));
+    .then((user) => {
+      console.log(user);
+      res.json(new LoginResponse(generateToken(user.publicData()), user.publicData()));
     })
     .catch((err) => {
       return next(err);
@@ -134,12 +129,11 @@ exports.refreshToken = (req, res, next) => {
 
     User
       .findById(decoded._id)
-      .select(fields.FIELDS_USER_PUBLIC)
       .exec()
-      .then((userPublicDatas) => {
-        if (!userPublicDatas) throw new UserNotFoundError();
-        if (userPublicDatas.disabled === true) throw new UserDisabledError();
-        return res.json(new LoginResponse(generateToken(userPublicDatas.toJSON()), userPublicDatas));
+      .then((user) => {
+        if (!user) throw new UserNotFoundError();
+        if (user.disabled === true) throw new UserDisabledError();
+        return res.json(new LoginResponse(generateToken(user.publicData()), user.publicData()));
       })
       .catch((err) => {
         next(err);

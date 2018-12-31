@@ -8,7 +8,6 @@ const messages = require('@constants/messages');
 const statuses = require('@constants/statuses');
 const models = require('@constants/models');
 const parameters = require('@constants/parameters');
-const fields = require('@constants/fields');
 
 // Errors
 const DatabaseFindError = require('@errors/DatabaseFindError');
@@ -35,10 +34,9 @@ exports.findOne = (req, res, next) => {
 
   User
     .findById(id)
-    .select(fields.FIELDS_USER_PUBLIC)
     .then((user) => {
       if (!user) throw new NotFoundError(models.MODEL_NAME_USER);
-      res.json(new SelectDocumentResponse(user));
+      res.json(new SelectDocumentResponse(user.publicData()));
     })
     .catch((err) => {
       next(err);
@@ -53,11 +51,10 @@ exports.updateOne = (req, res, next) => {
       _id: id
     }, req.body.data, {
       returnNewDocument: true,
-      projection: fields.FIELDS_USER_PUBLIC
     })
     .then((userUpdated) => {
       if (!userUpdated) throw new NotFoundError(models.MODEL_NAME_USER);
-      res.json(new UpdateDocumentResponse(userUpdated));
+      res.json(new UpdateDocumentResponse(userUpdated.publicData()));
     })
     .catch((err) => {
       next(err);
@@ -73,7 +70,7 @@ exports.deleteOne = (req, res, next) => {
     })
     .then((userDeleted) => {
       if (!userDeleted) throw new NotFoundError(models.MODEL_NAME_USER);
-      res.json(new DeleteDocumentResponse(userDeleted));
+      res.json(new DeleteDocumentResponse(userDeleted.publicData()));
     })
     .catch((err) => {
       next(err);
@@ -84,7 +81,7 @@ exports.findMany = (req, res, next) => {
   var returnedUsers;
   User
     .find(req.query.filters)
-    .select(req.query.fields || fields.FIELDS_USER_PUBLIC)
+    .select(req.query.fields)
     .skip(req.query.offset)
     .limit(req.query.limit)
     .sort(req.query.sort)
@@ -94,6 +91,9 @@ exports.findMany = (req, res, next) => {
       return User.countDocuments(req.query.filters)
     })
     .then((count) => {
+      for(var index in returnedUsers) { 
+        returnedUsers[index]=returnedUsers[index].publicData(); 
+      }
       res.json(new SelectDocumentsResponse(returnedUsers, count));
     })
     .catch((err) => {

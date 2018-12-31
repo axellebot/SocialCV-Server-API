@@ -47,10 +47,10 @@ var UserSchema = new Schema({
     ref: models.MODEL_NAME_PERMISSION,
     required: true
   },
-  picture:{
-    type : String,
-    default : "",
-    required : true
+  picture: {
+    type: String,
+    default: "",
+    required: true
   },
   profiles: {
     type: [{
@@ -100,6 +100,16 @@ UserSchema.methods.verifyPassword = function(candidatePassword) {
       resolve(isMatch);
     });
   });
+};
+
+UserSchema.methods.publicData = function() {
+  return {
+    _id: this._id,
+    email: this.email,
+    username:this.username,
+    profiles:this.profiles,
+    picture:this.picture,
+  };
 };
 
 module.exports = mongoose.model(models.MODEL_NAME_USER, UserSchema, "users");

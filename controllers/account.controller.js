@@ -8,7 +8,6 @@ const messages = require('@constants/messages');
 const statuses = require('@constants/statuses');
 const models = require('@constants/models');
 const parameters = require('@constants/parameters');
-const fields = require('@constants/fields');
 
 // Errors
 const DatabaseFindError = require('@errors/DatabaseFindError');
@@ -35,37 +34,9 @@ exports.findUser = (req, res, next) => {
 
   User
     .findById(id)
-    .select(fields.FIELDS_USER_PUBLIC)
     .then((user) => {
       if (!user) throw new NotFoundError(models.MODEL_NAME_USER);
-      res.json(new SelectDocumentResponse(user));
-    })
-    .catch((err) => {
-      next(err);
-    });
-}
-
-exports.findFull = (req, res, next) => {
-  const id = req.user._id;
-
-  User
-    .findById(id)
-    .select(fields.FIELDS_USER_PUBLIC)
-    .populate({
-      path: 'profiles',
-      populate: {
-        path: 'parts',
-        populate: {
-          path: 'groups',
-          populate: {
-            path: 'entries'
-          }
-        }
-      }
-    })
-    .then((userPopulate) => {
-      if (!userPopulate) throw new NotFoundError(models.MODEL_NAME_USER);
-      res.json(new SelectDocumentResponse(userPopulate));
+      res.json(new SelectDocumentResponse(user.publicData()));
     })
     .catch((err) => {
       next(err);

@@ -17,7 +17,6 @@
     "@middlewares": "./middlewares",
     "@models": "./models",
     "@responses": "./responses",
-    "@routes": "./routes",
     "@mongoose": "./mongoose.js"
   },
   "dependencies": {
@@ -31,6 +30,7 @@
     "moment": "^2.22.2",
     "mongoose": "^5.3.15",
     "morgan": "^1.9.1",
+    "passport": "^0.4.0",
     "serve-favicon": "^2.5.0"
   }
 }
