@@ -1,0 +1,25 @@
+"use strict";
+
+var mongoose = require('@mongoose');
+var Schema = mongoose.Schema;
+
+// Constants
+const models = require('@constants/models');
+
+var OAuthRefreshTokenSchema = new Schema({
+  refresh_token: String,
+  expires: Date,
+  scope: String,
+  user: {
+    type: Schema.Types.ObjectId,
+    ref: models.MODEL_NAME_USER,
+  },
+  oauth_client: {
+    type: Schema.Types.ObjectId,
+    ref: models.MODEL_NAME_OAUTH_CLIENT,
+  },
+}, {
+  timestamps: true
+});
+
+module.exports = mongoose.model(models.MODEL_NAME_OAUTH_REFRESH_TOKEN, OAuthRefreshTokenSchema, "oauth_refresh_tokens");
