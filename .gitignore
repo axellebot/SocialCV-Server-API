@@ -116,4 +116,5 @@ $RECYCLE.BIN/
 .idea
 data/
 
+config/development.json
 config/production.json

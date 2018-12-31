@@ -1,9 +1,0 @@
-{
-  "secret":"jZ0abu9FqQXP4Am2qXoBCGxQmbkHigmWqGtxXFKqVVKfD4LriVxeMUAlONolU8B",
-  "saltWorkFactor":13,
-  "database": {
-    "uri": "mongodb://localhost:27017/cv",
-    "username":"cv",
-    "password":"cv"
-  }
-}
