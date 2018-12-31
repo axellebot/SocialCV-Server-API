@@ -16,7 +16,7 @@ const ctrlAccount = require('@controllers/account.controller.js');
 const ctrlProfiles = require('@controllers/profiles.controller.js');
 
 module.exports = (router) => {
-  router.get('/', requireAuthentication, ctrlAccount.findUser);
-  
-  router.get(paths.PATH_PROFILES, requireAuthentication, parseQuerySelection,ctrlAccount.filterProfilesOfOne,ctrlProfiles.findMany);
+  router.get('/', requireAuthentication, ctrlAccount.findOne);
+
+  router.get(paths.PATH_PROFILES, requireAuthentication, parseQuerySelection, ctrlAccount.filterProfilesOfOne, ctrlProfiles.findMany);
 };

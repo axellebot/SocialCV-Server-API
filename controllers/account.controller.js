@@ -29,18 +29,8 @@ const DeleteDocumentsResponse = require('@responses/DeleteDocumentsResponse');
 const DeleteDocumentResponse = require('@responses/DeleteDocumentResponse');
 
 
-exports.findUser = (req, res, next) => {
-  const id = req.user._id;
-
-  User
-    .findById(id)
-    .then((user) => {
-      if (!user) throw new NotFoundError(models.MODEL_NAME_USER);
-      res.json(new SelectDocumentResponse(user.publicData()));
-    })
-    .catch((err) => {
-      next(err);
-    });
+exports.findOne = (req, res, next) => {
+  res.json(new SelectDocumentResponse(req.user.publicData()));
 }
 
 // Others

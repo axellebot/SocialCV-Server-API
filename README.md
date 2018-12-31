@@ -18,7 +18,7 @@ Use timestamp fields (create, update, ...)
 ## License
 
 ```
-    Copyright 2018 Axel LE BOT
+    Copyright 2018-2019 Axel LE BOT
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
