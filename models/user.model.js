@@ -106,9 +106,10 @@ UserSchema.methods.publicData = function() {
   return {
     _id: this._id,
     email: this.email,
-    username:this.username,
-    profiles:this.profiles,
-    picture:this.picture,
+    username: this.username,
+    profiles: this.profiles,
+    picture: this.picture,
+    permission: this.permission,
   };
 };
 
