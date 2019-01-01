@@ -16,5 +16,4 @@ const ctrlAuthentication = require('@controllers/authentication.controller.js');
 
 module.exports = (router) => {
 //   router.post(paths.PATH_REGISTER, ctrlAuthentication.register);
-//   router.all(paths.PATH_LOGIN + paths.PATH_OAUTH + paths.PATH_TOKEN_REFRESH, ctrlAuthentication.refreshToken);
 };

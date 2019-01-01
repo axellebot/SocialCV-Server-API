@@ -1,11 +1,13 @@
-# curriculum-server-api
+# Social-CV API
+[![MIT Licensed][license-image]][license-url]
 
 ## Used Technologies
 Server : Express 4.16.3, with nodejs,
 Storage : MongoDB, with mongoose 5.0.17,
 Communication : JSON.
 
-## Config
+## Installation
+### Config
 Use config templates `./config/*.json.dist` to add configuration file `./config/*.json`
 
 ## Sources
@@ -28,3 +30,6 @@ Use config templates `./config/*.json.dist` to add configuration file `./config/
     See the License for the specific language governing permissions and
     limitations under the License.
 ```
+
+[license-image]: https://img.shields.io/badge/license-Apache%202-blue.svg
+[license-url]: 

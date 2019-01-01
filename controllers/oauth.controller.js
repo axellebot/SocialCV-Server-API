@@ -30,11 +30,10 @@ const NotImplementedError = require('@errors/NotImplementedError');
 // Responses
 const LoginResponse = require('@responses/LoginResponse');
 
-
 //= =======================================
-// Access Token Controller
+// Token Controller (access and refresh token)
 //= =======================================
-exports.access_token = function(req, res, next) {
+exports.getToken = function(req, res, next) {
   var request = new Request(req);
   var response = new Response(res);
 
