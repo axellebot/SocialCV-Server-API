@@ -7,14 +7,14 @@ var Schema = mongoose.Schema;
 const models = require('@constants/models');
 
 var OAuthAccessTokenSchema = new Schema({
-  access_token: String,
+  accessToken: String,
   expires: Date,
   scope: String,
   user: {
     type: Schema.Types.ObjectId,
     ref: models.MODEL_NAME_USER,
   },
-  oauth_client: {
+  oauthClient: {
     type: Schema.Types.ObjectId,
     ref: models.MODEL_NAME_OAUTH_CLIENT,
   },
@@ -22,4 +22,4 @@ var OAuthAccessTokenSchema = new Schema({
   timestamps: true
 });
 
-module.exports = mongoose.model(models.MODEL_NAME_OAUTH_ACCESS_TOKEN, OAuthAccessTokenSchema, "oauth_access_tokens");
+module.exports = mongoose.model(models.MODEL_NAME_OAUTH_ACCESS_TOKEN, OAuthAccessTokenSchema, "oauthAccessTokens");

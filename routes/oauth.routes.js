@@ -12,9 +12,9 @@ const requireBodyDataObject = require('@middlewares/body/dataObject');
 const parseQuerySelection = require('@middlewares/selection');
 
 // Controllers
-const ctrlAuthentication = require('@controllers/authentication.controller.js');
+const ctrlOAuth = require('@controllers/oauth.controller.js');
 
 module.exports = (router) => {
-//   router.post(paths.PATH_REGISTER, ctrlAuthentication.register);
-//   router.all(paths.PATH_LOGIN + paths.PATH_OAUTH + paths.PATH_TOKEN_REFRESH, ctrlAuthentication.refreshToken);
+  router.post(paths.PATH_ACCESS_TOKEN, ctrlOAuth.access_token);
+  router.post(paths.PATH_AUTHORISE,ctrlOAuth.authorise);
 };

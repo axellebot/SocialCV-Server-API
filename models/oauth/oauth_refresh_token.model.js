@@ -7,14 +7,14 @@ var Schema = mongoose.Schema;
 const models = require('@constants/models');
 
 var OAuthRefreshTokenSchema = new Schema({
-  refresh_token: String,
+  refreshToken: String,
   expires: Date,
   scope: String,
   user: {
     type: Schema.Types.ObjectId,
     ref: models.MODEL_NAME_USER,
   },
-  oauth_client: {
+  oauthClient: {
     type: Schema.Types.ObjectId,
     ref: models.MODEL_NAME_OAUTH_CLIENT,
   },
@@ -22,4 +22,4 @@ var OAuthRefreshTokenSchema = new Schema({
   timestamps: true
 });
 
-module.exports = mongoose.model(models.MODEL_NAME_OAUTH_REFRESH_TOKEN, OAuthRefreshTokenSchema, "oauth_refresh_tokens");
+module.exports = mongoose.model(models.MODEL_NAME_OAUTH_REFRESH_TOKEN, OAuthRefreshTokenSchema, "oauthRefreshTokens");

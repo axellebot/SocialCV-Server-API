@@ -1,15 +1,13 @@
 "use strict";
 
-/*
-  Role Based Access Control
-*/
-
 // Require Packages
-const jwt = require('jsonwebtoken');
 const moment = require('moment');
+const oauthServer = require('oauth2-server');
+var Request = oauthServer.Request;
+var Response = oauthServer.Response;
 
 // Config
-const config = require('@config');
+var config = require('@config');
 
 // Errors
 const AccessRestrictedError = require('@errors/AccessRestrictedError');
@@ -19,38 +17,36 @@ const UserNotFoundError = require('@errors/UserNotFoundError');
 const UserDisabledError = require('@errors/UserDisabledError');
 
 // Schemas
-const User = require('@models/user.model')
+const User = require('@models/user.model');
+
+// OAuth
+const oauth = require('@oauth');
 
 /**
- * @param req
- * @param res
- * @param next
+ * @param options
  */
-module.exports = (req, res, next) => {
-  var token = req.body.token || req.query.token || req.headers['x-access-token'];
-
-  // forbidden without token
-  if (!token) return next(new AccessRestrictedError());
-
-  // verifies secret and checks exp
-  jwt.verify(token, config.secret, (err, decoded) => {
-    //failed verification.
-    if (err) return next(new FailedAuthenticationTokenError());
-
-    if (decoded.exp <= moment().unix()) return next(new ExpiredAuthenticationTokenError())
-
-    User.findById(decoded._id)
-      .populate("permission")
-      .then((user) => {
-        if (!user) throw new UserNotFoundError();
-        if (user.disabled === true) throw new UserDisabledError();
-
-        req.user = user;
-
-        return next();
+module.exports = function(options) {
+  var options = options || {};
+  return function(req, res, next) {
+    var request = new Request({
+      headers: {
+        authorization: req.headers.authorization
+      },
+      method: req.method,
+      query: req.query,
+      body: req.body
+    });
+    var response = new Response(res);
+    oauth.authenticate(request, response, options)
+      .then(function(token) {
+        if(!token) throw FailedAuthenticationTokenError();
+        // Request is authorized.
+        console.log('token',token);
+        req.user = token.user;
+        next();
       })
-      .catch((err) => {
+      .catch(function(err) {
         next(err);
-      })
-  });
+      });
+  };
 }

@@ -1,19 +1,15 @@
 # curriculum-server-api
 
 ## Used Technologies
-
 Server : Express 4.16.3, with nodejs,
-Storage: MongoDB, with mongoose 5.0.17,
-Communication: JSON.
+Storage : MongoDB, with mongoose 5.0.17,
+Communication : JSON.
 
 ## Config
-Fill in the `config\production.json`
+Use config templates `./config/*.json.dist` to add configuration file `./config/*.json`
 
-## Database
-
-- Import JSON
-Don't forget to use the Date type for date string with `ISODate(<String>)` function
-Use timestamp fields (create, update, ...)
+## Sources
+- Implementation of OAuth2 inspired from <https://github.com/manjeshpv/node-oauth2-server-implementation>
 
 ## License
 

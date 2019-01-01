@@ -18,14 +18,30 @@ const ctrlParts = require('@controllers/parts.controller.js');
 const ctrlGroups = require('@controllers/groups.controller.js');
 
 module.exports = (router) => {
-  router.get('/', hasPerms(perms.PERMISSION_SCOPE_PARTS, perms.PERMISSION_ACTION_READ), parseQuerySelection, ctrlParts.findMany);
-  router.post('/', hasPerms(perms.PERMISSION_SCOPE_PARTS, perms.PERMISSION_ACTION_CREATE), requireBodyDataObject, ctrlParts.createOne);
-  router.put('/', hasPerms(perms.PERMISSION_SCOPE_PARTS, perms.PERMISSION_ACTION_UPDATE), requireBodyDataArray, ctrlParts.updateMany);
-  router.delete('/', hasPerms(perms.PERMISSION_SCOPE_PARTS, perms.PERMISSION_ACTION_DELETE), ctrlParts.deleteAll);
+  router.get('/', requireAuthentication({
+    scope: "parts:read"
+  }), hasPerms(perms.PERMISSION_SCOPE_PARTS, perms.PERMISSION_ACTION_READ), parseQuerySelection, ctrlParts.findMany);
+  router.post('/', requireAuthentication({
+    scope: "parts:write"
+  }), hasPerms(perms.PERMISSION_SCOPE_PARTS, perms.PERMISSION_ACTION_CREATE), requireBodyDataObject, ctrlParts.createOne);
+  router.put('/', requireAuthentication({
+    scope: "parts:write"
+  }), hasPerms(perms.PERMISSION_SCOPE_PARTS, perms.PERMISSION_ACTION_UPDATE), requireBodyDataArray, ctrlParts.updateMany);
+  router.delete('/', requireAuthentication({
+    scope: "parts:delete"
+  }), hasPerms(perms.PERMISSION_SCOPE_PARTS, perms.PERMISSION_ACTION_DELETE), ctrlParts.deleteAll);
 
-  router.get('/' + ':' + parameters.PARAM_ID_PART, hasPerms(perms.PERMISSION_SCOPE_PARTS, perms.PERMISSION_ACTION_READ), ctrlParts.findOne);
-  router.put('/' + ':' + parameters.PARAM_ID_PART, hasPerms(perms.PERMISSION_SCOPE_PARTS, perms.PERMISSION_ACTION_UPDATE), requireBodyDataObject, ctrlParts.updateOne);
-  router.delete('/' + ':' + parameters.PARAM_ID_PART, hasPerms(perms.PERMISSION_SCOPE_PARTS, perms.PERMISSION_ACTION_DELETE), ctrlParts.deleteOne);
+  router.get('/' + ':' + parameters.PARAM_ID_PART, requireAuthentication({
+    scope: "parts:read"
+  }), hasPerms(perms.PERMISSION_SCOPE_PARTS, perms.PERMISSION_ACTION_READ), ctrlParts.findOne);
+  router.put('/' + ':' + parameters.PARAM_ID_PART, requireAuthentication({
+    scope: "parts:write"
+  }), hasPerms(perms.PERMISSION_SCOPE_PARTS, perms.PERMISSION_ACTION_UPDATE), requireBodyDataObject, ctrlParts.updateOne);
+  router.delete('/' + ':' + parameters.PARAM_ID_PART, requireAuthentication({
+    scope: "parts:delete"
+  }), hasPerms(perms.PERMISSION_SCOPE_PARTS, perms.PERMISSION_ACTION_DELETE), ctrlParts.deleteOne);
 
-  router.get('/' + ':' + parameters.PARAM_ID_PART + paths.PATH_GROUPS, hasPerms(perms.PERMISSION_SCOPE_PARTS, perms.PERMISSION_ACTION_READ), parseQuerySelection, ctrlParts.filterGroupsOfOne, hasPerms(perms.PERMISSION_SCOPE_GROUPS, perms.PERMISSION_ACTION_READ), ctrlGroups.findMany);
+  router.get('/' + ':' + parameters.PARAM_ID_PART + paths.PATH_GROUPS, requireAuthentication({
+    scope: "groups:read"
+  }), hasPerms(perms.PERMISSION_SCOPE_PARTS, perms.PERMISSION_ACTION_READ), parseQuerySelection, ctrlParts.filterGroupsOfOne, hasPerms(perms.PERMISSION_SCOPE_GROUPS, perms.PERMISSION_ACTION_READ), ctrlGroups.findMany);
 };

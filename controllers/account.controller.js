@@ -1,7 +1,7 @@
 "use strict";
 
 // Schemas
-const User = require('../models/user.model');
+const User = require('@models/user.model');
 
 // Constants
 const messages = require('@constants/messages');
@@ -27,7 +27,6 @@ const UpdateDocumentsResponse = require('@responses/UpdateDocumentsResponse');
 const UpdateDocumentResponse = require('@responses/UpdateDocumentResponse');
 const DeleteDocumentsResponse = require('@responses/DeleteDocumentsResponse');
 const DeleteDocumentResponse = require('@responses/DeleteDocumentResponse');
-
 
 exports.findOne = (req, res, next) => {
   res.json(new SelectDocumentResponse(req.user.publicData()));

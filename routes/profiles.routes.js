@@ -18,14 +18,30 @@ const ctrlProfiles = require('@controllers/profiles.controller.js');
 const ctrlParts = require('@controllers/parts.controller.js');
 
 module.exports = (router) => {
-  router.get('/', hasPerms(perms.PERMISSION_SCOPE_PROFILES, perms.PERMISSION_ACTION_READ), parseQuerySelection, ctrlProfiles.findMany);
-  router.post('/', hasPerms(perms.PERMISSION_SCOPE_PROFILES, perms.PERMISSION_ACTION_CREATE), requireBodyDataObject, ctrlProfiles.createOne);
-  router.put('/', hasPerms(perms.PERMISSION_SCOPE_PROFILES, perms.PERMISSION_ACTION_UPDATE), requireBodyDataArray, ctrlProfiles.updateMany);
-  router.delete('/', hasPerms(perms.PERMISSION_SCOPE_PROFILES, perms.PERMISSION_ACTION_DELETE), ctrlProfiles.deleteAll);
+  router.get('/', requireAuthentication({
+    scope: "profiles:read"
+  }), hasPerms(perms.PERMISSION_SCOPE_PROFILES, perms.PERMISSION_ACTION_READ), parseQuerySelection, ctrlProfiles.findMany);
+  router.post('/', requireAuthentication({
+    scope: "profiles:write"
+  }), hasPerms(perms.PERMISSION_SCOPE_PROFILES, perms.PERMISSION_ACTION_CREATE), requireBodyDataObject, ctrlProfiles.createOne);
+  router.put('/', requireAuthentication({
+    scope: "profiles:write"
+  }), hasPerms(perms.PERMISSION_SCOPE_PROFILES, perms.PERMISSION_ACTION_UPDATE), requireBodyDataArray, ctrlProfiles.updateMany);
+  router.delete('/', requireAuthentication({
+    scope: "profiles:delete"
+  }), hasPerms(perms.PERMISSION_SCOPE_PROFILES, perms.PERMISSION_ACTION_DELETE), ctrlProfiles.deleteAll);
 
-  router.get('/' + ':' + parameters.PARAM_ID_PROFILE, hasPerms(perms.PERMISSION_SCOPE_PROFILES, perms.PERMISSION_ACTION_READ), ctrlProfiles.findOne);
-  router.put('/' + ':' + parameters.PARAM_ID_PROFILE, hasPerms(perms.PERMISSION_SCOPE_PROFILES, perms.PERMISSION_ACTION_UPDATE), requireBodyDataObject, ctrlProfiles.updateOne);
-  router.delete('/' + ':' + parameters.PARAM_ID_PROFILE, hasPerms(perms.PERMISSION_SCOPE_PROFILES, perms.PERMISSION_ACTION_DELETE), ctrlProfiles.deleteOne);
+  router.get('/' + ':' + parameters.PARAM_ID_PROFILE, requireAuthentication({
+    scope: "profiles:read"
+  }), hasPerms(perms.PERMISSION_SCOPE_PROFILES, perms.PERMISSION_ACTION_READ), ctrlProfiles.findOne);
+  router.put('/' + ':' + parameters.PARAM_ID_PROFILE, requireAuthentication({
+    scope: "profiles:write"
+  }), hasPerms(perms.PERMISSION_SCOPE_PROFILES, perms.PERMISSION_ACTION_UPDATE), requireBodyDataObject, ctrlProfiles.updateOne);
+  router.delete('/' + ':' + parameters.PARAM_ID_PROFILE, requireAuthentication({
+    scope: "profiles:delete"
+  }), hasPerms(perms.PERMISSION_SCOPE_PROFILES, perms.PERMISSION_ACTION_DELETE), ctrlProfiles.deleteOne);
 
-  router.get('/' + ':' + parameters.PARAM_ID_PROFILE + paths.PATH_PARTS, hasPerms(perms.PERMISSION_SCOPE_PROFILES, perms.PERMISSION_ACTION_READ), parseQuerySelection, ctrlProfiles.filterPartsOfOne, hasPerms(perms.PERMISSION_SCOPE_PARTS, perms.PERMISSION_ACTION_READ), ctrlParts.findMany);
+  router.get('/' + ':' + parameters.PARAM_ID_PROFILE + paths.PATH_PARTS, requireAuthentication({
+    scope: "parts:delete"
+  }), hasPerms(perms.PERMISSION_SCOPE_PROFILES, perms.PERMISSION_ACTION_READ), parseQuerySelection, ctrlProfiles.filterPartsOfOne, hasPerms(perms.PERMISSION_SCOPE_PARTS, perms.PERMISSION_ACTION_READ), ctrlParts.findMany);
 };

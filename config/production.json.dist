@@ -4,6 +4,7 @@
   "database": {
     "uri": "mongodb://example.com/dbName",
     "username":"username",
-    "password":"password"
+    "password":"password",
+    "poolSize":10
   }
 }

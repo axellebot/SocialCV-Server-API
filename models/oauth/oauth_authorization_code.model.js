@@ -7,15 +7,15 @@ var Schema = mongoose.Schema;
 const models = require('@constants/models');
 
 var OAuthAuthorizationCodeSchema = new Schema({
-  authorization_code: String,
+  authorizationCode: String,
   expires: Date,
-  redirect_uri: String,
+  redirectUri: String,
   scope: String,
   user: {
     type: Schema.Types.ObjectId,
     ref: models.MODEL_NAME_USER,
   },
-  oauth_client: {
+  oauthClient: {
     type: Schema.Types.ObjectId,
     ref: models.MODEL_NAME_OAUTH_CLIENT,
   },
@@ -23,4 +23,4 @@ var OAuthAuthorizationCodeSchema = new Schema({
   timestamps: true
 });
 
-module.exports = mongoose.model(models.MODEL_NAME_OAUTH_AUTHORIZATION_CODE, OAuthAuthorizationCodeSchema,"oauth_authorization_codes");
+module.exports = mongoose.model(models.MODEL_NAME_OAUTH_AUTHORIZATION_CODE, OAuthAuthorizationCodeSchema,"oauthAuthorizationCodes");

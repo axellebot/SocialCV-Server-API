@@ -16,7 +16,7 @@ mongoose.connect(config.database.uri, {
   useNewUrlParser: true, // Newer url parser
   reconnectTries: 10, // Never stop trying to reconnect
   reconnectInterval: 500,
-  poolSize: 10, // Maintain up to 10 socket connections
+  poolSize: config.database.poolSize, // Maintain up to [X] socket connections
   // If not connected, return errors immediately rather than waiting for reconnect
   bufferMaxEntries: 0
 }).then(

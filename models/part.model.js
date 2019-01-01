@@ -8,9 +8,9 @@ const messages = require('@constants/messages');
 const statuses = require('@constants/statuses');
 const models = require('@constants/models');
 
-const PART_TYPE_LIST_HORIZONTAL= "PART_TYPE_LIST_HORIZONTAL";
-  const PART_TYPE_LIST_VERTICAL= "PART_TYPE_LIST_VERTICAL";
-const PART_TYPE_ENUM = [PART_TYPE_LIST_HORIZONTAL,PART_TYPE_LIST_VERTICAL];
+const PART_TYPE_LIST_HORIZONTAL = "PART_TYPE_LIST_HORIZONTAL";
+const PART_TYPE_LIST_VERTICAL = "PART_TYPE_LIST_VERTICAL";
+const PART_TYPE_ENUM = [PART_TYPE_LIST_HORIZONTAL, PART_TYPE_LIST_VERTICAL];
 
 var PartSchema = new Schema({
   name: {

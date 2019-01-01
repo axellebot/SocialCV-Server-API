@@ -8,10 +8,10 @@ const models = require('@constants/models');
 
 var OAuthClientSchema = new Schema({
   name: String,
-  client_id: String,
-  client_secret: String,
-  redirect_uri: String,
-  grant_types: String,
+  clientId: String,
+  clientSecret: String,
+  redirectUri: String,
+  grantTypes: String,
   scope: String,
   user: {
     type: Schema.Types.ObjectId,
@@ -21,4 +21,4 @@ var OAuthClientSchema = new Schema({
   timestamps: true
 });
 
-module.exports = mongoose.model(models.MODEL_NAME_OAUTH_CLIENT, OAuthClientSchema, "oauth_clients");
+module.exports = mongoose.model(models.MODEL_NAME_OAUTH_CLIENT, OAuthClientSchema, "oauthClients");

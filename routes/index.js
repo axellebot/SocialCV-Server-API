@@ -20,10 +20,17 @@ module.exports = (app) => {
   routeIndex.post('/', controllerIndex.get);
 
   //= ========================
+  // OAuth Routes
+  //= ========================
+  const routeOAuth = express.Router();
+  app.use(paths.PATH_OAUTH, routeOAuth);
+  require('@routes/oauth.routes.js')(routeOAuth);
+  
+  //= ========================
   // Auth Routes
   //= ========================
   const routeAuth = express.Router();
-  app.use(paths.PATH_AUTHENTICATION, routeAuth);
+  app.use('', routeAuth);
   require('@routes/authentication.routes.js')(routeAuth);
   
   //= ========================
