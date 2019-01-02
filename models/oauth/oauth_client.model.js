@@ -8,8 +8,7 @@ const models = require('@constants/models');
 
 var OAuthClientSchema = new Schema({
   name: String,
-  clientId: String,
-  clientSecret: String,
+  secret: String,
   redirectUri: String,
   grantTypes: String,
   scope: String,

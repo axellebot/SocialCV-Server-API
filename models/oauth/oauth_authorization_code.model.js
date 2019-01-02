@@ -7,7 +7,7 @@ var Schema = mongoose.Schema;
 const models = require('@constants/models');
 
 var OAuthAuthorizationCodeSchema = new Schema({
-  authorizationCode: String,
+  code: String,
   expires: Date,
   redirectUri: String,
   scope: String,

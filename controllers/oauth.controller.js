@@ -10,6 +10,11 @@ const oauth = require('@oauth');
 
 // Schemas
 const User = require('@models/user.model');
+const OAuthAccessToken = require('@models/oauth/oauth_access_token.model');
+const OAuthAuthorizationCode = require('@models/oauth/oauth_authorization_code.model');
+const OAuthClient = require('@models/oauth/oauth_client.model');
+const OAuthRefreshToken = require('@models/oauth/oauth_refresh_token.model');
+const OAuthScope = require('@models/oauth/oauth_scope.model');
 
 // Constants
 const messages = require('@constants/messages');
@@ -39,8 +44,24 @@ exports.getToken = function(req, res, next) {
 
   oauth.token(request, response)
     .then(function(token) {
-      // Todo: remove unnecessary values in response
-      return res.json(token)
+      if (!token) throw NotFoundError('Access token');
+     
+      var returnToken = {};
+      
+      if (token.accessToken) returnToken.access_token = token.accessToken;
+      if (token.tokenType) returnToken.token_type = token.tokenType;
+      if (token.accessTokenExpiresAt){
+        var endDate = token.accessTokenExpiresAt;
+        var startDate = new Date();
+        console.log(endDate,startDate);
+        var seconds = (endDate.getTime() - startDate.getTime()) / 1000;
+        var diff = Math.trunc(Math.abs(seconds));
+        returnToken.expires_in = diff || 0;
+      }
+      if (token.refreshToken) returnToken.refresh_token = token.refreshToken;
+      if (token.tokenType) returnToken.token_type = token.tokenType;
+      
+      return res.json(returnToken);
     })
     .catch(function(err) {
       return next(err)
@@ -50,7 +71,7 @@ exports.getToken = function(req, res, next) {
 //= =======================================
 // Authorise Controller
 //= =======================================
-exports.authorise = function(req, res, next) {
+exports.authorize = function(req, res, next) {
   var request = new Request(req);
   var response = new Response(res);
 

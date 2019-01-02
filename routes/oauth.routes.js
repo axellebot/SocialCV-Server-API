@@ -16,5 +16,5 @@ const ctrlOAuth = require('@controllers/oauth.controller.js');
 
 module.exports = (router) => {
   router.post(paths.PATH_TOKEN, ctrlOAuth.getToken);
-  router.post(paths.PATH_AUTHORISE,ctrlOAuth.authorise);
+  router.post(paths.PATH_AUTHORIZE,ctrlOAuth.authorize);
 };

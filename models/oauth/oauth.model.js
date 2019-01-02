@@ -2,7 +2,6 @@ var _ = require('lodash');
 
 // Schemas
 const User = require('@models/user.model');
-
 const OAuthAccessToken = require('@models/oauth/oauth_access_token.model');
 const OAuthAuthorizationCode = require('@models/oauth/oauth_authorization_code.model');
 const OAuthClient = require('@models/oauth/oauth_client.model');
@@ -21,7 +20,7 @@ const NotImplementedError = require('@errors/NotImplementedError');
 
 /**
  * getAccessToken
- * used to check access token existance
+ * Used to check access token existance
  */
 function getAccessToken(bearerToken) {
   console.log("getAccessToken", bearerToken)
@@ -29,30 +28,52 @@ function getAccessToken(bearerToken) {
     .findOne({
       accessToken: bearerToken
     })
-    .populate({
-      path: 'user',
-      populate: {
-        path: 'permission',
-      }
-    })
-    .populate('oauthClient')
     .then(function(accessToken) {
-      console.log('at', accessToken)
+      console.log('savedAT', accessToken)
       if (!accessToken) return false;
-      accessToken.accessTokenExpiresAt = accessToken.expires; // Adding accessTokenExpiresAt -> default field uesd by lib
-      return accessToken;
+      var returnAccessToken = accessToken;
+      returnAccessToken.accessTokenExpiresAt = accessToken.expires; // Adding accessTokenExpiresAt -> default field uesd by lib
+      return returnAccessToken;
     })
     .catch(function(err) {
       console.log("getAccessToken - Err: ")
     });
 }
 
+function getAuthorizationCode(code) {
+  console.log("getAuthorizationCode", code);
+  const options = {
+    authorizationCode: code
+  };
+  return OAuthAuthorizationCode
+    .findOne(options)
+    .populate('user')
+    .populate('oauthClient')
+    .then(function(authCodeModel) {
+      if (!authCodeModel) return false;
+      var client = authCodeModel.client
+      var user = authCodeModel.user
+      var reCode = {
+        code: code,
+        client: client,
+        expires: authCodeModel.expires,
+        redirectUri: client.redirectUri,
+        user: user,
+        scope: authCodeModel.scope,
+      };
+      return reCode;
+    })
+    .catch(function(err) {
+      console.log("getAuthorizationCode - Err: ", err)
+    });
+}
+
 function getClient(clientId, clientSecret) {
   console.log("getClient", clientId, clientSecret)
   const options = {
-    clientId: clientId
+    _id: clientId
   };
-  if (clientSecret) options.clientSecret = clientSecret;
+  if (clientSecret) options.secret = clientSecret;
 
   return OAuthClient
     .findOne(options)
@@ -70,18 +91,47 @@ function getClient(clientId, clientSecret) {
     });
 }
 
+function getRefreshToken(refreshToken) {
+  console.log("getRefreshToken", refreshToken)
+  const options = {
+    refreshToken: refreshToken
+  };
+  if (!refreshToken || refreshToken === 'undefined') return false;
+  return OAuthRefreshToken
+    .findOne(options)
+    .populate('oauthClient')
+    .then(function(savedRT) {
+      if(!savedRT) return false;
+      console.log("savedRT", savedRT)
+      var tokenTemp = {
+        refreshToken: refreshToken,
+        refresh_token: refreshToken,
+        refreshTokenExpiresAt: savedRT ? new Date(savedRT.expires) : null,
+        user: savedRT ? savedRT.user : "",
+        client: savedRT ? savedRT.oauthClient : {},
+        scope: savedRT.scope
+      };
+      return tokenTemp;
+    }).catch(function(err) {
+      console.log("getRefreshToken - Err: ", err)
+    });
+}
+
 function getUser(username, password) {
   console.log("getUser", username);
+
+  const options = {
+    $or: [{
+        email: username
+      },
+      {
+        username: username
+      }
+    ]
+  };
+
   return User
-    .findOne({
-      $or: [{
-          email: username
-        },
-        {
-          username: username
-        }
-      ]
-    })
+    .findOne(options)
     .then(function(user) {
       console.log("user", user);
       if (!user) throw new UserNotFoundError();
@@ -95,14 +145,35 @@ function getUser(username, password) {
     });
 }
 
+function getUserFromClient(client) {
+  console.log("getUserFromClient", client)
+  var options = {
+    _id: client._id
+  };
+  if (client.secret) options.secret = client.secret;
+
+  return OAuthClient
+    .findOne(options)
+    .populate('user')
+    .then(function(client) {
+      console.log(client)
+      if (!client) return false;
+      if (!client.user) return false;
+      return client.user;
+    })
+    .catch(function(err) {
+      console.log("getUserFromClient - Err: ", err)
+    });
+}
+
 function revokeAuthorizationCode(code) {
   console.log("revokeAuthorizationCode", code)
   return OAuthAuthorizationCode
     .findOne({
-      authorization_code: code.code
+      authorizationCode: code.code
     })
     .then(function(rCode) {
-      //if(rCode) rCode.destroy();
+      //if(rCode) rCode.remove();
       /***
        * As per the discussion we need set older date
        * revokeToken will expected return a boolean in future version
@@ -120,19 +191,21 @@ function revokeAuthorizationCode(code) {
 
 function revokeToken(token) {
   console.log("revokeToken", token)
+  const options = {
+    refreshToken: token.refreshToken
+  };
   return OAuthRefreshToken
-    .findOne({
-      refresh_token: token.refreshToken
-    })
+    .findOne(options)
     .then(function(rT) {
-      if (rT) rT.destroy();
+      console.log("sRT",rT);
+      if (rT) rT.remove();
       /***
        * As per the discussion we need set older date
        * revokeToken will expected return a boolean in future version
        * https://github.com/oauthjs/node-oauth2-server/pull/274
        * https://github.com/oauthjs/node-oauth2-server/issues/290
        */
-      var expiredToken = token
+      var expiredToken = token;
       expiredToken.refreshTokenExpiresAt = new Date();
       return expiredToken
     })
@@ -141,22 +214,43 @@ function revokeToken(token) {
     });
 }
 
+function saveAuthorizationCode(code, client, user) {
+  console.log("saveAuthorizationCode", code, client, user)
+  return OAuthAuthorizationCode
+    .create({
+      code: code.authorizationCode,
+      expires: code.expiresAt,
+      oauthClient: client._id,
+      user: user._id,
+      scope: code.scope
+    })
+    .then(function(savedAuthorizationCode) {
+      return savedAuthorizationCode;
+    })
+    .catch(function(err) {
+      console.log("saveAuthorizationCode - Err: ", err)
+    });
+}
+
 function saveToken(token, client, user) {
   console.log("saveToken", token, client, user);
+  token.scope = token.scope || client.scope;
+  token.tokenType = "Bearer";
   return Promise.all([
       OAuthAccessToken.create({
         accessToken: token.accessToken,
         expires: token.accessTokenExpiresAt,
         oauthClient: client._id,
         user: user._id,
-        scope: token.scope || client.scope
+        scope: token.scope,
+        tokenType: token.tokenType
       }),
       token.refreshToken ? OAuthRefreshToken.create({ // no refresh token for client_credentials
         refreshToken: token.refreshToken,
         expires: token.refreshTokenExpiresAt,
         oauthClient: client._id,
         user: user._id,
-        scope: token.scope || client.scope
+        scope: token.scope
       }) : [],
 
     ])
@@ -172,98 +266,7 @@ function saveToken(token, client, user) {
       )
     })
     .catch(function(err) {
-      console.log("revokeToken - Err: ", err)
-    });
-}
-
-function getAuthorizationCode(code) {
-  console.log("getAuthorizationCode", code);
-  return OAuthAuthorizationCode
-    .findOne({
-      authorizationCode: code
-    })
-    .populate('user')
-    .populate('oauthClient')
-    .then(function(authCodeModel) {
-      if (!authCodeModel) return false;
-      var client = authCodeModel.OAuthClient
-      var user = authCodeModel.User
-      var reCode = {
-        code: code,
-        client: client,
-        expires: authCodeModel.expires,
-        redirectUri: client.redirectUri,
-        user: user,
-        scope: authCodeModel.scope,
-      };
-      return reCode;
-    })
-    .catch(function(err) {
-      console.log("getAuthorizationCode - Err: ", err)
-    });
-}
-
-function saveAuthorizationCode(code, client, user) {
-  console.log("saveAuthorizationCode", code, client, user)
-  return OAuthAuthorizationCode
-    .create({
-      expires: code.expiresAt,
-      oauthClient: client._id,
-      authorizationCode: code.authorizationCode,
-      user: user._id,
-      scope: code.scope
-    })
-    .then(function() {
-      code.code = code.authorizationCode;
-      return code;
-    })
-    .catch(function(err) {
-      console.log("saveAuthorizationCode - Err: ", err)
-    });
-}
-
-function getUserFromClient(client) {
-  console.log("getUserFromClient", client)
-  var options = {
-    clientId: client.clientId
-  };
-  if (client.client_secret) options.clientSecret = client.clientSecret;
-
-  return OAuthClient
-    .findOne(options)
-    .populate('user')
-    .then(function(client) {
-      console.log(client)
-      if (!client) return false;
-      if (!client.user) return false;
-      return client.user;
-    })
-    .catch(function(err) {
-      console.log("getUserFromClient - Err: ", err)
-    });
-}
-
-function getRefreshToken(refreshToken) {
-  console.log("getRefreshToken", refreshToken)
-  if (!refreshToken || refreshToken === 'undefined') return false;
-  return OAuthRefreshToken
-    .findOne({
-      refreshToken: refreshToken
-    })
-    .populate('user')
-    .populate('oauthClient')
-    .then(function(savedRT) {
-      console.log("srt", savedRT)
-      var tokenTemp = {
-        user: savedRT ? savedRT.user : {},
-        client: savedRT ? savedRT.oauthClient : {},
-        expires: savedRT ? new Date(savedRT.expires) : null,
-        refreshToken: refreshToken,
-        scope: savedRT.scope
-      };
-      return tokenTemp;
-    }).catch(function(err) {
-      console.log("getRefreshToken - Err: ", err)
+      console.log("saveToken - Err: ", err)
     });
 }
 
@@ -287,7 +290,7 @@ module.exports = {
   //generateAuthorizationCode, optional
   //generateOAuthRefreshToken, - optional
   getAccessToken: getAccessToken,
-  getAuthorizationCode: getAuthorizationCode, //getOAuthAuthorizationCode renamed to,
+  getAuthorizationCode: getAuthorizationCode, //getOAuthAuthorizationCode renamed to
   getClient: getClient,
   getRefreshToken: getRefreshToken,
   getUser: getUser,
@@ -295,8 +298,8 @@ module.exports = {
   //grantTypeAllowed, Removed in oauth2-server 3.0
   revokeAuthorizationCode: revokeAuthorizationCode,
   revokeToken: revokeToken,
-  saveToken: saveToken, //saveOAuthAccessToken, renamed to
   saveAuthorizationCode: saveAuthorizationCode, //renamed saveOAuthAuthorizationCode,
+  saveToken: saveToken, //saveOAuthAccessToken, renamed to
   //validateScope: validateScope,
   verifyScope: verifyScope,
 }

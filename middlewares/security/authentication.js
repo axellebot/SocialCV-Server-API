@@ -42,9 +42,15 @@ module.exports = function(options) {
         if(!token) throw FailedAuthenticationTokenError();
         // Request is authorized.
         console.log('token',token);
-        req.user = token.user;
-        next();
+        
+        return User.findOne(token.user)
+        .populate('permission')
+        .exec();
       })
+    .then(function(user){
+      req.user=user;
+      next();
+    })
       .catch(function(err) {
         next(err);
       });

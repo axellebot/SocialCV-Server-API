@@ -16,5 +16,5 @@ module.exports = {
   PATH_USERS: "/users",
   PATH_OAUTH: "/oauth",
   PATH_TOKEN: "/token",
-  PATH_AUTHORISE: "/authorise",
+  PATH_AUTHORIZE: "/authorize",
 };
