@@ -7,11 +7,12 @@ Storage : MongoDB, with mongoose 5.0.17,
 Communication : JSON.
 
 ## Installation
+
 ### Config
 Use config templates `./config/*.json.dist` to add configuration file `./config/*.json`
 
 ## Sources
-- Implementation of OAuth2 inspired from <https://github.com/manjeshpv/node-oauth2-server-implementation>
+- Implementation of OAuth2 inspired from <https://github.com/FrankHassanabad/Oauth2orizeRecipes>
 
 ## License
 
