@@ -2,57 +2,67 @@
 
 // Require Packages
 const moment = require('moment');
-const oauthServer = require('oauth2-server');
-var Request = oauthServer.Request;
-var Response = oauthServer.Response;
+const oauth = require('@oauth');
+const passport = require('@passport');
+const db = require('@db');
 
 // Config
 var config = require('@config');
 
 // Errors
 const AccessRestrictedError = require('@errors/AccessRestrictedError');
-const FailedAuthenticationTokenError = require('@errors/FailedAuthenticationTokenError');
 const ExpiredAuthenticationTokenError = require('@errors/ExpiredAuthenticationTokenError');
+const FailedAuthenticationTokenError = require('@errors/FailedAuthenticationTokenError');
+const MissingPrivilegeError = require('@errors/MissingPrivilegeError');
 const UserNotFoundError = require('@errors/UserNotFoundError');
 const UserDisabledError = require('@errors/UserDisabledError');
 
-// Schemas
-const User = require('@models/user.model');
-
-// OAuth
-const oauth = require('@oauth');
+/** 
+ * You would call this with an access token
+ * in the body of the message according to OAuth 2.0 standards
+ * https://tools.ietf.org/html/rfc6750#section-2.1
+ *
+ * Example
+ * Authorization: Bearer someAccessTokenHere
+ */
 
 /**
  * @param options
  */
-module.exports = function(options) {
+module.exports.user = (options) => {
   var options = options || {};
-  return function(req, res, next) {
-    var request = new Request({
-      headers: {
-        authorization: req.headers.authorization
-      },
-      method: req.method,
-      query: req.query,
-      body: req.body
-    });
-    var response = new Response(res);
-    oauth.authenticate(request, response, options)
-      .then(function(token) {
-        if(!token) throw FailedAuthenticationTokenError();
-        // Request is authorized.
-        console.log('token',token);
-        
-        return User.findOne(token.user)
-        .populate('permission')
-        .exec();
-      })
-    .then(function(user){
-      req.user=user;
+  return [
+    passport.authenticate(['bearer'], {
+      session: false
+    }),
+    (req, res, next) => {
+      if (req.authInfo.scope && options.scope) {
+        if (req.authInfo.scope.split(" ").includes(options.scope)) {
+          next();
+        } else {
+          next(new MissingPrivilegeError());
+        }
+      } else {
+        next(new AccessRestrictedError());
+      }
+    }
+  ];
+};
+
+/** 
+ * You would call this with an client id and client secret
+ * in the body of the message according to OAuth 2.0 standards
+ * https://tools.ietf.org/html/rfc6750
+ */
+module.exports.client = (options) => {
+  var options = options || {};
+  return [
+    passport.authenticate(['oauth2-client-password'], {
+      session: false
+    }),
+    (req, res, next) => {
+      // TODO : Check client scope
       next();
-    })
-      .catch(function(err) {
-        next(err);
-      });
-  };
+    }
+  ]
 }

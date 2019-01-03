@@ -17,10 +17,6 @@ var OAuthAccessTokenSchema = new Schema({
   oauthClient: {
     type: Schema.Types.ObjectId,
     ref: models.MODEL_NAME_OAUTH_CLIENT,
-  },
-  tokenType: {
-    type: String,
-    default: "Bearer"
   }
 }, {
   timestamps: true

@@ -1,7 +1,6 @@
 "use strict";
 
-// Schemas
-const Permission = require('@models/permission.model');
+const db = require('@db');
 
 // Constants
 const messages = require('@constants/messages');
@@ -29,7 +28,7 @@ const DeleteDocumentResponse = require('@responses/DeleteDocumentResponse');
 
 exports.createOne = (req, res, next) => {
   var permission = req.body.data;
-  permission = new Permission(permission);
+  permission = db.permissions.create(permission);
 
   permission
     .save()
@@ -44,7 +43,7 @@ exports.createOne = (req, res, next) => {
 exports.findOne = (req, res, next) => {
   var id = req.params[parameters.PARAM_ID_PERMISSION];
 
-  Permission
+  db.permissions
     .findById(id)
     .then((permission) => {
       if (!permission) throw new NotFoundError(models.MODEL_NAME_PERMISSION);
@@ -58,7 +57,7 @@ exports.findOne = (req, res, next) => {
 exports.updateOne = (req, res, next) => {
   var id = req.params[parameters.PARAM_ID_PERMISSION];
 
-  Permission
+  db.permissions
     .findOneAndUpdate({
       _id: id
     }, req.body.data, {
@@ -76,7 +75,7 @@ exports.updateOne = (req, res, next) => {
 exports.deleteOne = (req, res, next) => {
   var id = req.params[parameters.PARAM_ID_PERMISSION];
 
-  Permission
+  db.permissions
     .findOneAndRemove({
       _id: id
     })
@@ -92,7 +91,7 @@ exports.deleteOne = (req, res, next) => {
 exports.findMany = (req, res, next) => {
   var returnedPermissions;
 
-  Permission
+  db.permissions
     .find(req.query.filters)
     .select(req.query.fields)
     .skip(req.query.offset)
@@ -101,7 +100,7 @@ exports.findMany = (req, res, next) => {
     .then((permissions) => {
       if (!permissions || permissions.length <= 0) throw new NotFoundError(models.MODEL_NAME_PERMISSION);
       returnedPermissions = permissions;
-      return Permission.countDocuments(req.query.filters);
+      return db.permissions.countDocuments(req.query.filters);
     })
     .then((total) => {
       res.json(new SelectDocumentsResponse(returnedPermissions, total));

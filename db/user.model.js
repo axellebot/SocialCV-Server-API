@@ -92,17 +92,11 @@ UserSchema.pre('save', function(next) {
 });
 
 // Add method to verify the password (must be a FUNCTION declaration -No ES2015)
-UserSchema.methods.verifyPassword = function(candidatePassword) {
-  var user = this;
-  return new Promise(function(resolve, reject) {
-    bcrypt.compare(candidatePassword, user.password, (err, isMatch) => {
-      if (err) reject(err);
-      resolve(isMatch);
-    });
-  });
+UserSchema.methods.verifyPassword = (candidatePassword) =>{
+  return bcrypt.compare(candidatePassword, this.password)
 };
 
-UserSchema.methods.publicData = function() {
+UserSchema.methods.publicData = () =>{
   return {
     _id: this._id,
     email: this.email,

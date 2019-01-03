@@ -29,4 +29,7 @@ function requiredProcessEnv() {
 //Require the right configuration file
 var config = require('./' + requiredProcessEnv());
 
+config.accessToken.calculateExpirationDate = function() {return new Date(Date.now() + (config.accessToken.expiresIn * 1000))};
+config.refreshToken.calculateExpirationDate = function() {return new Date(Date.now() + (config.refreshToken.expiresIn * 1000))};
+
 module.exports = config;

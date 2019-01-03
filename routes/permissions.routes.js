@@ -17,26 +17,26 @@ const parseQuerySelection = require('@middlewares/selection');
 const ctrlPermissions = require('@controllers/permissions.controller.js');
 
 module.exports = (router) => {
-  router.get('/', requireAuthentication({
+  router.get('/', requireAuthentication.user({
     scope: "permissions:read"
   }), hasPerms(perms.PERMISSION_SCOPE_PERMISSIONS, perms.PERMISSION_ACTION_READ), parseQuerySelection, ctrlPermissions.findMany);
-  router.post('/', requireAuthentication({
+  router.post('/', requireAuthentication.user({
     scope: "permissions:write"
   }), hasPerms(perms.PERMISSION_SCOPE_PERMISSIONS, perms.PERMISSION_ACTION_CREATE), requireBodyDataObject, ctrlPermissions.createOne);
-  router.put('/', requireAuthentication({
+  router.put('/', requireAuthentication.user({
     scope: "permissions:write"
   }), hasPerms(perms.PERMISSION_SCOPE_PERMISSIONS, perms.PERMISSION_ACTION_UPDATE), requireBodyDataArray, ctrlPermissions.updateMany);
-  router.delete('/', requireAuthentication({
+  router.delete('/', requireAuthentication.user({
     scope: "permissions:delete"
   }), hasPerms(perms.PERMISSION_SCOPE_PERMISSIONS, perms.PERMISSION_ACTION_DELETE), ctrlPermissions.deleteAll);
 
-  router.get('/' + ':' + parameters.PARAM_ID_PERMISSION, requireAuthentication({
+  router.get('/' + ':' + parameters.PARAM_ID_PERMISSION, requireAuthentication.user({
     scope: "permissions:read"
   }), hasPerms(perms.PERMISSION_SCOPE_PERMISSIONS, perms.PERMISSION_ACTION_READ), ctrlPermissions.findOne);
-  router.put('/' + ':' + parameters.PARAM_ID_PERMISSION, requireAuthentication({
+  router.put('/' + ':' + parameters.PARAM_ID_PERMISSION, requireAuthentication.user({
     scope: "permissions:write"
   }), hasPerms(perms.PERMISSION_SCOPE_PERMISSIONS, perms.PERMISSION_ACTION_UPDATE), requireBodyDataObject, ctrlPermissions.updateOne);
-  router.delete('/' + ':' + parameters.PARAM_ID_PERMISSION, requireAuthentication({
+  router.delete('/' + ':' + parameters.PARAM_ID_PERMISSION, requireAuthentication.user({
     scope: "permissions:delete"
   }), hasPerms(perms.PERMISSION_SCOPE_PERMISSIONS, perms.PERMISSION_ACTION_DELETE), ctrlPermissions.deleteOne);
 };

@@ -1,7 +1,6 @@
 "use strict";
 
-// Schemas
-const Part = require('@models/part.model');
+const db = require('@db');
 
 // Constants
 const messages = require('@constants/messages');
@@ -30,7 +29,7 @@ const DeleteDocumentResponse = require('@responses/DeleteDocumentResponse');
 exports.findOne = (req, res, next) => {
   const id = req.params[parameters.PARAM_ID_PART];
 
-  Part
+  db.parts
     .findById(id)
     .then((part) => {
       if (!part) throw new NotFoundError(models.MODEL_NAME_PART);
@@ -42,7 +41,7 @@ exports.findOne = (req, res, next) => {
 };
 
 exports.createOne = (req, res, next) => {
-  const part = new Part(req.body.data);
+  const part = cd.parts.create(req.body.data);
 
   part.save()
     .then((partSaved) => {
@@ -56,7 +55,7 @@ exports.createOne = (req, res, next) => {
 exports.updateOne = (req, res, next) => {
   const id = req.params[parameters.PARAM_ID_PART];
 
-  Part
+  db.parts
     .findOneAndUpdate({
       _id: id
     }, req.body.data, {
@@ -74,7 +73,7 @@ exports.updateOne = (req, res, next) => {
 exports.deleteOne = (req, res, next) => {
   const id = req.params[parameters.PARAM_ID_PART];
 
-  Part
+  db.parts
     .findOneAndRemove({
       _id: id
     })
@@ -90,7 +89,7 @@ exports.deleteOne = (req, res, next) => {
 exports.findMany = (req, res, next) => {
   var returnedParts;
 
-  Part
+  db.parts
     .find(req.query.filters)
     .select(req.query.fields)
     .skip(req.query.offset)
@@ -99,7 +98,7 @@ exports.findMany = (req, res, next) => {
     .then((parts) => {
       if (!parts || parts.length <= 0) throw new NotFoundError(models.MODEL_NAME_PART);
       returnedParts = parts;
-      return Part.countDocuments(req.query.filters);
+      return db.parts.countDocuments(req.query.filters);
     })
     .then((total) => {
       res.json(new SelectDocumentsResponse(returnedParts, total));

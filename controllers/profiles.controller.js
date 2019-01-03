@@ -1,7 +1,7 @@
 "use strict";
 
-// Schemas
-const Profile = require('@models/profile.model');
+// Packages
+const db = require('@db');
 
 // Constants
 const messages = require('@constants/messages');
@@ -29,7 +29,7 @@ const DeleteDocumentResponse = require('@responses/DeleteDocumentResponse');
 
 // One
 exports.createOne = (req, res, next) => {
-  const profile = new Profile(req.body.data);
+  const profile = db.profiles.save(req.body.data);
 
   profile
     .save()
@@ -44,7 +44,7 @@ exports.createOne = (req, res, next) => {
 exports.findOne = (req, res, next) => {
   const id = req.params[parameters.PARAM_ID_PROFILE];
 
-  Profile
+  db.profiles
     .findById(id)
     .then((profile) => {
       if (!profile) throw new NotFoundError(models.MODEL_NAME_PROFILE);
@@ -58,7 +58,7 @@ exports.findOne = (req, res, next) => {
 exports.updateOne = (req, res, next) => {
   const id = req.params[parameters.PARAM_ID_PROFILE];
 
-  Profile
+  db.profiles
     .findOneAndUpdate({
       _id: id
     }, req.body.data, {
@@ -76,7 +76,8 @@ exports.updateOne = (req, res, next) => {
 exports.deleteOne = (req, res, next) => {
   const id = req.params[parameters.PARAM_ID_PROFILE];
 
-  Profile
+  db.profiles
+
     .findOneAndRemove({
       _id: id
     })
@@ -93,7 +94,8 @@ exports.deleteOne = (req, res, next) => {
 exports.findMany = (req, res, next) => {
   var returnedProfiles;
 
-  Profile
+  db.profiles
+
     .find(req.query.filters)
     .select(req.query.fields)
     .skip(req.query.offset)
@@ -102,7 +104,7 @@ exports.findMany = (req, res, next) => {
     .then((profiles) => {
       if (!profiles || profiles.length <= 0) throw new NotFoundError(models.MODEL_NAME_PROFILE);
       returnedProfiles = profiles;
-      return Profile.countDocuments(req.query.filters);
+      return db.profiles.countDocuments(req.query.filters);
     })
     .then((total) => {
       res.json(new SelectDocumentsResponse(returnedProfiles, total));

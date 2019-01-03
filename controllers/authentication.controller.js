@@ -1,10 +1,9 @@
 "use strict";
 
+const db = require('@db');
+
 // Config
 var config = require('@config');
-
-// Schema
-const User = require('@models/user.model');
 
 // Errors
 const MissingEmailError = require('@errors/MissingEmailError');

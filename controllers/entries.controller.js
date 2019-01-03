@@ -1,7 +1,6 @@
 "use strict";
 
-// Schemas
-const Entry = require('@models/entry.model');
+const db = require('@db');
 
 // Constants
 const messages = require('@constants/messages');
@@ -30,7 +29,7 @@ const DeleteDocumentResponse = require('@responses/DeleteDocumentResponse');
 exports.findOne = (req, res, next) => {
   const id = req.params[parameters.PARAM_ID_ENTRY];
 
-  Entry
+  db.entries
     .findById(id)
     .then((entry) => {
       if (!entry) throw new NotFoundError(models.MODEL_NAME_ENTRY);
@@ -42,7 +41,7 @@ exports.findOne = (req, res, next) => {
 };
 
 exports.createOne = (req, res, next) => {
-  const entry = new Entry(req.body.data);
+  const entry =  db.entries.create(req.body.data);
 
   entry.save()
     .then((entrySaved) => {
@@ -56,7 +55,7 @@ exports.createOne = (req, res, next) => {
 exports.updateOne = (req, res, next) => {
   const id = req.params[parameters.PARAM_ID_ENTRY];
 
-  Entry
+  db.entries
     .findOneAndUpdate({
       _id: id
     }, req.body.data, {
@@ -74,7 +73,7 @@ exports.updateOne = (req, res, next) => {
 exports.deleteOne = (req, res, next) => {
   const id = req.params[parameters.PARAM_ID_ENTRY];
 
-  Entry
+  db.entries
     .findOneAndRemove({
       _id: id
     })
@@ -89,7 +88,7 @@ exports.deleteOne = (req, res, next) => {
 
 exports.findMany = (req, res, next) => {
   var returnedEntries;
-  Entry
+  db.entries
     .find(req.query.filters)
     .select(req.query.fields)
     .skip(req.query.offset)
@@ -98,7 +97,7 @@ exports.findMany = (req, res, next) => {
     .then((entries) => {
       if (!entries || entries.length <= 0) throw new NotFoundError(models.MODEL_NAME_ENTRY);
       returnedEntries = entries;
-      return Entry.countDocuments(req.query.filters);
+      return db.entries.countDocuments(req.query.filters);
     })
     .then((total) => {
       res.json(new SelectDocumentsResponse(returnedEntries, total));

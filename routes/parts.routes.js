@@ -18,30 +18,30 @@ const ctrlParts = require('@controllers/parts.controller.js');
 const ctrlGroups = require('@controllers/groups.controller.js');
 
 module.exports = (router) => {
-  router.get('/', requireAuthentication({
+  router.get('/', requireAuthentication.user({
     scope: "parts:read"
   }), hasPerms(perms.PERMISSION_SCOPE_PARTS, perms.PERMISSION_ACTION_READ), parseQuerySelection, ctrlParts.findMany);
-  router.post('/', requireAuthentication({
+  router.post('/', requireAuthentication.user({
     scope: "parts:write"
   }), hasPerms(perms.PERMISSION_SCOPE_PARTS, perms.PERMISSION_ACTION_CREATE), requireBodyDataObject, ctrlParts.createOne);
-  router.put('/', requireAuthentication({
+  router.put('/', requireAuthentication.user({
     scope: "parts:write"
   }), hasPerms(perms.PERMISSION_SCOPE_PARTS, perms.PERMISSION_ACTION_UPDATE), requireBodyDataArray, ctrlParts.updateMany);
-  router.delete('/', requireAuthentication({
+  router.delete('/', requireAuthentication.user({
     scope: "parts:delete"
   }), hasPerms(perms.PERMISSION_SCOPE_PARTS, perms.PERMISSION_ACTION_DELETE), ctrlParts.deleteAll);
 
-  router.get('/' + ':' + parameters.PARAM_ID_PART, requireAuthentication({
+  router.get('/' + ':' + parameters.PARAM_ID_PART, requireAuthentication.user({
     scope: "parts:read"
   }), hasPerms(perms.PERMISSION_SCOPE_PARTS, perms.PERMISSION_ACTION_READ), ctrlParts.findOne);
-  router.put('/' + ':' + parameters.PARAM_ID_PART, requireAuthentication({
+  router.put('/' + ':' + parameters.PARAM_ID_PART, requireAuthentication.user({
     scope: "parts:write"
   }), hasPerms(perms.PERMISSION_SCOPE_PARTS, perms.PERMISSION_ACTION_UPDATE), requireBodyDataObject, ctrlParts.updateOne);
-  router.delete('/' + ':' + parameters.PARAM_ID_PART, requireAuthentication({
+  router.delete('/' + ':' + parameters.PARAM_ID_PART, requireAuthentication.user({
     scope: "parts:delete"
   }), hasPerms(perms.PERMISSION_SCOPE_PARTS, perms.PERMISSION_ACTION_DELETE), ctrlParts.deleteOne);
 
-  router.get('/' + ':' + parameters.PARAM_ID_PART + paths.PATH_GROUPS, requireAuthentication({
+  router.get('/' + ':' + parameters.PARAM_ID_PART + paths.PATH_GROUPS, requireAuthentication.user({
     scope: "groups:read"
   }), hasPerms(perms.PERMISSION_SCOPE_PARTS, perms.PERMISSION_ACTION_READ), parseQuerySelection, ctrlParts.filterGroupsOfOne, hasPerms(perms.PERMISSION_SCOPE_GROUPS, perms.PERMISSION_ACTION_READ), ctrlGroups.findMany);
 };

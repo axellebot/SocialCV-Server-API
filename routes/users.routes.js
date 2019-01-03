@@ -17,26 +17,26 @@ const parseQuerySelection = require('@middlewares/selection');
 const ctrlUsers = require('@controllers/users.controller.js');
 
 module.exports = (router) => {
-  router.get('/', authenticate({
+  router.get('/', authenticate.user({
     scope: "users:read"
   }), hasPerms(perms.PERMISSION_SCOPE_USERS, perms.PERMISSION_ACTION_READ), parseQuerySelection, ctrlUsers.findMany);
-  router.post('/', authenticate({
+  router.post('/', authenticate.user({
     scope: "users:write"
   }), hasPerms(perms.PERMISSION_SCOPE_USERS, perms.PERMISSION_ACTION_CREATE), requireBodyDataObject, ctrlUsers.createOne);
-  router.put('/', authenticate({
+  router.put('/', authenticate.user({
     scope: "users:write"
   }), hasPerms(perms.PERMISSION_SCOPE_USERS, perms.PERMISSION_ACTION_UPDATE), requireBodyDataArray, ctrlUsers.updateMany);
-  router.delete('/', authenticate({
+  router.delete('/', authenticate.user({
     scope: "users:delete"
   }), hasPerms(perms.PERMISSION_SCOPE_USERS, perms.PERMISSION_ACTION_DELETE), ctrlUsers.deleteAll);
 
-  router.get('/' + ':' + parameters.PARAM_ID_USER, authenticate({
+  router.get('/' + ':' + parameters.PARAM_ID_USER, authenticate.user({
     scope: "users:read"
   }), hasPerms(perms.PERMISSION_SCOPE_USERS, perms.PERMISSION_ACTION_READ), ctrlUsers.findOne);
-  router.put('/' + ':' + parameters.PARAM_ID_USER, authenticate({
+  router.put('/' + ':' + parameters.PARAM_ID_USER, authenticate.user({
     scope: "users:write"
   }), hasPerms(perms.PERMISSION_SCOPE_USERS, perms.PERMISSION_ACTION_UPDATE), requireBodyDataObject, ctrlUsers.updateOne);
-  router.delete('/' + ':' + parameters.PARAM_ID_USER, authenticate({
+  router.delete('/' + ':' + parameters.PARAM_ID_USER, authenticate.user({
     scope: "users:delete"
   }), hasPerms(perms.PERMISSION_SCOPE_USERS, perms.PERMISSION_ACTION_DELETE), ctrlUsers.deleteOne);
 };

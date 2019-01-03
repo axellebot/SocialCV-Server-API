@@ -1,8 +1,7 @@
 "use strict";
 
 // Config
-const config = require('./config');
-
+const config = require('@config');
 const mongoose = require("mongoose");
 
 // Setup promises

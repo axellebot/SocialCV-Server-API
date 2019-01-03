@@ -15,7 +15,7 @@ const permissions = require('@constants/permissions');
  * @param next
  */
 module.exports = (scopeName, permCRUD) => {
-  return function(req, res, next) {
+  return (req, res, next) => {
     console.info({
       "Scope": scopeName,
       perm: permCRUD,

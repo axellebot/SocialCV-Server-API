@@ -7,7 +7,7 @@ const perms = require('@constants/permissions');
 
 // Middlewares
 const hasPerms = require('@middlewares/security/RBAC');
-const authenticate = require('@middlewares/security/authentication');
+const requireAuthentication = require('@middlewares/security/authentication');
 const requireBodyData = require('@middlewares/body/data');
 const requireBodyDataArray = require('@middlewares/body/dataArray');
 const requireBodyDataObject = require('@middlewares/body/dataObject');
@@ -17,26 +17,26 @@ const parseQuerySelection = require('@middlewares/selection');
 const ctrlEntries = require('@controllers/entries.controller.js');
 
 module.exports = (router) => {
-  router.get('/', authenticate({
+  router.get('/', requireAuthentication.user({
     scope: "entries:read"
   }), hasPerms(perms.PERMISSION_SCOPE_ENTRIES, perms.PERMISSION_ACTION_READ), parseQuerySelection, ctrlEntries.findMany);
-  router.post('/', authenticate({
+  router.post('/', requireAuthentication.user({
     scope: "entries:write"
   }), hasPerms(perms.PERMISSION_SCOPE_ENTRIES, perms.PERMISSION_ACTION_CREATE), requireBodyDataObject, ctrlEntries.createOne);
-  router.put('/', authenticate({
+  router.put('/', requireAuthentication.user({
     scope: "entries:write"
   }), hasPerms(perms.PERMISSION_SCOPE_ENTRIES, perms.PERMISSION_ACTION_UPDATE), requireBodyDataArray, ctrlEntries.updateMany);
-  router.delete('/', authenticate({
+  router.delete('/', requireAuthentication.user({
     scope: "entries:delete"
   }), hasPerms(perms.PERMISSION_SCOPE_ENTRIES, perms.PERMISSION_ACTION_DELETE), ctrlEntries.deleteAll);
 
-  router.get('/' + ':' + parameters.PARAM_ID_ENTRY, authenticate({
+  router.get('/' + ':' + parameters.PARAM_ID_ENTRY, requireAuthentication.user({
     scope: "entries:read"
   }), hasPerms(perms.PERMISSION_SCOPE_ENTRIES, perms.PERMISSION_ACTION_READ), ctrlEntries.findOne);
-  router.put('/' + ':' + parameters.PARAM_ID_ENTRY, authenticate({
+  router.put('/' + ':' + parameters.PARAM_ID_ENTRY, requireAuthentication.user({
     scope: "entries:write"
   }), hasPerms(perms.PERMISSION_SCOPE_ENTRIES, perms.PERMISSION_ACTION_UPDATE), requireBodyDataObject, ctrlEntries.updateOne);
-  router.delete('/' + ':' + parameters.PARAM_ID_ENTRY, authenticate({
+  router.delete('/' + ':' + parameters.PARAM_ID_ENTRY, requireAuthentication.user({
     scope: "entries:delete"
   }), hasPerms(perms.PERMISSION_SCOPE_ENTRIES, perms.PERMISSION_ACTION_DELETE), ctrlEntries.deleteOne);
 };

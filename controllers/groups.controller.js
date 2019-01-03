@@ -1,7 +1,7 @@
 "use strict";
 
-// Schemas
-const Group = require('@models/group.model');
+// Others
+const db = require('@db');
 
 // Constants
 const messages = require('@constants/messages');
@@ -43,7 +43,7 @@ exports.findOne = (req, res, next) => {
 };
 
 exports.createOne = (req, res, next) => {
-  const group = new Group(req.body.data);
+  const group = db.groups.create(req.body.data);
 
   group.save()
     .then((groupSaved) => {

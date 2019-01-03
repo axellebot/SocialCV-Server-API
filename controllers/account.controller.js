@@ -1,7 +1,6 @@
 "use strict";
 
-// Schemas
-const User = require('@models/user.model');
+const db = require('@db');
 
 // Constants
 const messages = require('@constants/messages');

@@ -1,7 +1,6 @@
 "use strict";
 
-// Schemas
-const User = require('@models/user.model');
+const db = require('@db');
 
 // Constants
 const messages = require('@constants/messages');
@@ -32,7 +31,7 @@ const DeleteDocumentResponse = require('@responses/DeleteDocumentResponse');
 exports.findOne = (req, res, next) => {
   const id = req.params[parameters.PARAM_ID_USER];
 
-  User
+  db.users
     .findById(id)
     .then((user) => {
       if (!user) throw new NotFoundError(models.MODEL_NAME_USER);
@@ -46,7 +45,7 @@ exports.findOne = (req, res, next) => {
 exports.updateOne = (req, res, next) => {
   const id = req.params[parameters.PARAM_ID_USER];
 
-  User
+  db.users
     .findOneAndUpdate({
       _id: id
     }, req.body.data, {
@@ -64,7 +63,7 @@ exports.updateOne = (req, res, next) => {
 exports.deleteOne = (req, res, next) => {
   const id = req.params[parameters.PARAM_ID_USER];
 
-  User
+  db.users
     .findOneAndRemove({
       _id: id
     })
@@ -79,8 +78,7 @@ exports.deleteOne = (req, res, next) => {
 
 exports.findMany = (req, res, next) => {
   var returnedUsers;
-  User
-    .find(req.query.filters)
+  db.users.find(req.query.filters)
     .select(req.query.fields)
     .skip(req.query.offset)
     .limit(req.query.limit)
@@ -88,11 +86,11 @@ exports.findMany = (req, res, next) => {
     .then((users) => {
       if (!users || users.length <= 0) throw new NotFoundError(models.MODEL_NAME_USER);
       returnedUsers = users;
-      return User.countDocuments(req.query.filters)
+      return db.users.countDocuments(req.query.filters)
     })
     .then((count) => {
-      for(var index in returnedUsers) { 
-        returnedUsers[index]=returnedUsers[index].publicData(); 
+      for (var index in returnedUsers) {
+        returnedUsers[index] = returnedUsers[index].publicData();
       }
       res.json(new SelectDocumentsResponse(returnedUsers, count));
     })

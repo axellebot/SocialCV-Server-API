@@ -15,7 +15,7 @@ module.exports = (app) => {
   //= ========================
   const routeIndex = express.Router();
   app.use(paths.PATH_INDEX, routeIndex);
-  
+
   routeIndex.get('/', controllerIndex.get);
   routeIndex.post('/', controllerIndex.get);
 
@@ -25,14 +25,14 @@ module.exports = (app) => {
   const routeOAuth = express.Router();
   app.use(paths.PATH_OAUTH, routeOAuth);
   require('@routes/oauth.routes.js')(routeOAuth);
-  
+
   //= ========================
   // Auth Routes
   //= ========================
   const routeAuth = express.Router();
   app.use('', routeAuth);
   require('@routes/authentication.routes.js')(routeAuth);
-  
+
   //= ========================
   // Accounts Routes
   //= ========================
@@ -67,7 +67,7 @@ module.exports = (app) => {
   const routePermissions = express.Router();
   app.use(paths.PATH_PERMISSION, routePermissions);
   require('@routes/permissions.routes.js')(routePermissions);
-  
+
   //= ========================
   // Profiles Routes
   //= ========================
