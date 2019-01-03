@@ -33,4 +33,4 @@ Use config templates `./config/*.json.dist` to add configuration file `./config/
 ```
 
 [license-image]: https://img.shields.io/badge/license-Apache%202-blue.svg
-[license-url]: 
+[license-url]: ./LICENSE
