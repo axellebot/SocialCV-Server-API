@@ -23,9 +23,12 @@ const models = require('@constants/models');
 
 var OAuthScopeSchema = new Schema({
   scope: String,
-  isDefault: Boolean
+  description: Boolean
 }, {
-  timestamps: true
+  timestamps: {
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  }
 });
 
 module.exports = mongoose.model(models.MODEL_NAME_OAUTH_SCOPE, OAuthScopeSchema, "oauthScopes");

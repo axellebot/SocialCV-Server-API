@@ -63,7 +63,10 @@ var UserSchema = new Schema({
     default: []
   }
 }, {
-  timestamps: true
+  timestamps: {
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  }
 });
 
 //= ===============================

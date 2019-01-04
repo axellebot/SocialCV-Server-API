@@ -19,7 +19,10 @@ var OAuthAccessTokenSchema = new Schema({
     ref: models.MODEL_NAME_OAUTH_CLIENT,
   }
 }, {
-  timestamps: true
+  timestamps: {
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  }
 });
 
 module.exports = mongoose.model(models.MODEL_NAME_OAUTH_ACCESS_TOKEN, OAuthAccessTokenSchema, "oauthAccessTokens");

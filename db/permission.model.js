@@ -35,7 +35,10 @@ var PermissionSchema = new Schema({
     default: {}
   },
 }, {
-  timestamps: true
+  timestamps: {
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  }
 });
 
 module.exports = mongoose.model(models.MODEL_NAME_PERMISSION, PermissionSchema, "permissions");

@@ -53,7 +53,10 @@ var PartSchema = new Schema({
     ref: models.MODEL_NAME_USER
   }
 }, {
-  timestamps: true
+  timestamps: {
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  }
 });
 
 module.exports = mongoose.model(models.MODEL_NAME_PART, PartSchema, "parts");
