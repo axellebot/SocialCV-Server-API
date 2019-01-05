@@ -46,7 +46,6 @@ const LoginResponse = require('@responses/LoginResponse');
 //         }
 //       ]
 //     })
-//     .exec()
 //     .then((existingUser) => {
 //       // If user is not unique, return error
 //       if (existingUser) throw new EmailAlreadyExistError();
@@ -57,7 +56,6 @@ const LoginResponse = require('@responses/LoginResponse');
 //       // Respond with JWT if user was created
 //       return User
 //         .findById(newUser._id)
-//         .exec();
 //     })
 //     .then((user) => {
 //       res.json(new LoginResponse(generateToken(user.publicData(), user.publicData())));

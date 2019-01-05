@@ -1,15 +1,16 @@
 "use strict";
 
-// Requires packages
+// Packages
 const bcrypt = require('bcrypt');
 
-// Config
+// Others
 const config = require('@config');
-
-// Constants
 const models = require('@constants/models');
+const permissions = require('@constants/permissions');
+const mongoose = require('@mongoose');
+const db = require('@db');
 
-var mongoose = require('@mongoose');
+// Create Schema
 var Schema = mongoose.Schema;
 
 //= ===============================
@@ -42,10 +43,10 @@ var UserSchema = new Schema({
     required: true,
     default: true
   },
-  permission: {
-    type: Schema.Types.ObjectId,
-    ref: models.MODEL_NAME_PERMISSION,
-    required: true
+  roles: {
+    type: [String],
+    required: true,
+    default: [permissions.PERMISSION_ROLE_GUEST]
   },
   picture: {
     type: String,
@@ -70,7 +71,7 @@ var UserSchema = new Schema({
 });
 
 //= ===============================
-// User ORM Methods
+// User ORM Methods (don't use ES function)
 //= ===============================
 
 // Add save middleware to salt password
@@ -94,20 +95,66 @@ UserSchema.pre('save', function(next) {
   });
 });
 
-// Add method to verify the password (must be a FUNCTION declaration -No ES2015)
-UserSchema.methods.verifyPassword = (candidatePassword) =>{
+
+
+// Add method to verify the password
+UserSchema.methods.verifyPassword = (candidatePassword) => {
   return bcrypt.compare(candidatePassword, this.password)
 };
 
-UserSchema.methods.publicData = () =>{
+/**
+ * publicData
+ *
+ * return User public data object
+ */
+UserSchema.methods.publicData = function() {
   return {
     _id: this._id,
     email: this.email,
     username: this.username,
+    roles: this.roles,
+    disabled: this.disabled,
     profiles: this.profiles,
-    picture: this.picture,
-    permission: this.permission,
+    picture: this.picture
   };
 };
+
+/**
+ * getScopes
+ *
+ * return array of strings scope
+ */
+UserSchema.methods.getScopes = function() {
+  var scopes = db.permissions
+    .find({
+      'role': {
+        $in: this.roles
+      }
+    })
+    .exec((err, permissions) => {
+      var tmp = [];
+      if (err) return tmp;
+      if (permissions.size > 0) permissions.forEach((permission) => Array.prototype.push.apply(tmp, permission.getScopes()));
+      console.log("test",tmp);
+      return tmp;
+    });
+
+  scopes = scopes.filter((v, i) => scopes.indexOf(v) === i); // remove duplicates
+  return scopes;
+}
+
+/**
+ * verifyScopes 
+ * 
+ * Check scopes
+ */
+UserSchema.methods.verifyScopes = function(scopes) {
+  const userScopes = this.getScopes();
+  for (var scope in scopes) {
+    if (!userScopes.contains(scope)) return false;
+  }
+  return true;
+};
+
 
 module.exports = mongoose.model(models.MODEL_NAME_USER, UserSchema, "users");

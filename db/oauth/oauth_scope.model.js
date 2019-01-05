@@ -1,10 +1,12 @@
 "use strict";
 
-var mongoose = require('@mongoose');
-var Schema = mongoose.Schema;
-
-// Constants
+// Others
+const config = require('@config');
+const mongoose = require('@mongoose');
 const models = require('@constants/models');
+
+// Create schema
+var Schema = mongoose.Schema;
 
 // oauth_access_tokens:write oauth_access_tokens:read oauth_access_tokens:delete
 // oauth_authorization_codes:write oauth_authorization_codes:read oauth_authorization_codes:delete
@@ -22,8 +24,15 @@ const models = require('@constants/models');
 
 
 var OAuthScopeSchema = new Schema({
-  scope: String,
-  description: Boolean
+  scope: {
+    type: String,
+    unique: true,
+    required: true
+  },
+  description: {
+    type: String,
+    default: ""
+  }
 }, {
   timestamps: {
     createdAt: 'createdAt',

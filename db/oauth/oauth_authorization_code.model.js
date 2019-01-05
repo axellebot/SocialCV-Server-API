@@ -1,21 +1,35 @@
 "use strict";
 
-var mongoose = require('@mongoose');
-var Schema = mongoose.Schema;
-
-// Constants
+// Others
+const mongoose = require('@mongoose');
+const config = require('@config');
 const models = require('@constants/models');
 
+// Create schema
+var Schema = mongoose.Schema;
+
 var OAuthAuthorizationCodeSchema = new Schema({
-  code: String,
-  expires: Date,
+  code: {
+    type: String,
+    unique: true,
+    required: true
+  },
+  expires: {
+    type: Date,
+    required: true,
+    default: Date(),
+  },
   redirectUri: String,
-  scope: String,
+  scopes: {
+    type: [String],
+    required: true,
+    default: []
+  },
   user: {
     type: Schema.Types.ObjectId,
     ref: models.MODEL_NAME_USER,
   },
-  oauthClient: {
+  client: {
     type: Schema.Types.ObjectId,
     ref: models.MODEL_NAME_OAUTH_CLIENT,
   },
@@ -26,4 +40,4 @@ var OAuthAuthorizationCodeSchema = new Schema({
   }
 });
 
-module.exports = mongoose.model(models.MODEL_NAME_OAUTH_AUTHORIZATION_CODE, OAuthAuthorizationCodeSchema,"oauthAuthorizationCodes");
+module.exports = mongoose.model(models.MODEL_NAME_OAUTH_AUTHORIZATION_CODE, OAuthAuthorizationCodeSchema, "oauthAuthorizationCodes");

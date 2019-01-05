@@ -31,7 +31,7 @@ const NotFoundError = require('@errors/NotFoundError');
 passport.use(new BearerStrategy((token, done) => {
   db.oauthAccessTokens
     .findOne({
-      accessToken: token
+      token: token
     })
     .populate({
       path: 'user',
@@ -45,7 +45,7 @@ passport.use(new BearerStrategy((token, done) => {
         if (Date.now() > token.expires) throw new ExpiredAuthenticationTokenError();
       }
       return done(null, token.user, {
-        scope: token.scope
+        scopes: token.scopes
       });
     })
     .catch(function(err) {
@@ -72,7 +72,7 @@ passport.use(new OAuthClientPasswordStrategy((clientId, clientSecret, done) => {
         throw new FailedAuthenticationTokenError();
       }
       return done(null, client, {
-        scope: client.scope
+        scopes: client.scopes
       });
     })
     .catch((err) => done(err));

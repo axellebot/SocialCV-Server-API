@@ -36,8 +36,8 @@ module.exports.user = (options) => {
       session: false
     }),
     (req, res, next) => {
-      if (req.authInfo.scope && options.scope) {
-        if (req.authInfo.scope.split(" ").includes(options.scope)) {
+      if (req.authInfo.scopes && options.scope) {
+        if (req.authInfo.scopes.includes(options.scope)) {
           next();
         } else {
           next(new MissingPrivilegeError());

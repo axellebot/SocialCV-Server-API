@@ -6,7 +6,6 @@ const paths = require('@constants/paths');
 const perms = require('@constants/permissions');
 
 // Middlewares
-const hasPerms = require('@middlewares/security/RBAC');
 const authenticate = require('@middlewares/security/authentication');
 const requireBodyData = require('@middlewares/body/data');
 const requireBodyDataArray = require('@middlewares/body/dataArray');
@@ -19,24 +18,24 @@ const ctrlUsers = require('@controllers/users.controller.js');
 module.exports = (router) => {
   router.get('/', authenticate.user({
     scope: "users:read"
-  }), hasPerms(perms.PERMISSION_SCOPE_USERS, perms.PERMISSION_ACTION_READ), parseQuerySelection, ctrlUsers.findMany);
+  }), parseQuerySelection, ctrlUsers.findMany);
   router.post('/', authenticate.user({
     scope: "users:write"
-  }), hasPerms(perms.PERMISSION_SCOPE_USERS, perms.PERMISSION_ACTION_CREATE), requireBodyDataObject, ctrlUsers.createOne);
+  }), requireBodyDataObject, ctrlUsers.createOne);
   router.put('/', authenticate.user({
     scope: "users:write"
-  }), hasPerms(perms.PERMISSION_SCOPE_USERS, perms.PERMISSION_ACTION_UPDATE), requireBodyDataArray, ctrlUsers.updateMany);
+  }), requireBodyDataArray, ctrlUsers.updateMany);
   router.delete('/', authenticate.user({
     scope: "users:delete"
-  }), hasPerms(perms.PERMISSION_SCOPE_USERS, perms.PERMISSION_ACTION_DELETE), ctrlUsers.deleteAll);
+  }), ctrlUsers.deleteAll);
 
   router.get('/' + ':' + parameters.PARAM_ID_USER, authenticate.user({
     scope: "users:read"
-  }), hasPerms(perms.PERMISSION_SCOPE_USERS, perms.PERMISSION_ACTION_READ), ctrlUsers.findOne);
+  }), ctrlUsers.findOne);
   router.put('/' + ':' + parameters.PARAM_ID_USER, authenticate.user({
     scope: "users:write"
-  }), hasPerms(perms.PERMISSION_SCOPE_USERS, perms.PERMISSION_ACTION_UPDATE), requireBodyDataObject, ctrlUsers.updateOne);
+  }), requireBodyDataObject, ctrlUsers.updateOne);
   router.delete('/' + ':' + parameters.PARAM_ID_USER, authenticate.user({
     scope: "users:delete"
-  }), hasPerms(perms.PERMISSION_SCOPE_USERS, perms.PERMISSION_ACTION_DELETE), ctrlUsers.deleteOne);
+  }), ctrlUsers.deleteOne);
 };

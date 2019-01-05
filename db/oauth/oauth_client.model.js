@@ -1,17 +1,23 @@
 "use strict";
 
-var mongoose = require('@mongoose');
-var Schema = mongoose.Schema;
-
-// Constants
+// Others
+const config = require('@config');
+const mongoose = require('@mongoose');
 const models = require('@constants/models');
+
+// Create schema
+var Schema = mongoose.Schema;
 
 var OAuthClientSchema = new Schema({
   name: String,
   secret: String,
   redirectUri: String,
   grantTypes: String,
-  scope: String,
+  scopes: {
+    type: [String],
+    required: true,
+    default: []
+  },
   user: {
     type: Schema.Types.ObjectId,
     ref: models.MODEL_NAME_USER,

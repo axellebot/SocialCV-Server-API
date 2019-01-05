@@ -42,17 +42,18 @@ const expiresIn = {
  *
  * The callback takes the `client` requesting authorization, the `redirectURI`
  * (which is used as a verifier in the subsequent exchange), the authenticated
- * `user` granting access, and their response, which contains approved scope,
+ * `user` granting access, and their response, which contains approved scopes,
  * duration, etc. as parsed by the application.  The application issues a code,
  * which is bound to these values, and will be exchanged for an access token.
  */
 oauth2server.grant(oauth2orize.grant.code((client, redirectURI, user, ares, done) => {
+  console.log("grant code",client,redirectURI,user,ares);
   var code = utils.uid(16);
 
   db.oauthAuthorizationCodes
     .create({
       code: code,
-      oauthClient: client.id,
+      client: client.id,
       redirectUri: redirectURI,
       user: user.id,
       scope: ares.scope
@@ -76,6 +77,7 @@ oauth2server.grant(oauth2orize.grant.code((client, redirectURI, user, ares, done
  * authorized the code.
  */
 oauth2server.exchange(oauth2orize.exchange.code((client, code, redirectURI, done) => {
+  console.log("exchange code",client,code,redirectURI);
   db.oauthAuthorizationCodes
     .findOne({
       code: code
@@ -94,11 +96,11 @@ oauth2server.exchange(oauth2orize.exchange.code((client, code, redirectURI, done
 
       return db.oauthAccessTokens
         .create({
-          accessToken: token,
+          token: token,
           expires: config.accessToken.calculateExpirationDate(),
           user: authorizationCode.user,
-          oauthClient: authorizationCode.oauthClient,
-          scope: authorizationCode.scope
+          client: authorizationCode.client,
+          scopes: authorizationCode.scopes
         });
     })
     .then((savedAccessToken) => {
@@ -119,17 +121,11 @@ oauth2server.exchange(oauth2orize.exchange.code((client, code, redirectURI, done
  * which is bound to these values.
  */
 oauth2server.grant(oauth2orize.grant.token((client, user, ares, done) => {
+  console.log("grant token",client,user,ares);
   const token = utils.createToken();
   const expirationDate = config.accessToken.calculateExpirationDate();
 
-  db.oauthAccessTokens
-    .create({
-      accessToken: token,
-      expires: expirationDate,
-      user: user.id,
-      oauthClient: client.id,
-      scope: client.scope
-    })
+  createAccessToken(user.id, client._id, user.getScopes())
     .then((savedAccessToken) => {
       if (!savedAccessToken) throw new DatabaseCreateError();
       return done(null, token, expiresIn);
@@ -145,11 +141,12 @@ oauth2server.grant(oauth2orize.grant.token((client, user, ares, done) => {
  * application issues an access token on behalf of the client who authorized the code.
  */
 oauth2server.exchange(oauth2orize.exchange.clientCredentials((client, scope, done) => {
-
+  console.log("exchange clientCredentials",client,scope);
+  
   // Pass in a null for user id since there is no user when using this grant type
-  return createAccessToken(null, client._id, scope, config.accessToken.calculateExpirationDate())
+  return createAccessToken(null, client._id, scope.split(" "))
 
-    .then((savedAccessToken) => done(null, savedAccessToken.accessToken, null, expiresIn))
+    .then((savedAccessToken) => done(null, savedAccessToken.token, null, expiresIn))
     .catch(err => done(err));
 }));
 
@@ -160,53 +157,42 @@ oauth2server.exchange(oauth2orize.exchange.clientCredentials((client, scope, don
  * request for verification.  If this value is validated, the application issues an access
  * token on behalf of the client who authorized the code
  */
-oauth2server.exchange(oauth2orize.exchange.refreshToken((client, refreshToken, scope, done) => {
-  var accessToken;
-  if (!scope) {
-    scope = scope || client.scope;
-  } else {
-    // TODO : Compare client scop with asked scope
-    scope = scope || client.scope; // remove after adding security check
-  }
+oauth2server.exchange(oauth2orize.exchange.refreshToken((client, refreshToken, scopes, done) => {
+    console.log("exchange refreshToken",client,refreshToken,scopes);
+var accessToken;
 
   db.oauthRefreshTokens
     .findOne({
-      refreshToken: refreshToken
+      token: refreshToken
     })
     .then((foundRefreshToken) => {
       if (!foundRefreshToken) throw new NotFoundError("Refresh token");
 
-      const accessToken = utils.createToken();
       foundRefreshToken.remove();
 
-      return createAccessToken(foundRefreshToken.user, client._id, scope, config.accessToken.calculateExpirationDate());
+      return createAccessToken(foundRefreshToken.user, client._id, scopes);
     })
     .then((savedAccessToken) => {
       if (!savedAccessToken) throw new DatabaseCreateError();
-      accessToken = savedAccessToken.accessToken;
-      return createRefreshToken(savedAccessToken.user, client._id, scope, config.refreshToken.calculateExpirationDate());
+      accessToken = savedAccessToken.token;
+      return createRefreshToken(savedAccessToken.user, client._id, scopes);
     })
     .then((savedRefreshToken) => {
       if (!savedRefreshToken) throw new DatabaseCreateError();
-      return done(null, accessToken, savedRefreshToken.refreshToken, expiresIn)
+      return done(null, accessToken, savedRefreshToken.token, expiresIn)
     })
     .catch((err) => done(err));
 }));
 
-oauth2server.exchange(oauth2orize.exchange.password((client, username, password, scope, done) => {
-  // Find the user in the database with the requested username or email
-
+/**
+ * Find the user in the database with the requested username or email
+ */
+oauth2server.exchange(oauth2orize.exchange.password((client, username, password, scopes, done) => {
+console.log("exchange password",username,password,scopes);
   var accessToken;
 
   if (!client) throw Error(); // Need client authentication
   if (!client.grantTypes.split(" ").includes("password")) throw MissingPrivilegeError();
-
-  if (!scope) {
-    scope = scope || client.scope;
-  } else {
-    // TODO : Compare client scop with asked scope
-    scope = scope || client.scope; // remove after adding security check
-  }
 
   const options = {
     $or: [{
@@ -217,52 +203,48 @@ oauth2server.exchange(oauth2orize.exchange.password((client, username, password,
       }
     ]
   };
-  
+
   db.users.findOne(options)
     .then((user) => {
       if (!user) throw new UserNotFoundError();
       if (user.disabled) throw new UserDisabledError();
       // If there is a match and the passwords are equal 
       if (!user.verifyPassword(password)) throw new WrongPasswordError();
-      return createAccessToken(user._id, client._id, scope, config.accessToken.calculateExpirationDate());
+      if(!user.verifyScopes(scopes)) throw new MissingPrivilegeError();
+      return createAccessToken(user._id, client._id, scopes);
     })
     .then((savedAccessToken) => {
       if (!savedAccessToken) throw new DatabaseCreateError();
-      accessToken = savedAccessToken.accessToken;
-      return createRefreshToken(savedAccessToken.user, client._id, scope, config.refreshToken.calculateExpirationDate());
+      accessToken = savedAccessToken.token;
+      return createRefreshToken(savedAccessToken.user, client._id, savedAccessToken.scope);
     })
     .then((savedRefreshToken) => {
       if (!savedRefreshToken) throw new DatabaseCreateError();
       return done(null, /* No error*/
         accessToken, /* The generated token */
-        savedRefreshToken.refreshToken, /* The generated refresh token */
+        savedRefreshToken.token, /* The generated refresh token */
         expiresIn /* Additional properties to be merged with the token and send in the response */
       );
     })
     .catch((err) => done(err));
 }));
 
-function createAccessToken(userId, clientId, scope, expirationDate) {
-  var accessToken = utils.createToken();
-  return db.oauthAccessTokens.create({
-    accessToken: accessToken,
-    oauthClient: clientId,
-    expires: expirationDate,
-    user: userId,
-    scope: scope
-  });
+function createAccessToken(userId, clientId, scopes) {
+  return db.oauthAccessTokens
+    .create({
+      client: clientId,
+      user: userId,
+      scopes: scopes
+    });
 }
 
-function createRefreshToken(userId, clientId, scope, expirationDate) {
-  var refreshToken = utils.createToken();
-
-  return db.oauthRefreshTokens.create({
-    refreshToken: refreshToken,
-    oauthClient: clientId,
-    expires: config.refreshToken.calculateExpirationDate(),
-    user: userId,
-    scope: scope
-  });
+function createRefreshToken(userId, clientId, scopes) {
+  return db.oauthRefreshTokens
+    .create({
+      client: clientId,
+      user: userId,
+      scopes: scopes
+    });
 }
 
 module.exports = oauth2server;

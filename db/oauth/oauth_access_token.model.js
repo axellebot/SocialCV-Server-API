@@ -1,20 +1,35 @@
 "use strict";
 
-var mongoose = require('@mongoose');
+// Others
+const config = require('@config');
+const mongoose = require('@mongoose');
+const models = require('@constants/models');
+const utils = require('@utils');
+
+// Create Schema
 var Schema = mongoose.Schema;
 
-// Constants
-const models = require('@constants/models');
-
 var OAuthAccessTokenSchema = new Schema({
-  accessToken: String,
-  expires: Date,
-  scope: String,
+  token: {
+    type: String,
+    unique: true,
+    default:utils.createToken()
+  },
+  expires: {
+    type: Date,
+    required: true,
+    default: config.accessToken.calculateExpirationDate()
+  },
+  scopes: {
+    type: [String],
+    required: true,
+    default: []
+  },
   user: {
     type: Schema.Types.ObjectId,
     ref: models.MODEL_NAME_USER,
   },
-  oauthClient: {
+  client: {
     type: Schema.Types.ObjectId,
     ref: models.MODEL_NAME_OAUTH_CLIENT,
   }

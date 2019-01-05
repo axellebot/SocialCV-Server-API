@@ -3,8 +3,9 @@
 // Constants
 const models = require('@constants/models');
 const permissions = require('@constants/permissions');
+const mongoose = require('@mongoose');
+const db = require('@db');
 
-var mongoose = require('@mongoose');
 var Schema = mongoose.Schema;
 
 const enumPerms = [permissions.PERMISSION_ALL, permissions.PERMISSION_OWN, permissions.PERMISSION_OWN];
@@ -21,19 +22,15 @@ var PermissionSchema = new Schema({
     required: true
   },
   scopes: {
-    type: Schema.Types.Mixed,
-    body: {
-      type: {
-        read: permissionsSchema,
-        write: permissionsSchema,
-        delete: permissionsSchema
-      },
-      required: true,
-      default: {},
-    },
+    type: [String],
     required: true,
-    default: {}
+    default: []
   },
+  inherits: {
+    type: [String],
+    required: true,
+    default: ["ROLE_PUBLIC"]
+  }
 }, {
   timestamps: {
     createdAt: 'createdAt',
@@ -41,4 +38,35 @@ var PermissionSchema = new Schema({
   }
 });
 
-module.exports = mongoose.model(models.MODEL_NAME_PERMISSION, PermissionSchema, "permissions");
+/**
+ * getScopes
+ *
+ * return array of 
+ */
+PermissionSchema.methods.getScopes =  function(countLoop) {
+  // Count Loop in case of inheritance role loop
+  if (countLoop) {
+    countLoop++;
+    if (countLoop > 1) return [];
+  } else {
+    countLoop = 0;
+  }
+
+  var scopes = [];
+  scopes = scopes.concat(this.scopes); // add permission scopes
+
+  if (this.inherits.size > 0) {
+    var permissions = await db.permissions.find({
+        'role': {
+          $in: this.inherits
+        }
+      });
+      
+    if (permissions.size > 0) permissions.forEach((permission) => Array.prototype.push.apply(scopes, permission.getScopes(countLoop)));
+  }
+
+  scopes = scopes.filter((v, i) => scopes.indexOf(v) === i); // remove duplicates
+  return scopes;
+}
+
+module.exports = mongoose.model(models.MODEL_NAME_ROLE, PermissionSchema, "permissions");
