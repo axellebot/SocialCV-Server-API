@@ -43,7 +43,7 @@ var PermissionSchema = new Schema({
  *
  * return array of 
  */
-PermissionSchema.methods.getScopes =  function(countLoop) {
+PermissionSchema.methods.getScopes = async function(countLoop) {
   // Count Loop in case of inheritance role loop
   if (countLoop) {
     countLoop++;
@@ -57,12 +57,17 @@ PermissionSchema.methods.getScopes =  function(countLoop) {
 
   if (this.inherits.size > 0) {
     var permissions = await db.permissions.find({
-        'role': {
-          $in: this.inherits
-        }
-      });
-      
-    if (permissions.size > 0) permissions.forEach((permission) => Array.prototype.push.apply(scopes, permission.getScopes(countLoop)));
+      'role': {
+        $in: this.inherits
+      }
+    });
+
+    if (permissions.size > 0) {
+      for (var permission in permissions) {
+        var tmp = await permission.getScopes(countLoop);
+        Array.prototype.push.apply(scopes, );
+      }
+    }
   }
 
   scopes = scopes.filter((v, i) => scopes.indexOf(v) === i); // remove duplicates

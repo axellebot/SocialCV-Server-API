@@ -46,25 +46,24 @@ const expiresIn = {
  * duration, etc. as parsed by the application.  The application issues a code,
  * which is bound to these values, and will be exchanged for an access token.
  */
-oauth2server.grant(oauth2orize.grant.code((client, redirectURI, user, ares, done) => {
-  console.log("grant code",client,redirectURI,user,ares);
-  var code = utils.uid(16);
+oauth2server.grant(oauth2orize.grant.code(async (client, redirectURI, user, ares, done) => {
+  try {
+    console.log("grant code", client, redirectURI, user, ares);
 
-  db.oauthAuthorizationCodes
-    .create({
+    var code = utils.uid(16);
+
+    var savedAuthorizationCode = await db.oauthAuthorizationCodes.create({
       code: code,
       client: client.id,
       redirectUri: redirectURI,
       user: user.id,
       scope: ares.scope
-    })
-    .then((savedAuthorizationCode) => {
-      if (!savedAuthorizationCode) throw new DatabaseCreateError();
-      return done(null, code);
-    })
-    .catch((err) => {
-      done(err);
     });
+    if (!savedAuthorizationCode) throw new DatabaseCreateError();
+    return done(null, code);
+  } catch (err) {
+    done(err);
+  }
 }));
 
 
@@ -76,40 +75,38 @@ oauth2server.grant(oauth2orize.grant.code((client, redirectURI, user, ares, done
  * are validated, the application issues an access token on behalf of the user who
  * authorized the code.
  */
-oauth2server.exchange(oauth2orize.exchange.code((client, code, redirectURI, done) => {
-  console.log("exchange code",client,code,redirectURI);
-  db.oauthAuthorizationCodes
-    .findOne({
+oauth2server.exchange(oauth2orize.exchange.code(async (client, code, redirectURI, done) => {
+  try {
+    console.log("exchange code", client, code, redirectURI);
+
+    var authorizationCode = db.oauthAuthorizationCodes.findOne({
       code: code
-    })
-    .then((authorizationCode) => {
-      if (!authorizationCode) throw new NotFoundError("AuthorizationCode");
-
-      if (client.id !== code.clientId) {
-        return done(null, false);
-      }
-      if (redirectURI !== code.redirectUri) {
-        return done(null, false);
-      }
-
-      var token = utils.createToken();
-
-      return db.oauthAccessTokens
-        .create({
-          token: token,
-          expires: config.accessToken.calculateExpirationDate(),
-          user: authorizationCode.user,
-          client: authorizationCode.client,
-          scopes: authorizationCode.scopes
-        });
-    })
-    .then((savedAccessToken) => {
-      if (!savedAccessToken) throw new DatabaseCreateError();
-      return done(null, savedAccessToken);
-    })
-    .catch((err) => {
-      done(err);
     });
+
+    if (!authorizationCode) throw new NotFoundError("AuthorizationCode");
+
+    if (client.id !== code.clientId) {
+      return done(null, false);
+    }
+    if (redirectURI !== code.redirectUri) {
+      return done(null, false);
+    }
+
+    var token = utils.createToken();
+
+    var savedAccessToken = await db.oauthAccessTokens.create({
+      token: token,
+      expires: config.accessToken.calculateExpirationDate(),
+      user: authorizationCode.user,
+      client: authorizationCode.client,
+      scopes: authorizationCode.scopes
+    });
+
+    if (!savedAccessToken) throw new DatabaseCreateError();
+    return done(null, savedAccessToken);
+  } catch (err) {
+    done(err);
+  }
 }));
 
 /**
@@ -120,17 +117,16 @@ oauth2server.exchange(oauth2orize.exchange.code((client, code, redirectURI, done
  * duration, etc. as parsed by the application.  The application issues a token,
  * which is bound to these values.
  */
-oauth2server.grant(oauth2orize.grant.token((client, user, ares, done) => {
-  console.log("grant token",client,user,ares);
-  const token = utils.createToken();
-  const expirationDate = config.accessToken.calculateExpirationDate();
+oauth2server.grant(oauth2orize.grant.token(async (client, user, ares, done) => {
+  try {
+    console.log("grant token", client, user, ares);
 
-  createAccessToken(user.id, client._id, user.getScopes())
-    .then((savedAccessToken) => {
-      if (!savedAccessToken) throw new DatabaseCreateError();
-      return done(null, token, expiresIn);
-    })
-    .catch((err) => done(err));
+    var savedAccessToken = await createAccessToken(user.id, client._id, user.getScopes());
+    if (!savedAccessToken) throw new DatabaseCreateError();
+    return done(null, token, expiresIn);
+  } catch (err) {
+    done(err);
+  }
 }));
 
 /**
@@ -140,14 +136,18 @@ oauth2server.grant(oauth2orize.grant.token((client, user, ares, done) => {
  * password/secret from the token request for verification. If these values are validated, the
  * application issues an access token on behalf of the client who authorized the code.
  */
-oauth2server.exchange(oauth2orize.exchange.clientCredentials((client, scope, done) => {
-  console.log("exchange clientCredentials",client,scope);
-  
-  // Pass in a null for user id since there is no user when using this grant type
-  return createAccessToken(null, client._id, scope.split(" "))
+oauth2server.exchange(oauth2orize.exchange.clientCredentials(async (client, scope, done) => {
+  try {
+    console.log("exchange clientCredentials", client, scope);
 
-    .then((savedAccessToken) => done(null, savedAccessToken.token, null, expiresIn))
-    .catch(err => done(err));
+    // Pass in a null for user id since there is no user when using this grant type
+
+    var savedAccessToken = await createAccessToken(null, client._id, scope.split(" "));
+
+    return done(null, savedAccessToken.token, null, expiresIn);
+  } catch (err) {
+    done(err);
+  }
 }));
 
 /**
@@ -157,92 +157,93 @@ oauth2server.exchange(oauth2orize.exchange.clientCredentials((client, scope, don
  * request for verification.  If this value is validated, the application issues an access
  * token on behalf of the client who authorized the code
  */
-oauth2server.exchange(oauth2orize.exchange.refreshToken((client, refreshToken, scopes, done) => {
-    console.log("exchange refreshToken",client,refreshToken,scopes);
-var accessToken;
+oauth2server.exchange(oauth2orize.exchange.refreshToken(async (client, refreshToken, scopes, done) => {
+  try {
+    scopes = scopes || "";
+    console.log("exchange refreshToken", client, refreshToken, scopes);
 
-  db.oauthRefreshTokens
-    .findOne({
+    var foundRefreshToken = await db.oauthRefreshTokens.findOne({
       token: refreshToken
-    })
-    .then((foundRefreshToken) => {
-      if (!foundRefreshToken) throw new NotFoundError("Refresh token");
+    });
+    if (!foundRefreshToken) throw new NotFoundError("Refresh token");
 
-      foundRefreshToken.remove();
+    var deletedRefreshToken = await foundRefreshToken.remove();
+    if (!deletedRefreshToken) throw new DatabaseDeleteError();
 
-      return createAccessToken(foundRefreshToken.user, client._id, scopes);
-    })
-    .then((savedAccessToken) => {
-      if (!savedAccessToken) throw new DatabaseCreateError();
-      accessToken = savedAccessToken.token;
-      return createRefreshToken(savedAccessToken.user, client._id, scopes);
-    })
-    .then((savedRefreshToken) => {
-      if (!savedRefreshToken) throw new DatabaseCreateError();
-      return done(null, accessToken, savedRefreshToken.token, expiresIn)
-    })
-    .catch((err) => done(err));
+    var savedAccessToken = await createAccessToken(deletedRefreshToken.user, client._id, scopes);
+    if (!savedAccessToken) throw new DatabaseCreateError();
+
+    var savedRefreshToken = await createRefreshToken(savedAccessToken.user, client._id, scopes);
+    if (!savedRefreshToken) throw new DatabaseCreateError();
+
+    return done(null, savedAccessToken.token, savedRefreshToken.token, expiresIn);
+  } catch (err) {
+    done(err);
+  }
 }));
 
 /**
  * Find the user in the database with the requested username or email
  */
-oauth2server.exchange(oauth2orize.exchange.password((client, username, password, scopes, done) => {
-console.log("exchange password",username,password,scopes);
-  var accessToken;
+oauth2server.exchange(oauth2orize.exchange.password(async (client, username, password, scopes, done) => {
+  try {
+    console.log("exchange password", username, password, scopes);
 
-  if (!client) throw Error(); // Need client authentication
-  if (!client.grantTypes.split(" ").includes("password")) throw MissingPrivilegeError();
+    if (!client) throw Error(); // Need client authentication
+    if (!client.grantTypes.split(" ").includes("password")) throw MissingPrivilegeError();
 
-  const options = {
-    $or: [{
-        email: username
-      },
-      {
-        username: username
-      }
-    ]
-  };
+    const options = {
+      $or: [{
+          email: username
+        },
+        {
+          username: username
+        }
+      ]
+    };
 
-  db.users.findOne(options)
-    .then((user) => {
-      if (!user) throw new UserNotFoundError();
-      if (user.disabled) throw new UserDisabledError();
-      // If there is a match and the passwords are equal 
-      if (!user.verifyPassword(password)) throw new WrongPasswordError();
-      if(!user.verifyScopes(scopes)) throw new MissingPrivilegeError();
-      return createAccessToken(user._id, client._id, scopes);
-    })
-    .then((savedAccessToken) => {
-      if (!savedAccessToken) throw new DatabaseCreateError();
-      accessToken = savedAccessToken.token;
-      return createRefreshToken(savedAccessToken.user, client._id, savedAccessToken.scope);
-    })
-    .then((savedRefreshToken) => {
-      if (!savedRefreshToken) throw new DatabaseCreateError();
-      return done(null, /* No error*/
-        accessToken, /* The generated token */
-        savedRefreshToken.token, /* The generated refresh token */
-        expiresIn /* Additional properties to be merged with the token and send in the response */
-      );
-    })
-    .catch((err) => done(err));
+    var user = await db.users.findOne(options);
+    if (!user) throw new UserNotFoundError();
+    if (user.disabled) throw new UserDisabledError();
+    // If there is a match and the passwords are equal 
+    if (!user.verifyPassword(password)) throw new WrongPasswordError();
+    if (!user.verifyScopes(scopes)) throw new MissingPrivilegeError();
+    var savedAccessToken = await createAccessToken(user._id, client._id, scopes);
+    if (!savedAccessToken) throw new DatabaseCreateError();
+    var savedRefreshToken = await createRefreshToken(savedAccessToken.user, client._id, savedAccessToken.scope);
+    if (!savedRefreshToken) throw new DatabaseCreateError();
+    return done(null, /* No error*/
+      savedAccessToken.token, /* The generated token */
+      savedRefreshToken.token, /* The generated refresh token */
+      expiresIn /* Additional properties to be merged with the token and send in the response */
+    );
+  } catch (err) {
+    done(err);
+  }
 }));
 
-function createAccessToken(userId, clientId, scopes) {
+async function createAccessToken(userId, clientId, scopes) {
+  const accessToken = utils.createToken();
+  const expirationDate = config.accessToken.calculateExpirationDate();
   return db.oauthAccessTokens
     .create({
+      token: accessToken,
       client: clientId,
       user: userId,
+      expires: expirationDate,
       scopes: scopes
     });
 }
 
-function createRefreshToken(userId, clientId, scopes) {
+async function createRefreshToken(userId, clientId, scopes) {
+  const refreshToken = utils.createToken();
+  const expirationDate = config.refreshToken.calculateExpirationDate();
   return db.oauthRefreshTokens
     .create({
+      token: refreshToken,
       client: clientId,
       user: userId,
+      expires: expirationDate,
       scopes: scopes
     });
 }

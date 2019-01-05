@@ -26,99 +26,86 @@ const UpdateDocumentResponse = require('@responses/UpdateDocumentResponse');
 const DeleteDocumentsResponse = require('@responses/DeleteDocumentsResponse');
 const DeleteDocumentResponse = require('@responses/DeleteDocumentResponse');
 
-exports.findOne = (req, res, next) => {
-  const id = req.params[parameters.PARAM_ID_PART];
+exports.findOne = async (req, res, next) => {
+  try {
+    const id = req.params[parameters.PARAM_ID_PART];
 
-  db.parts
-    .findById(id)
-    .then((part) => {
-      if (!part) throw new NotFoundError(models.MODEL_NAME_PART);
-      res.json(new SelectDocumentResponse(part));
-    })
-    .catch((err) => {
-      next(err);
-    });
+    var part = db.parts.findById(id);
+    if (!part) throw new NotFoundError(models.MODEL_NAME_PART);
+    res.json(new SelectDocumentResponse(part));
+  } catch (err) {
+    next(err);
+  }
 };
 
-exports.createOne = (req, res, next) => {
-  const part = cd.parts.create(req.body.data);
+exports.createOne = async (req, res, next) => {
+  try {
+    const partSaved = await cd.parts.create(req.body.data);
 
-  part.save()
-    .then((partSaved) => {
-      res.json(new CreateDocumentResponse(partSaved));
-    })
-    .catch((err) => {
-      next(err);
-    });
+    res.json(new CreateDocumentResponse(partSaved));
+  } catch (err) {
+    next(err);
+  }
 };
 
-exports.updateOne = (req, res, next) => {
-  const id = req.params[parameters.PARAM_ID_PART];
+exports.updateOne = async (req, res, next) => {
+  try {
+    const id = req.params[parameters.PARAM_ID_PART];
 
-  db.parts
-    .findOneAndUpdate({
+    var partUpdated = await db.parts
+      .findOneAndUpdate({
+        _id: id
+      }, req.body.data, {
+        new: true
+      });
+    if (!partUpdated) throw new NotFoundError(models.MODEL_NAME_PART);
+    res.json(new UpdateDocumentResponse(partUpdated));
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.deleteOne = async (req, res, next) => {
+  try {
+    const id = req.params[parameters.PARAM_ID_PART];
+
+    var partDeleted = await db.parts.findOneAndRemove({
       _id: id
-    }, req.body.data, {
-      new: true
-    })
-    .then((partUpdated) => {
-      if (!partUpdated) throw new NotFoundError(models.MODEL_NAME_PART);
-      res.json(new UpdateDocumentResponse(partUpdated));
-    })
-    .catch((err) => {
-      next(err);
     });
+    if (!partDeleted) throw new NotFoundError(models.MODEL_NAME_PART);
+    res.json(new DeleteDocumentResponse(partDeleted));
+  } catch (err) {
+    next(err);
+  }
 };
 
-exports.deleteOne = (req, res, next) => {
-  const id = req.params[parameters.PARAM_ID_PART];
+exports.findMany = async (req, res, next) => {
+  try {
+    var parts = await db.parts
+      .find(req.query.filters)
+      .select(req.query.fields)
+      .skip(req.query.offset)
+      .limit(req.query.limit)
+      .sort(req.query.sort);
 
-  db.parts
-    .findOneAndRemove({
-      _id: id
-    })
-    .then((partDeleted) => {
-      if (!partDeleted) throw new NotFoundError(models.MODEL_NAME_PART);
-      res.json(new DeleteDocumentResponse(partDeleted));
-    })
-    .catch((err) => {
-      next(err);
-    });
+    if (!parts || parts.length <= 0) throw new NotFoundError(models.MODEL_NAME_PART);
+    var count = await db.parts.countDocuments(req.query.filters);
+    res.json(new SelectDocumentsResponse(parts, count));
+  } catch (err) {
+    next(err);
+  }
 };
 
-exports.findMany = (req, res, next) => {
-  var returnedParts;
-
-  db.parts
-    .find(req.query.filters)
-    .select(req.query.fields)
-    .skip(req.query.offset)
-    .limit(req.query.limit)
-    .sort(req.query.sort)
-    .then((parts) => {
-      if (!parts || parts.length <= 0) throw new NotFoundError(models.MODEL_NAME_PART);
-      returnedParts = parts;
-      return db.parts.countDocuments(req.query.filters);
-    })
-    .then((total) => {
-      res.json(new SelectDocumentsResponse(returnedParts, total));
-    })
-    .catch((err) => {
-      next(err);
-    })
-};
-
-exports.updateMany = (req, res, next) => {
+exports.updateMany = async (req, res, next) => {
   next(new NotImplementedError())
 };
 
-exports.deleteAll = (req, res, next) => {
+exports.deleteAll = async (req, res, next) => {
   next(new NotImplementedError())
 };
-
 
 // Others
-exports.filterGroupsOfOne = (req, res, next) => {
+exports.filterGroupsOfOne = async (req, res, next) => {
   const id = req.params[parameters.PARAM_ID_PART];
   req.query.filters.part = id;
   next();

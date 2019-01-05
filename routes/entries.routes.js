@@ -3,6 +3,7 @@
 // Constants
 const parameters = require('@constants/parameters');
 const paths = require('@constants/paths');
+const perms = require('@constants/permissions');
 
 // Middlewares
 const requireAuthentication = require('@middlewares/security/authentication');

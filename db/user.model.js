@@ -98,8 +98,8 @@ UserSchema.pre('save', function(next) {
 
 
 // Add method to verify the password
-UserSchema.methods.verifyPassword = (candidatePassword) => {
-  return bcrypt.compare(candidatePassword, this.password)
+UserSchema.methods.verifyPassword = async (candidatePassword) =>  {
+  return await bcrypt.compare(candidatePassword, this.password);
 };
 
 /**
@@ -124,20 +124,20 @@ UserSchema.methods.publicData = function() {
  *
  * return array of strings scope
  */
-UserSchema.methods.getScopes = function() {
-  var scopes = db.permissions
-    .find({
-      'role': {
-        $in: this.roles
-      }
-    })
-    .exec((err, permissions) => {
-      var tmp = [];
-      if (err) return tmp;
-      if (permissions.size > 0) permissions.forEach((permission) => Array.prototype.push.apply(tmp, permission.getScopes()));
-      console.log("test",tmp);
-      return tmp;
-    });
+UserSchema.methods.getScopes = async function() {
+  var scopes = [];
+  var permissions = db.permissions.find({
+    'role': {
+      $in: this.roles
+    }
+  });
+
+  if (permissions.size > 0) {
+    for (var permission in permissions) {
+      var tmp = await permission.getScopes();
+      Array.prototype.push.apply(scopes, tmp)
+    }
+  }
 
   scopes = scopes.filter((v, i) => scopes.indexOf(v) === i); // remove duplicates
   return scopes;
@@ -148,10 +148,10 @@ UserSchema.methods.getScopes = function() {
  * 
  * Check scopes
  */
-UserSchema.methods.verifyScopes = function(scopes) {
-  const userScopes = this.getScopes();
+UserSchema.methods.verifyScopes = async function(scopes) {
+  const userScopes = await this.getScopes();
   for (var scope in scopes) {
-    if (!userScopes.contains(scope)) return false;
+    if (!userScopes.includes(scope)) return false;
   }
   return true;
 };

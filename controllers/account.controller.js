@@ -27,12 +27,12 @@ const UpdateDocumentResponse = require('@responses/UpdateDocumentResponse');
 const DeleteDocumentsResponse = require('@responses/DeleteDocumentsResponse');
 const DeleteDocumentResponse = require('@responses/DeleteDocumentResponse');
 
-exports.findOne = (req, res, next) => {
+exports.findOne = async (req, res, next) => {
   res.json(new SelectDocumentResponse(req.user.publicData()));
 }
 
 // Others
-exports.filterProfilesOfOne = (req, res, next) => {
+exports.filterProfilesOfOne = async (req, res, next) => {
   const id = req.user._id;
   req.query.filters.owner = id;
   next();

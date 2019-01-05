@@ -13,12 +13,10 @@ var OAuthAccessTokenSchema = new Schema({
   token: {
     type: String,
     unique: true,
-    default:utils.createToken()
   },
   expires: {
     type: Date,
     required: true,
-    default: config.accessToken.calculateExpirationDate()
   },
   scopes: {
     type: [String],

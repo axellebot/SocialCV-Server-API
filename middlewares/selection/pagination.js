@@ -9,11 +9,11 @@ const WrongQueryCursorSortError = require('@errors/WrongQueryCursorSortError');
  * @param res
  * @param next
  */
-module.exports = (req, res, next) => {
+module.exports = async (req, res, next) => {
   //Pagination
   req.query.offset = Number(req.query.offset);
-  req.query.limit= Number(req.query.limit);
-  
+  req.query.limit = Number(req.query.limit);
+
   const offset = req.query.offset;
   const limit = req.query.limit;
 

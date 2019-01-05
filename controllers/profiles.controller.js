@@ -1,6 +1,6 @@
 "use strict";
 
-// Packages
+// Others
 const db = require('@db');
 
 // Constants
@@ -28,102 +28,85 @@ const DeleteDocumentsResponse = require('@responses/DeleteDocumentsResponse');
 const DeleteDocumentResponse = require('@responses/DeleteDocumentResponse');
 
 // One
-exports.createOne = (req, res, next) => {
-  const profile = db.profiles.save(req.body.data);
-
-  profile
-    .save()
-    .then((profileSaved) => {
-      res.json(new CreateDocumentResponse(profileSaved));
-    })
-    .catch((err) => {
-      next(err);
-    });
+exports.createOne = async (req, res, next) => {
+  try {
+    var profileSaved = await db.profiles.create(req.body.data);
+    res.json(new CreateDocumentResponse(profileSaved));
+  } catch (err) {
+    next(err);
+  }
 };
 
-exports.findOne = (req, res, next) => {
+exports.findOne = async (req, res, next) => {
+  try{
   const id = req.params[parameters.PARAM_ID_PROFILE];
 
-  db.profiles
-    .findById(id)
-    .then((profile) => {
-      if (!profile) throw new NotFoundError(models.MODEL_NAME_PROFILE);
-      res.json(new SelectDocumentResponse(profile));
-    })
-    .catch((err) => {
-      next(err);
-    });
+  var profile = await db.profiles.findById(id);
+  if (!profile) throw new NotFoundError(models.MODEL_NAME_PROFILE);
+  res.json(new SelectDocumentResponse(profile));
+  }catch(err){
+    next(err);
+  }
 };
 
-exports.updateOne = (req, res, next) => {
+exports.updateOne = async (req, res, next) => {
+  try{
   const id = req.params[parameters.PARAM_ID_PROFILE];
 
-  db.profiles
-    .findOneAndUpdate({
-      _id: id
-    }, req.body.data, {
-      new: true
-    })
-    .then((profileUpdated) => {
-      if (!profileUpdated) throw new NotFoundError(parameters.MODEL_NAME_PROFILE);
-      res.json(new UpdateDocumentResponse(profileUpdated));
-    })
-    .catch((err) => {
-      next(err);
-    });
+  var profileUpdated = db.profiles.findOneAndUpdate({
+    _id: id
+  }, req.body.data, {
+    new: true
+  });
+  if (!profileUpdated) throw new NotFoundError(parameters.MODEL_NAME_PROFILE);
+  res.json(new UpdateDocumentResponse(profileUpdated));
+  }catch(err){
+    next(err);
+  }
 };
 
-exports.deleteOne = (req, res, next) => {
+exports.deleteOne = async (req, res, next) => {
+  try{
   const id = req.params[parameters.PARAM_ID_PROFILE];
 
-  db.profiles
-
-    .findOneAndRemove({
-      _id: id
-    })
-    .then((profileDeleted) => {
-      if (!profileDeleted) throw new NotFoundError(models.MODEL_NAME_PROFILE);
-      res.json(new DeleteDocumentResponse(profileDeleted));
-    })
-    .catch((err) => {
-      next(err);
-    });
+  var profileDeleted = await db.profiles.findOneAndRemove({
+    _id: id
+  });
+  if (!profileDeleted) throw new NotFoundError(models.MODEL_NAME_PROFILE);
+  res.json(new DeleteDocumentResponse(profileDeleted));
+  }catch(err){
+    next(err);
+  }
 };
 
 // Many
-exports.findMany = (req, res, next) => {
-  var returnedProfiles;
-
-  db.profiles
-
+exports.findMany = async (req, res, next) => {
+try{
+  var profiles = await db.profiles
     .find(req.query.filters)
     .select(req.query.fields)
     .skip(req.query.offset)
     .limit(req.query.limit)
-    .sort(req.query.sort)
-    .then((profiles) => {
-      if (!profiles || profiles.length <= 0) throw new NotFoundError(models.MODEL_NAME_PROFILE);
-      returnedProfiles = profiles;
-      return db.profiles.countDocuments(req.query.filters);
-    })
-    .then((total) => {
-      res.json(new SelectDocumentsResponse(returnedProfiles, total));
-    })
-    .catch((err) => {
-      next(err);
-    });
+    .sort(req.query.sort);
+
+  if (!profiles || profiles.length <= 0) throw new NotFoundError(models.MODEL_NAME_PROFILE);
+  var count = await db.profiles.countDocuments(req.query.filters);
+  res.json(new SelectDocumentsResponse(profiles, count));
+}catch(err){
+  next(err);
+}
 };
 
-exports.updateMany = (req, res, next) => {
+exports.updateMany = async (req, res, next) => {
   return next(new NotImplementedError("Update many Profiles"));
 };
 
-exports.deleteAll = (req, res, next) => {
+exports.deleteAll = async (req, res, next) => {
   return next(new NotImplementedError("Delete all Profiles"));
 };
 
 // Others
-exports.filterPartsOfOne = (req, res, next) => {
+exports.filterPartsOfOne = async (req, res, next) => {
   const id = req.params[parameters.PARAM_ID_PROFILE];
   req.query.filters.profile = id;
   next();

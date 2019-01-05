@@ -35,7 +35,7 @@ module.exports.user = (options) => {
     passport.authenticate(['bearer'], {
       session: false
     }),
-    (req, res, next) => {
+    async (req, res, next) => {
       if (req.authInfo.scopes && options.scope) {
         if (req.authInfo.scopes.includes(options.scope)) {
           next();
@@ -60,7 +60,7 @@ module.exports.client = (options) => {
     passport.authenticate(['oauth2-client-password'], {
       session: false
     }),
-    (req, res, next) => {
+    async (req, res, next) => {
       // TODO : Check client scope
       next();
     }

@@ -8,7 +8,7 @@ const WrongQueryCursorSortError = require('@errors/WrongQueryCursorSortError');
  * @param res
  * @param next
  */
-module.exports = (req, res, next) => {
+module.exports = async (req, res, next) => {
   // Sort
   const sortString = req.query.sort || "";
 

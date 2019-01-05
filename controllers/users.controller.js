@@ -28,86 +28,80 @@ const DeleteDocumentsResponse = require('@responses/DeleteDocumentsResponse');
 const DeleteDocumentResponse = require('@responses/DeleteDocumentResponse');
 
 
-exports.findOne = (req, res, next) => {
+exports.findOne = async (req, res, next) => {
+  try{
   const id = req.params[parameters.PARAM_ID_USER];
 
-  db.users
-    .findById(id)
-    .then((user) => {
-      if (!user) throw new NotFoundError(models.MODEL_NAME_USER);
-      res.json(new SelectDocumentResponse(user.publicData()));
-    })
-    .catch((err) => {
-      next(err);
-    });
+  var user = await db.users.findById(id);
+  if (!user) throw new NotFoundError(models.MODEL_NAME_USER);
+  res.json(new SelectDocumentResponse(user.publicData()));
+  }catch(err){
+    next(err);
+  }
 };
 
-exports.updateOne = (req, res, next) => {
+exports.updateOne = async (req, res, next) => {
+try{
   const id = req.params[parameters.PARAM_ID_USER];
 
-  db.users
+  var userUpdated = await db.users
     .findOneAndUpdate({
       _id: id
     }, req.body.data, {
       returnNewDocument: true,
-    })
-    .then((userUpdated) => {
-      if (!userUpdated) throw new NotFoundError(models.MODEL_NAME_USER);
-      res.json(new UpdateDocumentResponse(userUpdated.publicData()));
-    })
-    .catch((err) => {
-      next(err);
     });
+  if (!userUpdated) throw new NotFoundError(models.MODEL_NAME_USER);
+  res.json(new UpdateDocumentResponse(userUpdated.publicData()));
+}catch(err){
+  next(err);
+}
 };
 
-exports.deleteOne = (req, res, next) => {
+exports.deleteOne = async (req, res, next) => {
+  try{
   const id = req.params[parameters.PARAM_ID_USER];
 
-  db.users
-    .findOneAndRemove({
-      _id: id
-    })
-    .then((userDeleted) => {
-      if (!userDeleted) throw new NotFoundError(models.MODEL_NAME_USER);
-      res.json(new DeleteDocumentResponse(userDeleted.publicData()));
-    })
-    .catch((err) => {
-      next(err);
-    });
+  var userDeleted = await db.users.findOneAndRemove({
+    _id: id
+  });
+  if (!userDeleted) throw new NotFoundError(models.MODEL_NAME_USER);
+  res.json(new DeleteDocumentResponse(userDeleted.publicData()));
+  }catch(err){
+    next(err);
+  }
 };
 
-exports.findMany = (req, res, next) => {
-  var returnedUsers;
-  db.users.find(req.query.filters)
+exports.findMany = async (req, res, next) => {
+  try{
+  var users = await db.users.find(req.query.filters)
     .select(req.query.fields)
     .skip(req.query.offset)
     .limit(req.query.limit)
-    .sort(req.query.sort)
-    .then((users) => {
-      if (!users || users.length <= 0) throw new NotFoundError(models.MODEL_NAME_USER);
-      returnedUsers = users;
-      return db.users.countDocuments(req.query.filters)
-    })
-    .then((count) => {
-      for (var index in returnedUsers) {
-        returnedUsers[index] = returnedUsers[index].publicData();
-      }
-      res.json(new SelectDocumentsResponse(returnedUsers, count));
-    })
-    .catch((err) => {
-      next(err);
-    });
+    .sort(req.query.sort);
+
+  if (!users || users.length <= 0) throw new NotFoundError(models.MODEL_NAME_USER);
+  returnedUsers = users;
+  var count = await db.users.countDocuments(req.query.filters);
+
+  for (var index in users) {
+    users[index] = users[index].publicData();
+  }
+
+  res.json(new SelectDocumentsResponse(users, count));
+  }catch(err){
+    next(err);
+  }
 };
 
-exports.createOne = (req, res, next) => {
+exports.createOne = async (req, res, next) => {
   //TODO : users - Create user
   next(new NotImplementedError("Create a new user"));
 };
 
-exports.updateMany = (req, res, next) => {
+exports.updateMany = async (req, res, next) => {
   next(new NotImplementedError("Update many users"));
 };
 
-exports.deleteAll = (req, res, next) => {
+exports.deleteAll = async (req, res, next) => {
   next(new NotImplementedError("Delete All users"));
 };

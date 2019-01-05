@@ -36,24 +36,23 @@ exports.getToken = oauth.token();
 // Authorise Controller
 //= =======================================
 exports.authorize = [
-  oauth.authorize((clientID, redirectURI, done) => {
-    db.oauthClients.findOne({
-        _id: clientID
-      })
-      .then(function(client) {
-        if (!client) {
-          return done(null, false);
-        }
-        if (client.redirectUri != redirectURI) {
-          return done(null, false);
-        }
-        return done(null, client, client.redirectURI);
-      })
-      .catch(function(err) {
-        return done(err);
-      });
+  oauth.authorize(async (clientID, redirectURI, done) => {
+    try{
+    var client = await db.oauthClients.findOne({
+      _id: clientID
+    });
+    if (!client) {
+      return done(null, false);
+    }
+    if (client.redirectUri != redirectURI) {
+      return done(null, false);
+    }
+    return done(null, client, client.redirectURI);
+    }catch(err){
+      done(err);
+    }
   }),
-  function(req, res, next) {
-
+  async function(req, res, next) {
+    next();
   }
 ];

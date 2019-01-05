@@ -1,5 +1,6 @@
 "use strict";
 
+// Others
 const db = require('@db');
 
 // Constants
@@ -26,94 +27,79 @@ const UpdateDocumentResponse = require('@responses/UpdateDocumentResponse');
 const DeleteDocumentsResponse = require('@responses/DeleteDocumentsResponse');
 const DeleteDocumentResponse = require('@responses/DeleteDocumentResponse');
 
-exports.createOne = (req, res, next) => {
-  var permission = req.body.data;
-  permission = db.permissions.create(permission);
-
-  permission
-    .save()
-    .then((permissionSaved) => {
-      res.json(new CreateDocumentResponse(permissionSaved));
-    })
-    .catch((err) => {
-      next(err);
-    });
+exports.createOne = async (req, res, next) => {
+  try {
+    var permissionSaved = await db.permissions.create(req.body.data);
+    res.json(new CreateDocumentResponse(permissionSaved));
+  } catch (err) {
+    next(err);
+  }
 };
 
-exports.findOne = (req, res, next) => {
-  var id = req.params[parameters.PARAM_ID_PERMISSION];
+exports.findOne = async (req, res, next) => {
+  try {
+    var id = req.params[parameters.PARAM_ID_PERMISSION];
 
-  db.permissions
-    .findById(id)
-    .then((permission) => {
-      if (!permission) throw new NotFoundError(models.MODEL_NAME_PERMISSION);
-      res.json(new SelectDocumentResponse(permission));
-    })
-    .catch((err) => {
-      next(err);
-    });
+    var permissions = await db.permissions.findById(id);
+    if (!permission) throw new NotFoundError(models.MODEL_NAME_PERMISSION);
+    res.json(new SelectDocumentResponse(permission));
+  } catch (err) {
+    next(err);
+  }
 };
 
-exports.updateOne = (req, res, next) => {
-  var id = req.params[parameters.PARAM_ID_PERMISSION];
+exports.updateOne = async (req, res, next) => {
+  try {
+    var id = req.params[parameters.PARAM_ID_PERMISSION];
 
-  db.permissions
-    .findOneAndUpdate({
+    var permissionUpdated = await db.permissions
+      .findOneAndUpdate({
+        _id: id
+      }, req.body.data, {
+        new: true
+      });
+    if (!permissionUpdated) throw new NotFoundError(parameters.MODEL_NAME_PERMISSION);
+    res.json(new UpdateDocumentResponse(permissionUpdated));
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.deleteOne = async (req, res, next) => {
+  try {
+    var id = req.params[parameters.PARAM_ID_PERMISSION];
+
+    var permissionDeleted = await db.permissions.findOneAndRemove({
       _id: id
-    }, req.body.data, {
-      new: true
-    })
-    .then((permissionUpdated) => {
-      if (!permissionUpdated) throw new NotFoundError(parameters.MODEL_NAME_PERMISSION);
-      res.json(new UpdateDocumentResponse(permissionUpdated));
-    })
-    .catch((err) => {
-      next(err);
     });
+    if (!permissionDeleted) throw new NotFoundError(models.MODEL_NAME_PERMISSION);
+    res.json(new DeleteDocumentResponse(permissionDeleted));
+  } catch (err) {
+    next(err);
+  }
 };
 
-exports.deleteOne = (req, res, next) => {
-  var id = req.params[parameters.PARAM_ID_PERMISSION];
-
-  db.permissions
-    .findOneAndRemove({
-      _id: id
-    })
-    .then((permissionDeleted) => {
-      if (!permissionDeleted) throw new NotFoundError(models.MODEL_NAME_PERMISSION);
-      res.json(new DeleteDocumentResponse(permissionDeleted));
-    })
-    .catch((err) => {
-      next(err);
-    });
+exports.findMany = async (req, res, next) => {
+  try {
+    var permissions = await db.permissions
+      .find(req.query.filters)
+      .select(req.query.fields)
+      .skip(req.query.offset)
+      .limit(req.query.limit)
+      .sort(req.query.sort);
+    if (!permissions || permissions.length <= 0) throw new NotFoundError(models.MODEL_NAME_PERMISSION);
+    returnedPermissions = permissions;
+    var count = await db.permissions.countDocuments(req.query.filters);
+    res.json(new SelectDocumentsResponse(permissions, count));
+  } catch (err) {
+    next(err);
+  }
 };
 
-exports.findMany = (req, res, next) => {
-  var returnedPermissions;
-
-  db.permissions
-    .find(req.query.filters)
-    .select(req.query.fields)
-    .skip(req.query.offset)
-    .limit(req.query.limit)
-    .sort(req.query.sort)
-    .then((permissions) => {
-      if (!permissions || permissions.length <= 0) throw new NotFoundError(models.MODEL_NAME_PERMISSION);
-      returnedPermissions = permissions;
-      return db.permissions.countDocuments(req.query.filters);
-    })
-    .then((total) => {
-      res.json(new SelectDocumentsResponse(returnedPermissions, total));
-    })
-    .catch((err) => {
-      next(err);
-    });
-};
-
-exports.updateMany = (req, res, next) => {
+exports.updateMany = async (req, res, next) => {
   return next(new NotImplementedError("Update many Permissions"));
 };
 
-exports.deleteAll = (req, res, next) => {
+exports.deleteAll = async (req, res, next) => {
   return next(new NotImplementedError("Delete all Permissions"));
 };
