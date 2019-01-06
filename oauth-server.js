@@ -145,15 +145,19 @@ oauth2server.grant(oauth2orize.grant.token(async (client, user, ares, done) => {
  */
 oauth2server.exchange(oauth2orize.exchange.clientCredentials(async (client, requestedScopes, done) => {
   try {
-    console.log("exchange clientCredentials", client, scope);
-
+    var requestedScopes = requestedScopes || [];
+    console.log("exchange clientCredentials", client, requestedScopes);
+    
     // Check grant_type="client_credentials"
     if (!client) throw Error();
-    if (!client.grantTypes.includes("client_credentials")) throw ClientMissingGrantTypeError();
+    if (!client.grantTypes.includes("client_credentials")) throw new ClientMissingGrantTypeError();
 
-    // check scopes
+    // Check scopes
     var scopes = scopes || [];
-    if (await client.verifyScopes(requestedScopes)) throw ClientMissingPrivilegeError();
+
+    if (!requestedScopes.length > 0) Array.prototype.push.apply(scopes,client.scopes);
+
+    if (!await client.verifyScopes(requestedScopes)) throw new ClientMissingPrivilegeError();
     Array.prototype.push.apply(scopes, requestedScopes);
 
     var savedAccessToken = await createAccessToken(null, client._id, scopes);
@@ -176,7 +180,7 @@ oauth2server.exchange(oauth2orize.exchange.clientCredentials(async (client, requ
  */
 oauth2server.exchange(oauth2orize.exchange.refreshToken(async (client, refreshToken, requestedScopes, done) => {
   try {
-    requestedScopes = requestedScopes || []; // Additionals scopes
+    var requestedScopes = requestedScopes || [];
     console.log("exchange refreshToken", client, refreshToken, requestedScopes);
 
     var foundRefreshToken = await db.oauthRefreshTokens.findOne({

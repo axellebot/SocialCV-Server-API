@@ -35,7 +35,7 @@ var OAuthClientSchema = new Schema({
  * 
  * Check grantTypes
  */
-OAuthClientSchema.methods.verifyGrantTypes = async function(grantTypes) {  
+OAuthClientSchema.methods.verifyGrantTypes = async function(grantTypes) {
   for (var grantType in grantTypes) {
     if (!this.grantTypes.includes(grantType)) return false;
   }
@@ -49,8 +49,8 @@ OAuthClientSchema.methods.verifyGrantTypes = async function(grantTypes) {
  */
 OAuthClientSchema.methods.verifyScopes = async function(scopes) {
   const clientScopes = this.scopes;
-  console.log("Client:verifyScopes",scopes,clientScopes);
-  for (var scope in scopes) {
+  console.log("Client:verifyScopes", scopes, clientScopes);
+  for (var scope of scopes) {
     if (!clientScopes.includes(scope)) return false;
   }
   return true;
