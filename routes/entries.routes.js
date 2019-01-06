@@ -16,26 +16,26 @@ const parseQuerySelection = require('@middlewares/selection');
 const ctrlEntries = require('@controllers/entries.controller.js');
 
 module.exports = (router) => {
-  router.get('/', requireAuthentication.user({
+  router.get('/', requireAuthentication.accessToken({
     scope: "entries:read"
   }), parseQuerySelection, ctrlEntries.findMany);
-  router.post('/', requireAuthentication.user({
+  router.post('/', requireAuthentication.accessToken({
     scope: "entries:write"
   }), requireBodyDataObject, ctrlEntries.createOne);
-  router.put('/', requireAuthentication.user({
+  router.put('/', requireAuthentication.accessToken({
     scope: "entries:write"
   }), requireBodyDataArray, ctrlEntries.updateMany);
-  router.delete('/', requireAuthentication.user({
+  router.delete('/', requireAuthentication.accessToken({
     scope: "entries:delete"
   }), ctrlEntries.deleteAll);
 
-  router.get('/' + ':' + parameters.PARAM_ID_ENTRY, requireAuthentication.user({
+  router.get('/' + ':' + parameters.PARAM_ID_ENTRY, requireAuthentication.accessToken({
     scope: "entries:read"
   }), ctrlEntries.findOne);
-  router.put('/' + ':' + parameters.PARAM_ID_ENTRY, requireAuthentication.user({
+  router.put('/' + ':' + parameters.PARAM_ID_ENTRY, requireAuthentication.accessToken({
     scope: "entries:write"
   }), requireBodyDataObject, ctrlEntries.updateOne);
-  router.delete('/' + ':' + parameters.PARAM_ID_ENTRY, requireAuthentication.user({
+  router.delete('/' + ':' + parameters.PARAM_ID_ENTRY, requireAuthentication.accessToken({
     scope: "entries:delete"
   }), ctrlEntries.deleteOne);
 };

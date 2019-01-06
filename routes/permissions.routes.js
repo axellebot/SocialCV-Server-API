@@ -16,26 +16,26 @@ const parseQuerySelection = require('@middlewares/selection');
 const ctrlPermissions = require('@controllers/permissions.controller.js');
 
 module.exports = (router) => {
-  router.get('/', requireAuthentication.user({
+  router.get('/', requireAuthentication.accessToken({
     scope: "permissions:read"
   }), parseQuerySelection, ctrlPermissions.findMany);
-  router.post('/', requireAuthentication.user({
+  router.post('/', requireAuthentication.accessToken({
     scope: "permissions:write"
   }), requireBodyDataObject, ctrlPermissions.createOne);
-  router.put('/', requireAuthentication.user({
+  router.put('/', requireAuthentication.accessToken({
     scope: "permissions:write"
   }), requireBodyDataArray, ctrlPermissions.updateMany);
-  router.delete('/', requireAuthentication.user({
+  router.delete('/', requireAuthentication.accessToken({
     scope: "permissions:delete"
   }), ctrlPermissions.deleteAll);
 
-  router.get('/' + ':' + parameters.PARAM_ID_PERMISSION, requireAuthentication.user({
+  router.get('/' + ':' + parameters.PARAM_ID_PERMISSION, requireAuthentication.accessToken({
     scope: "permissions:read"
   }), ctrlPermissions.findOne);
-  router.put('/' + ':' + parameters.PARAM_ID_PERMISSION, requireAuthentication.user({
+  router.put('/' + ':' + parameters.PARAM_ID_PERMISSION, requireAuthentication.accessToken({
     scope: "permissions:write"
   }), requireBodyDataObject, ctrlPermissions.updateOne);
-  router.delete('/' + ':' + parameters.PARAM_ID_PERMISSION, requireAuthentication.user({
+  router.delete('/' + ':' + parameters.PARAM_ID_PERMISSION, requireAuthentication.accessToken({
     scope: "permissions:delete"
   }), ctrlPermissions.deleteOne);
 };

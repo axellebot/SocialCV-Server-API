@@ -6,16 +6,30 @@ const db = require('@db');
 var config = require('@config');
 
 // Errors
-const MissingEmailError = require('@errors/MissingEmailError');
-const MissingUsernameError = require('@errors/MissingUsernameError');
-const MissingPasswordError = require('@errors/MissingPasswordError');
+const AccessRestrictedError=require('@errors/AccessRestrictedError');
+const BodyMissingDataError =require('@errors/BodyMissingDataError');
+const BodyMissingTokenError =require('@errors/BodyMissingTokenError');
+const BodyWrongDataError =require('@errors/BodyWrongDataError');
+const ClientMissingPrivilegeError=require('@errors/ClientMissingPrivilegeError');
+const CursorWrongPaginationError=require('@errors/CursorWrongPaginationError');
+const CursorWrongSortError=require('@errors/CursorWrongSortError');
+const DatabaseCountError = require('@errors/DatabaseCountError');
+const DatabaseCreateError = require('@errors/DatabaseCreateError');
 const DatabaseFindError = require('@errors/DatabaseFindError');
-const EmailAlreadyExistError = require('@errors/EmailAlreadyExistError');
-const FailedAuthenticationTokenError = require('@errors/FailedAuthenticationTokenError');
+const DatabaseRemoveError = require('@errors/DatabaseRemoveError');
+const DatabaseUpdateError = require('@errors/DatabaseUpdateError');
+const NotFoundError = require('@errors/NotFoundError');
+const NotImplementedError = require('@errors/NotImplementedError');
+const ProtocolWrongError= require('@errors/ProtocolWrongError');
+const TokenAuthenticationError = require('@errors/TokenAuthenticationError');
+const TokenExpiredError = require('@errors/TokenExpiredError');
+const UserDisabledError =require('@errors/UserDisabledError');
+const UserMissingEmailError=require('@errors/UserMissingEmailError');
+const UserMissingPasswordError=require('@errors/UserMissingPasswordError');
+const UserMissingPrivilegeError = require('@errors/UserMissingPrivilegeError');
+const UserMissingUsernameError = require('@errors/UserMissingUsernameError');
 const UserNotFoundError = require('@errors/UserNotFoundError');
-const WrongPasswordError = require('@errors/WrongPasswordError');
-const ProvidingTokenError = require('@errors/ProvidingTokenError');
-const UserDisabledError = require('@errors/UserDisabledError');
+const UserWrongPasswordError = require('@errors/UserWrongPasswordError');
 
 // Responses
 const LoginResponse = require('@responses/LoginResponse');

@@ -4,12 +4,12 @@
 const bodyData = require("@middlewares/body/data");
 
 // Errors
-const WrongDataError = require('@errors/WrongDataError');
+const BodyWrongDataError = require('@errors/BodyWrongDataError');
 
 module.exports = [
   bodyData,
  async (req, res, next) => {
-    if (typeof req.body.data !== "object") return next(new WrongDataError());
+    if (typeof req.body.data !== "object") return next(new BodyWrongDataError());
     next()
   }
 ];

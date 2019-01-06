@@ -36,7 +36,7 @@ var UserSchema = new Schema({
   },
   passwordMethod: {
     type: String,
-    required: false,
+    required: true,
   },
   disabled: {
     type: Boolean,
@@ -98,8 +98,10 @@ UserSchema.pre('save', function(next) {
 
 
 // Add method to verify the password
-UserSchema.methods.verifyPassword = async (candidatePassword) =>  {
-  return await bcrypt.compare(candidatePassword, this.password);
+UserSchema.methods.verifyPassword = async function(candidatePassword) {
+  console.log("UserSchema:verifyPassword", this.passwordMethod);
+  if (this.passwordMethod === "bcrypt") return await bcrypt.compare(candidatePassword, this.password);
+  return (candidatePassword === this.password);
 };
 
 /**
@@ -126,17 +128,15 @@ UserSchema.methods.publicData = function() {
  */
 UserSchema.methods.getScopes = async function() {
   var scopes = [];
-  var permissions = db.permissions.find({
+  var permissions = await db.permissions.find({
     'role': {
       $in: this.roles
     }
   });
 
-  if (permissions.size > 0) {
-    for (var permission in permissions) {
-      var tmp = await permission.getScopes();
-      Array.prototype.push.apply(scopes, tmp)
-    }
+  for (var permission of permissions) {
+    var tmp = await permission.getScopes();
+    Array.prototype.push.apply(scopes, tmp)
   }
 
   scopes = scopes.filter((v, i) => scopes.indexOf(v) === i); // remove duplicates
@@ -150,7 +150,8 @@ UserSchema.methods.getScopes = async function() {
  */
 UserSchema.methods.verifyScopes = async function(scopes) {
   const userScopes = await this.getScopes();
-  for (var scope in scopes) {
+  if (!userScopes || userScopes.length <= 0) return false;
+  for (var scope of scopes) {
     if (!userScopes.includes(scope)) return false;
   }
   return true;

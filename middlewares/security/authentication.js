@@ -1,21 +1,38 @@
 "use strict";
 
-// Require Packages
+// Others
+const config = require('@config');
 const moment = require('moment');
 const oauth = require('@oauth');
 const passport = require('@passport');
 const db = require('@db');
 
-// Config
-var config = require('@config');
-
 // Errors
-const AccessRestrictedError = require('@errors/AccessRestrictedError');
-const ExpiredAuthenticationTokenError = require('@errors/ExpiredAuthenticationTokenError');
-const FailedAuthenticationTokenError = require('@errors/FailedAuthenticationTokenError');
-const MissingPrivilegeError = require('@errors/MissingPrivilegeError');
+const AccessRestrictedError=require('@errors/AccessRestrictedError');
+const AccessTokenMissingPrivilegeError = require('@errors/AccessTokenMissingPrivilegeError');
+const BodyMissingDataError =require('@errors/BodyMissingDataError');
+const BodyMissingTokenError =require('@errors/BodyMissingTokenError');
+const BodyWrongDataError =require('@errors/BodyWrongDataError');
+const ClientMissingPrivilegeError=require('@errors/ClientMissingPrivilegeError');
+const CursorWrongPaginationError=require('@errors/CursorWrongPaginationError');
+const CursorWrongSortError=require('@errors/CursorWrongSortError');
+const DatabaseCountError = require('@errors/DatabaseCountError');
+const DatabaseCreateError = require('@errors/DatabaseCreateError');
+const DatabaseFindError = require('@errors/DatabaseFindError');
+const DatabaseRemoveError = require('@errors/DatabaseRemoveError');
+const DatabaseUpdateError = require('@errors/DatabaseUpdateError');
+const NotFoundError = require('@errors/NotFoundError');
+const NotImplementedError = require('@errors/NotImplementedError');
+const ProtocolWrongError= require('@errors/ProtocolWrongError');
+const TokenAuthenticationError = require('@errors/TokenAuthenticationError');
+const TokenExpiredError = require('@errors/TokenExpiredError');
+const UserDisabledError =require('@errors/UserDisabledError');
+const UserMissingEmailError=require('@errors/UserMissingEmailError');
+const UserMissingPasswordError=require('@errors/UserMissingPasswordError');
+const UserMissingPrivilegeError = require('@errors/UserMissingPrivilegeError');
+const UserMissingUsernameError = require('@errors/UserMissingUsernameError');
 const UserNotFoundError = require('@errors/UserNotFoundError');
-const UserDisabledError = require('@errors/UserDisabledError');
+const UserWrongPasswordError = require('@errors/UserWrongPasswordError');
 
 /** 
  * You would call this with an access token
@@ -29,21 +46,22 @@ const UserDisabledError = require('@errors/UserDisabledError');
 /**
  * @param options
  */
-module.exports.user = (options) => {
+module.exports.accessToken = (options) => {
   var options = options || {};
   return [
     passport.authenticate(['bearer'], {
       session: false
     }),
     async (req, res, next) => {
-      if (req.authInfo.scopes && options.scope) {
-        if (req.authInfo.scopes.includes(options.scope)) {
-          next();
-        } else {
-          next(new MissingPrivilegeError());
+      try {
+      console.log("AccessToken authInfo",req.authInfo );
+        if(options.scope){
+          if (!req.authInfo.scopes ) throw new AccessTokenMissingPrivilegeError();
+          if (!req.authInfo.scopes.includes(options.scope)) throw new AccessTokenMissingPrivilegeError();
         }
-      } else {
-        next(new AccessRestrictedError());
+        next();
+      } catch (err) {
+        next(err);
       }
     }
   ];
@@ -61,8 +79,16 @@ module.exports.client = (options) => {
       session: false
     }),
     async (req, res, next) => {
-      // TODO : Check client scope
-      next();
+      try {
+      console.log("Client authInfo",req.authInfo );
+        if(options.scope){
+          if (!req.authInfo.scopes ) throw new ClientMissingPrivilegeError();
+          if (!req.authInfo.scopes.includes(options.scope)) throw new ClientMissingPrivilegeError();
+        }
+        next();
+      }catch(err){
+        next(err);
+      }
     }
   ]
 }

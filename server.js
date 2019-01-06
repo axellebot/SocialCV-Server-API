@@ -18,7 +18,7 @@ const paths = require('@constants/paths');
 
 // Errors
 const NotFoundError = require('@errors/NotFoundError')
-const WrongProtocolError = require('@errors/WrongProtocolError')
+const ProtocolWrongError = require('@errors/ProtocolWrongError')
 
 // Routers
 const app = express();

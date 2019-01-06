@@ -11,8 +11,8 @@ var Schema = mongoose.Schema;
 var OAuthClientSchema = new Schema({
   name: String,
   secret: String,
-  redirectUri: String,
-  grantTypes: String,
+  redirectUris: [String],
+  grantTypes: [String],
   scopes: {
     type: [String],
     required: true,
@@ -28,5 +28,35 @@ var OAuthClientSchema = new Schema({
     updatedAt: 'updatedAt'
   }
 });
+
+
+/**
+ * verifyGrantTypes 
+ * 
+ * Check grantTypes
+ */
+OAuthClientSchema.methods.verifyGrantTypes = async function(grantTypes) {  
+  for (var grantType in grantTypes) {
+    if (!this.grantTypes.includes(grantType)) return false;
+  }
+  return true;
+};
+
+/**
+ * verifyScopes 
+ * 
+ * Check scopes
+ */
+OAuthClientSchema.methods.verifyScopes = async function(scopes) {
+  const clientScopes = await this.scopes;
+  console.log("Client:verifyScopes",scopes,clientScopes);
+  for (var scope in scopes) {
+    if (!clientScopes.includes(scope)) return false;
+  }
+  return true;
+};
+
+
+
 
 module.exports = mongoose.model(models.MODEL_NAME_OAUTH_CLIENT, OAuthClientSchema, "oauthClients");

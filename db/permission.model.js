@@ -55,17 +55,17 @@ PermissionSchema.methods.getScopes = async function(countLoop) {
   var scopes = [];
   scopes = scopes.concat(this.scopes); // add permission scopes
 
-  if (this.inherits.size > 0) {
+  if (this.inherits.length > 0) {
     var permissions = await db.permissions.find({
       'role': {
         $in: this.inherits
       }
     });
 
-    if (permissions.size > 0) {
-      for (var permission in permissions) {
+    if (permissions.length > 0) {
+      for (var permission of permissions) {
         var tmp = await permission.getScopes(countLoop);
-        Array.prototype.push.apply(scopes, );
+        Array.prototype.push.apply(scopes, tmp);
       }
     }
   }

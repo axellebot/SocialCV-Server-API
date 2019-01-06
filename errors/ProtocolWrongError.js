@@ -3,9 +3,9 @@
 const messages = require('@constants/messages');
 const statuses = require('@constants/statuses');
 
-module.exports = class WrongPasswordError extends require('@errors/AppError') {
+module.exports = class ProtocolWrongError extends require('@errors/AppError') {
   constructor(message, status) {
-    message = message || messages.MESSAGE_ERROR_WRONG_PASSWORD;
+    message = message || messages.MESSAGE_ERROR_WRONG_PROTOCOL;
     status = status || statuses.HTTP_STATUS_BAD_REQUEST;
     super(message, status);
   }

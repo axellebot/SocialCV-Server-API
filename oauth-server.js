@@ -17,17 +17,32 @@ const models = require('@constants/models');
 const parameters = require('@constants/parameters');
 
 // Errors
-const DatabaseFindError = require('@errors/DatabaseFindError');
+const AccessRestrictedError=require('@errors/AccessRestrictedError');
+const BodyMissingDataError =require('@errors/BodyMissingDataError');
+const BodyMissingTokenError =require('@errors/BodyMissingTokenError');
+const BodyWrongDataError =require('@errors/BodyWrongDataError');
+const ClientMissingGrantTypeError=require('@errors/ClientMissingGrantTypeError');
+const ClientMissingPrivilegeError=require('@errors/ClientMissingPrivilegeError');
+const ClientWrongCredentialsError=require('@errors/ClientWrongCredentialsError');
+const CursorWrongPaginationError=require('@errors/CursorWrongPaginationError');
+const CursorWrongSortError=require('@errors/CursorWrongSortError');
 const DatabaseCountError = require('@errors/DatabaseCountError');
 const DatabaseCreateError = require('@errors/DatabaseCreateError');
-const DatabaseUpdateError = require('@errors/DatabaseUpdateError');
+const DatabaseFindError = require('@errors/DatabaseFindError');
 const DatabaseRemoveError = require('@errors/DatabaseRemoveError');
-const MissingPrivilegeError = require('@errors/MissingPrivilegeError');
+const DatabaseUpdateError = require('@errors/DatabaseUpdateError');
 const NotFoundError = require('@errors/NotFoundError');
 const NotImplementedError = require('@errors/NotImplementedError');
-const UserNotFoundError = require('@errors/NotImplementedError');
-const UserDisabledError = require('@errors/UserDisabledError');
-const WrongPasswordError = require('@errors/WrongPasswordError');
+const ProtocolWrongError= require('@errors/ProtocolWrongError');
+const TokenAuthenticationError = require('@errors/TokenAuthenticationError');
+const TokenExpiredError = require('@errors/TokenExpiredError');
+const UserDisabledError =require('@errors/UserDisabledError');
+const UserMissingEmailError=require('@errors/UserMissingEmailError');
+const UserMissingPasswordError=require('@errors/UserMissingPasswordError');
+const UserMissingPrivilegeError = require('@errors/UserMissingPrivilegeError');
+const UserMissingUsernameError = require('@errors/UserMissingUsernameError');
+const UserNotFoundError = require('@errors/UserNotFoundError');
+const UserWrongPasswordError = require('@errors/UserWrongPasswordError');
 
 // create OAuth 2.0 server
 const oauth2server = oauth2orize.createServer();
@@ -50,7 +65,7 @@ oauth2server.grant(oauth2orize.grant.code(async (client, redirectURI, user, ares
   try {
     console.log("grant code", client, redirectURI, user, ares);
 
-    var code = utils.uid(16);
+    var code = utils.createCode();
 
     var savedAuthorizationCode = await db.oauthAuthorizationCodes.create({
       code: code,
@@ -82,9 +97,7 @@ oauth2server.exchange(oauth2orize.exchange.code(async (client, code, redirectURI
     var authorizationCode = db.oauthAuthorizationCodes.findOne({
       code: code
     });
-
     if (!authorizationCode) throw new NotFoundError("AuthorizationCode");
-
     if (client.id !== code.clientId) {
       return done(null, false);
     }
@@ -92,16 +105,7 @@ oauth2server.exchange(oauth2orize.exchange.code(async (client, code, redirectURI
       return done(null, false);
     }
 
-    var token = utils.createToken();
-
-    var savedAccessToken = await db.oauthAccessTokens.create({
-      token: token,
-      expires: config.accessToken.calculateExpirationDate(),
-      user: authorizationCode.user,
-      client: authorizationCode.client,
-      scopes: authorizationCode.scopes
-    });
-
+    var savedAccessToken = await createAccessToken(user.id, client._id,await user.getScopes());
     if (!savedAccessToken) throw new DatabaseCreateError();
     return done(null, savedAccessToken);
   } catch (err) {
@@ -121,8 +125,9 @@ oauth2server.grant(oauth2orize.grant.token(async (client, user, ares, done) => {
   try {
     console.log("grant token", client, user, ares);
 
-    var savedAccessToken = await createAccessToken(user.id, client._id, user.getScopes());
+    var savedAccessToken = await createAccessToken(user.id, client._id,await user.getScopes());
     if (!savedAccessToken) throw new DatabaseCreateError();
+    
     return done(null, token, expiresIn);
   } catch (err) {
     done(err);
@@ -139,10 +144,11 @@ oauth2server.grant(oauth2orize.grant.token(async (client, user, ares, done) => {
 oauth2server.exchange(oauth2orize.exchange.clientCredentials(async (client, scope, done) => {
   try {
     console.log("exchange clientCredentials", client, scope);
-
-    // Pass in a null for user id since there is no user when using this grant type
-
+    
+//     if(client.grantTypes.contains("password")) throw new MissingPrivilegeError();
+    
     var savedAccessToken = await createAccessToken(null, client._id, scope.split(" "));
+    if (!savedAccessToken) throw new DatabaseCreateError();
 
     return done(null, savedAccessToken.token, null, expiresIn);
   } catch (err) {
@@ -157,23 +163,29 @@ oauth2server.exchange(oauth2orize.exchange.clientCredentials(async (client, scop
  * request for verification.  If this value is validated, the application issues an access
  * token on behalf of the client who authorized the code
  */
-oauth2server.exchange(oauth2orize.exchange.refreshToken(async (client, refreshToken, scopes, done) => {
+oauth2server.exchange(oauth2orize.exchange.refreshToken(async (client, refreshToken, requestedScopes, done) => {
   try {
-    scopes = scopes || "";
-    console.log("exchange refreshToken", client, refreshToken, scopes);
+    requestedScopes = requestedScopes || []; // Additionals scopes
+    console.log("exchange refreshToken", client, refreshToken, requestedScopes);
 
     var foundRefreshToken = await db.oauthRefreshTokens.findOne({
       token: refreshToken
-    });
+    })
+    .populate('user');
     if (!foundRefreshToken) throw new NotFoundError("Refresh token");
-
+    
+    var scopes = foundRefreshToken.scopes;
+    var user = foundRefreshToken.user;
+    
+    if(await user.verifyScopes(requestedScopes)) Array.prototype.push.apply(scopes,requestedScopes); // Added olders scopes to new scopes
+    
     var deletedRefreshToken = await foundRefreshToken.remove();
     if (!deletedRefreshToken) throw new DatabaseDeleteError();
 
-    var savedAccessToken = await createAccessToken(deletedRefreshToken.user, client._id, scopes);
+    var savedAccessToken = await createAccessToken(user._id, client._id, scopes);
     if (!savedAccessToken) throw new DatabaseCreateError();
 
-    var savedRefreshToken = await createRefreshToken(savedAccessToken.user, client._id, scopes);
+    var savedRefreshToken = await createRefreshToken(user._id, client._id, scopes);
     if (!savedRefreshToken) throw new DatabaseCreateError();
 
     return done(null, savedAccessToken.token, savedRefreshToken.token, expiresIn);
@@ -185,13 +197,14 @@ oauth2server.exchange(oauth2orize.exchange.refreshToken(async (client, refreshTo
 /**
  * Find the user in the database with the requested username or email
  */
-oauth2server.exchange(oauth2orize.exchange.password(async (client, username, password, scopes, done) => {
+oauth2server.exchange(oauth2orize.exchange.password(async (client, username, password, requestedScopes, done) => {
   try {
-    console.log("exchange password", username, password, scopes);
+    var requestedScopes=requestedScopes||[];
+    console.log("exchange password",client, username, password, requestedScopes);
 
     if (!client) throw Error(); // Need client authentication
-    if (!client.grantTypes.split(" ").includes("password")) throw MissingPrivilegeError();
-
+    if (!client.grantTypes.includes("password")) throw ClientMissingGrantTypeError();
+    
     const options = {
       $or: [{
           email: username
@@ -206,11 +219,27 @@ oauth2server.exchange(oauth2orize.exchange.password(async (client, username, pas
     if (!user) throw new UserNotFoundError();
     if (user.disabled) throw new UserDisabledError();
     // If there is a match and the passwords are equal 
-    if (!user.verifyPassword(password)) throw new WrongPasswordError();
-    if (!user.verifyScopes(scopes)) throw new MissingPrivilegeError();
+    if (!await user.verifyPassword(password)) throw new UserWrongPasswordError();
+  
+    
+    // Check scopes
+    var scopes = [];
+    
+    if(!requestedScopes.length>0) Array.prototype.push.apply(scopes,await user.getScopes());
+      
+    if (await user.verifyScopes(requestedScopes)) {
+      Array.prototype.push.apply(scopes,requestedScopes);
+    }else{
+      throw new UserMissingPrivilegeError();
+    }
+
+    
+    // Save Access Token
     var savedAccessToken = await createAccessToken(user._id, client._id, scopes);
     if (!savedAccessToken) throw new DatabaseCreateError();
-    var savedRefreshToken = await createRefreshToken(savedAccessToken.user, client._id, savedAccessToken.scope);
+
+    // Save Refresh Token
+    var savedRefreshToken = await createRefreshToken(savedAccessToken.user, client._id, scopes);
     if (!savedRefreshToken) throw new DatabaseCreateError();
     return done(null, /* No error*/
       savedAccessToken.token, /* The generated token */
@@ -225,27 +254,25 @@ oauth2server.exchange(oauth2orize.exchange.password(async (client, username, pas
 async function createAccessToken(userId, clientId, scopes) {
   const accessToken = utils.createToken();
   const expirationDate = config.accessToken.calculateExpirationDate();
-  return db.oauthAccessTokens
-    .create({
-      token: accessToken,
-      client: clientId,
-      user: userId,
-      expires: expirationDate,
-      scopes: scopes
-    });
+  return db.oauthAccessTokens.create({
+    token: accessToken,
+    client: clientId,
+    user: userId,
+    expires: expirationDate,
+    scopes: scopes
+  });
 }
 
 async function createRefreshToken(userId, clientId, scopes) {
   const refreshToken = utils.createToken();
   const expirationDate = config.refreshToken.calculateExpirationDate();
-  return db.oauthRefreshTokens
-    .create({
-      token: refreshToken,
-      client: clientId,
-      user: userId,
-      expires: expirationDate,
-      scopes: scopes
-    });
+  return db.oauthRefreshTokens.create({
+    token: refreshToken,
+    client: clientId,
+    user: userId,
+    expires: expirationDate,
+    scopes: scopes
+  });
 }
 
 module.exports = oauth2server;

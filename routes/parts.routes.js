@@ -17,30 +17,30 @@ const ctrlParts = require('@controllers/parts.controller.js');
 const ctrlGroups = require('@controllers/groups.controller.js');
 
 module.exports = (router) => {
-  router.get('/', requireAuthentication.user({
+  router.get('/', requireAuthentication.accessToken({
     scope: "parts:read"
   }), parseQuerySelection, ctrlParts.findMany);
-  router.post('/', requireAuthentication.user({
+  router.post('/', requireAuthentication.accessToken({
     scope: "parts:write"
   }), requireBodyDataObject, ctrlParts.createOne);
-  router.put('/', requireAuthentication.user({
+  router.put('/', requireAuthentication.accessToken({
     scope: "parts:write"
   }), requireBodyDataArray, ctrlParts.updateMany);
-  router.delete('/', requireAuthentication.user({
+  router.delete('/', requireAuthentication.accessToken({
     scope: "parts:delete"
   }), ctrlParts.deleteAll);
 
-  router.get('/' + ':' + parameters.PARAM_ID_PART, requireAuthentication.user({
+  router.get('/' + ':' + parameters.PARAM_ID_PART, requireAuthentication.accessToken({
     scope: "parts:read"
   }), ctrlParts.findOne);
-  router.put('/' + ':' + parameters.PARAM_ID_PART, requireAuthentication.user({
+  router.put('/' + ':' + parameters.PARAM_ID_PART, requireAuthentication.accessToken({
     scope: "parts:write"
   }), requireBodyDataObject, ctrlParts.updateOne);
-  router.delete('/' + ':' + parameters.PARAM_ID_PART, requireAuthentication.user({
+  router.delete('/' + ':' + parameters.PARAM_ID_PART, requireAuthentication.accessToken({
     scope: "parts:delete"
   }), ctrlParts.deleteOne);
 
-  router.get('/' + ':' + parameters.PARAM_ID_PART + paths.PATH_GROUPS, requireAuthentication.user({
+  router.get('/' + ':' + parameters.PARAM_ID_PART + paths.PATH_GROUPS, requireAuthentication.accessToken({
     scope: "groups:read"
   }), parseQuerySelection, ctrlParts.filterGroupsOfOne, ctrlGroups.findMany);
 };

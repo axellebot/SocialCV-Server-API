@@ -11,7 +11,7 @@ var Schema = mongoose.Schema;
 
 var OAuthRefreshTokenSchema = new Schema({
   token: {
-    type:String,
+    type: String,
     unique: true,
   },
   expires: {

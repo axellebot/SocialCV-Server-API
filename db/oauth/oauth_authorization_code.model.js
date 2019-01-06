@@ -17,9 +17,8 @@ var OAuthAuthorizationCodeSchema = new Schema({
   expires: {
     type: Date,
     required: true,
-    default: Date(),
   },
-  redirectUri: String,
+  redirectUris: [String],
   scopes: {
     type: [String],
     required: true,

@@ -1,22 +1,41 @@
 "use strict";
 
 // Required packages
-const utils = require('@utils');
-const passport = require('passport');
 const BearerStrategy = require('passport-http-bearer');
 const OAuthClientPasswordStrategy = require('passport-oauth2-client-password');
+
+// Others
+const config = require('@config');
+const utils = require('@utils');
+const passport = require('passport');
 const db = require('@db');
 
-// Config
-var config = require('@config');
-
 // Errors
-const AccessRestrictedError = require('@errors/AccessRestrictedError');
-const ExpiredAuthenticationTokenError = require('@errors/ExpiredAuthenticationTokenError');
-const FailedAuthenticationTokenError = require('@errors/FailedAuthenticationTokenError');
-const UserNotFoundError = require('@errors/UserNotFoundError');
-const UserDisabledError = require('@errors/UserDisabledError');
+const AccessRestrictedError=require('@errors/AccessRestrictedError');
+const BodyMissingDataError =require('@errors/BodyMissingDataError');
+const BodyMissingTokenError =require('@errors/BodyMissingTokenError');
+const BodyWrongDataError =require('@errors/BodyWrongDataError');
+const ClientMissingPrivilegeError=require('@errors/ClientMissingPrivilegeError');
+const ClientWrongCredentialsError=require('@errors/ClientWrongCredentialsError');
+const CursorWrongPaginationError=require('@errors/CursorWrongPaginationError');
+const CursorWrongSortError=require('@errors/CursorWrongSortError');
+const DatabaseCountError = require('@errors/DatabaseCountError');
+const DatabaseCreateError = require('@errors/DatabaseCreateError');
+const DatabaseFindError = require('@errors/DatabaseFindError');
+const DatabaseRemoveError = require('@errors/DatabaseRemoveError');
+const DatabaseUpdateError = require('@errors/DatabaseUpdateError');
 const NotFoundError = require('@errors/NotFoundError');
+const NotImplementedError = require('@errors/NotImplementedError');
+const ProtocolWrongError= require('@errors/ProtocolWrongError');
+const TokenAuthenticationError = require('@errors/TokenAuthenticationError');
+const TokenExpiredError = require('@errors/TokenExpiredError');
+const UserDisabledError =require('@errors/UserDisabledError');
+const UserMissingEmailError=require('@errors/UserMissingEmailError');
+const UserMissingPasswordError=require('@errors/UserMissingPasswordError');
+const UserMissingPrivilegeError = require('@errors/UserMissingPrivilegeError');
+const UserMissingUsernameError = require('@errors/UserMissingUsernameError');
+const UserNotFoundError = require('@errors/UserNotFoundError');
+const UserWrongPasswordError = require('@errors/UserWrongPasswordError');
 
 /**
  * BearerStrategy
@@ -30,24 +49,17 @@ const NotFoundError = require('@errors/NotFoundError');
  */
 passport.use(new BearerStrategy(async (token, done) => {
   try {
-    var token = await db.oauthAccessTokens.findOne({
+    var accessToken = await db.oauthAccessTokens.findOne({
         token: token
       })
-      .populate({
-        path: 'user',
-        populate: {
-          path: 'permission'
-        }
-      });
+      .populate('user');
 
-    if (!token) throw new FailedAuthenticationTokenError();
-    if (token.expires) {
-      if (Date.now() > token.expires) throw new ExpiredAuthenticationTokenError();
-    }
-    return done(null, token.user, {
-      scopes: token.scopes
+    if (!accessToken) throw new TokenAuthenticationError();
+    if (accessToken.expires && Date.now() > accessToken.expires) throw new TokenExpiredError();
+
+    return done(null, accessToken.user, {
+      scopes: accessToken.scopes
     });
-
   } catch (err) {
     done(err);
   }
@@ -64,12 +76,8 @@ passport.use(new OAuthClientPasswordStrategy(async (clientId, clientSecret, done
     var client = await db.oauthClients.findOne({
       _id: clientId
     });
-    if (!client) {
-      throw new AccessRestrictedError();
-    }
-    if (client.secret != clientSecret) {
-      throw new FailedAuthenticationTokenError();
-    }
+    if (!client) throw new Error();
+    if (client.secret != clientSecret) throw new ClientWrongCredentialsError();
     return done(null, client, {
       scopes: client.scopes
     });
