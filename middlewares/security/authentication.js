@@ -4,8 +4,8 @@
 const config = require('@config');
 const moment = require('moment');
 const oauth = require('@oauth');
-const passport = require('@passport');
 const db = require('@db');
+const passport = require('@passport');
 
 // Errors
 const AccessRestrictedError=require('@errors/AccessRestrictedError');
@@ -41,49 +41,31 @@ const UserWrongPasswordError = require('@errors/UserWrongPasswordError');
  *
  * Example
  * Authorization: Bearer someAccessTokenHere
+ *
+ * You would call this with an client id and client secret
+ * in the body of the message according to OAuth 2.0 standards
+ * https://tools.ietf.org/html/rfc6750
  */
 
 /**
  * @param options
  */
-module.exports.accessToken = (options) => {
+module.exports = (options) => {
   var options = options || {};
   return [
-    passport.authenticate(['bearer'], {
+    passport.authenticate(['bearer','oauth2-client-password'], {
       session: false
     }),
     async (req, res, next) => {
       try {
-      console.log("AccessToken authInfo",req.authInfo );
-        if(options.scope){
-          if (!req.authInfo.scopes ) throw new AccessTokenMissingPrivilegeError();
-          if (!req.authInfo.scopes.includes(options.scope)) throw new AccessTokenMissingPrivilegeError();
-        }
-        next();
-      } catch (err) {
-        next(err);
-      }
-    }
-  ];
-};
-
-/** 
- * You would call this with an client id and client secret
- * in the body of the message according to OAuth 2.0 standards
- * https://tools.ietf.org/html/rfc6750
- */
-module.exports.client = (options) => {
-  var options = options || {};
-  return [
-    passport.authenticate(['oauth2-client-password'], {
-      session: false
-    }),
-    async (req, res, next) => {
-      try {
-      console.log("Client authInfo",req.authInfo );
-        if(options.scope){
+//       console.log("req",req );
+      console.log("authInfo",req.authInfo );
+        if(options.scopes){
           if (!req.authInfo.scopes ) throw new ClientMissingPrivilegeError();
-          if (!req.authInfo.scopes.includes(options.scope)) throw new ClientMissingPrivilegeError();
+          for(var scope of options.scopes){
+//             console.log("check",scope);
+            if (!req.authInfo.scopes.includes(scope)) throw new ClientMissingPrivilegeError();
+          }
         }
         next();
       }catch(err){

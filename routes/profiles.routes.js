@@ -17,30 +17,30 @@ const ctrlProfiles = require('@controllers/profiles.controller.js');
 const ctrlParts = require('@controllers/parts.controller.js');
 
 module.exports = (router) => {
-  router.get('/', requireAuthentication.accessToken({
-    scope: "profiles:read"
+  router.get('/', requireAuthentication({
+    scopes: ["profiles:read"]
   }), parseQuerySelection, ctrlProfiles.findMany);
-  router.post('/', requireAuthentication.accessToken({
-    scope: "profiles:write"
+  router.post('/', requireAuthentication({
+    scopes: ["profiles:write"]
   }), requireBodyDataObject, ctrlProfiles.createOne);
-  router.put('/', requireAuthentication.accessToken({
-    scope: "profiles:write"
+  router.put('/', requireAuthentication({
+    scopes: ["profiles:write"]
   }), requireBodyDataArray, ctrlProfiles.updateMany);
-  router.delete('/', requireAuthentication.accessToken({
-    scope: "profiles:delete"
+  router.delete('/', requireAuthentication({
+    scopes: ["profiles:delete"]
   }), ctrlProfiles.deleteAll);
 
-  router.get('/' + ':' + parameters.PARAM_ID_PROFILE, requireAuthentication.accessToken({
-    scope: "profiles:read"
+  router.get('/' + ':' + parameters.PARAM_ID_PROFILE, requireAuthentication({
+    scopes: ["profiles:read"]
   }), ctrlProfiles.findOne);
-  router.put('/' + ':' + parameters.PARAM_ID_PROFILE, requireAuthentication.accessToken({
-    scope: "profiles:write"
+  router.put('/' + ':' + parameters.PARAM_ID_PROFILE, requireAuthentication({
+    scopes: ["profiles:write"]
   }), requireBodyDataObject, ctrlProfiles.updateOne);
-  router.delete('/' + ':' + parameters.PARAM_ID_PROFILE, requireAuthentication.accessToken({
-    scope: "profiles:delete"
+  router.delete('/' + ':' + parameters.PARAM_ID_PROFILE, requireAuthentication({
+    scopes: ["profiles:delete"]
   }), ctrlProfiles.deleteOne);
 
-  router.get('/' + ':' + parameters.PARAM_ID_PROFILE + paths.PATH_PARTS, requireAuthentication.accessToken({
-    scope: "parts:read"
+  router.get('/' + ':' + parameters.PARAM_ID_PROFILE + paths.PATH_PARTS, requireAuthentication({
+    scopes: ["profiles:read","parts:read"]
   }), parseQuerySelection, ctrlProfiles.filterPartsOfOne, ctrlParts.findMany);
 };

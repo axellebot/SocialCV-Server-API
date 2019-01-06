@@ -15,6 +15,6 @@ const parseQuerySelection = require('@middlewares/selection');
 const ctrlOAuth = require('@controllers/oauth.controller.js');
 
 module.exports = (router) => {
-  router.post(paths.PATH_TOKEN, requireAuthentication.client(), ctrlOAuth.getToken);
-  router.post(paths.PATH_AUTHORIZE,requireAuthentication.client(),ctrlOAuth.authorize);
+  router.post(paths.PATH_TOKEN, requireAuthentication(), ctrlOAuth.getToken);
+  router.post(paths.PATH_AUTHORIZE,requireAuthentication(),ctrlOAuth.authorize);
 };

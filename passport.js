@@ -11,14 +11,14 @@ const passport = require('passport');
 const db = require('@db');
 
 // Errors
-const AccessRestrictedError=require('@errors/AccessRestrictedError');
-const BodyMissingDataError =require('@errors/BodyMissingDataError');
-const BodyMissingTokenError =require('@errors/BodyMissingTokenError');
-const BodyWrongDataError =require('@errors/BodyWrongDataError');
-const ClientMissingPrivilegeError=require('@errors/ClientMissingPrivilegeError');
-const ClientWrongCredentialsError=require('@errors/ClientWrongCredentialsError');
-const CursorWrongPaginationError=require('@errors/CursorWrongPaginationError');
-const CursorWrongSortError=require('@errors/CursorWrongSortError');
+const AccessRestrictedError = require('@errors/AccessRestrictedError');
+const BodyMissingDataError = require('@errors/BodyMissingDataError');
+const BodyMissingTokenError = require('@errors/BodyMissingTokenError');
+const BodyWrongDataError = require('@errors/BodyWrongDataError');
+const ClientMissingPrivilegeError = require('@errors/ClientMissingPrivilegeError');
+const ClientWrongCredentialsError = require('@errors/ClientWrongCredentialsError');
+const CursorWrongPaginationError = require('@errors/CursorWrongPaginationError');
+const CursorWrongSortError = require('@errors/CursorWrongSortError');
 const DatabaseCountError = require('@errors/DatabaseCountError');
 const DatabaseCreateError = require('@errors/DatabaseCreateError');
 const DatabaseFindError = require('@errors/DatabaseFindError');
@@ -26,12 +26,12 @@ const DatabaseRemoveError = require('@errors/DatabaseRemoveError');
 const DatabaseUpdateError = require('@errors/DatabaseUpdateError');
 const NotFoundError = require('@errors/NotFoundError');
 const NotImplementedError = require('@errors/NotImplementedError');
-const ProtocolWrongError= require('@errors/ProtocolWrongError');
+const ProtocolWrongError = require('@errors/ProtocolWrongError');
 const TokenAuthenticationError = require('@errors/TokenAuthenticationError');
 const TokenExpiredError = require('@errors/TokenExpiredError');
-const UserDisabledError =require('@errors/UserDisabledError');
-const UserMissingEmailError=require('@errors/UserMissingEmailError');
-const UserMissingPasswordError=require('@errors/UserMissingPasswordError');
+const UserDisabledError = require('@errors/UserDisabledError');
+const UserMissingEmailError = require('@errors/UserMissingEmailError');
+const UserMissingPasswordError = require('@errors/UserMissingPasswordError');
 const UserMissingPrivilegeError = require('@errors/UserMissingPrivilegeError');
 const UserMissingUsernameError = require('@errors/UserMissingUsernameError');
 const UserNotFoundError = require('@errors/UserNotFoundError');
@@ -49,16 +49,29 @@ const UserWrongPasswordError = require('@errors/UserWrongPasswordError');
  */
 passport.use(new BearerStrategy(async (token, done) => {
   try {
+    console.log("Authenticate Bearer", token);
     var accessToken = await db.oauthAccessTokens.findOne({
         token: token
       })
-      .populate('user');
+      .populate('user')
+      .populate('client');
+
 
     if (!accessToken) throw new TokenAuthenticationError();
+    console.log("accessToken", accessToken);
     if (accessToken.expires && Date.now() > accessToken.expires) throw new TokenExpiredError();
 
-    return done(null, accessToken.user, {
-      scopes: accessToken.scopes
+    var scopes = [];
+    if (accessToken.user) {
+      Array.prototype.push.apply(scopes, await accessToken.user.getScopes());
+    } else if (accessToken.client) {
+      Array.prototype.push.apply(scopes, await accessToken.client.scopes);
+    }
+
+    // issue : https://github.com/jaredhanson/passport-http-bearer/issues/60
+    return done(null, accessToken.user || {}, {
+      scopes: scopes,
+      client: accessToken.client
     });
   } catch (err) {
     done(err);
@@ -73,6 +86,7 @@ passport.use(new BearerStrategy(async (token, done) => {
  */
 passport.use(new OAuthClientPasswordStrategy(async (clientId, clientSecret, done) => {
   try {
+    console.log("Authenticate OAuthClientPassword", clientId, clientSecret);
     var client = await db.oauthClients.findOne({
       _id: clientId
     });

@@ -17,30 +17,30 @@ const ctrlParts = require('@controllers/parts.controller.js');
 const ctrlGroups = require('@controllers/groups.controller.js');
 
 module.exports = (router) => {
-  router.get('/', requireAuthentication.accessToken({
-    scope: "parts:read"
+  router.get('/', requireAuthentication({
+    scopes: ["parts:read"]
   }), parseQuerySelection, ctrlParts.findMany);
-  router.post('/', requireAuthentication.accessToken({
-    scope: "parts:write"
+  router.post('/', requireAuthentication({
+    scopes: ["parts:write"]
   }), requireBodyDataObject, ctrlParts.createOne);
-  router.put('/', requireAuthentication.accessToken({
-    scope: "parts:write"
+  router.put('/', requireAuthentication({
+    scopes: ["parts:write"]
   }), requireBodyDataArray, ctrlParts.updateMany);
-  router.delete('/', requireAuthentication.accessToken({
+  router.delete('/', requireAuthentication({
     scope: "parts:delete"
   }), ctrlParts.deleteAll);
 
-  router.get('/' + ':' + parameters.PARAM_ID_PART, requireAuthentication.accessToken({
-    scope: "parts:read"
+  router.get('/' + ':' + parameters.PARAM_ID_PART, requireAuthentication({
+    scopes: ["parts:read"]
   }), ctrlParts.findOne);
-  router.put('/' + ':' + parameters.PARAM_ID_PART, requireAuthentication.accessToken({
-    scope: "parts:write"
+  router.put('/' + ':' + parameters.PARAM_ID_PART, requireAuthentication({
+    scopes: ["parts:write"]
   }), requireBodyDataObject, ctrlParts.updateOne);
-  router.delete('/' + ':' + parameters.PARAM_ID_PART, requireAuthentication.accessToken({
-    scope: "parts:delete"
+  router.delete('/' + ':' + parameters.PARAM_ID_PART, requireAuthentication({
+    scopes: ["parts:delete"]
   }), ctrlParts.deleteOne);
 
-  router.get('/' + ':' + parameters.PARAM_ID_PART + paths.PATH_GROUPS, requireAuthentication.accessToken({
-    scope: "groups:read"
+  router.get('/' + ':' + parameters.PARAM_ID_PART + paths.PATH_GROUPS, requireAuthentication({
+    scopes: ["parts:read","groups:read"]
   }), parseQuerySelection, ctrlParts.filterGroupsOfOne, ctrlGroups.findMany);
 };

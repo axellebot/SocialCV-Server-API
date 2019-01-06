@@ -48,7 +48,7 @@ OAuthClientSchema.methods.verifyGrantTypes = async function(grantTypes) {
  * Check scopes
  */
 OAuthClientSchema.methods.verifyScopes = async function(scopes) {
-  const clientScopes = await this.scopes;
+  const clientScopes = this.scopes;
   console.log("Client:verifyScopes",scopes,clientScopes);
   for (var scope in scopes) {
     if (!clientScopes.includes(scope)) return false;

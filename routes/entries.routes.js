@@ -16,26 +16,26 @@ const parseQuerySelection = require('@middlewares/selection');
 const ctrlEntries = require('@controllers/entries.controller.js');
 
 module.exports = (router) => {
-  router.get('/', requireAuthentication.accessToken({
-    scope: "entries:read"
+  router.get('/', requireAuthentication({
+    scopes: ["entries:read"]
   }), parseQuerySelection, ctrlEntries.findMany);
-  router.post('/', requireAuthentication.accessToken({
-    scope: "entries:write"
+  router.post('/', requireAuthentication({
+    scopes: ["entries:write"]
   }), requireBodyDataObject, ctrlEntries.createOne);
-  router.put('/', requireAuthentication.accessToken({
-    scope: "entries:write"
+  router.put('/', requireAuthentication({
+    scopes: ["entries:write"]
   }), requireBodyDataArray, ctrlEntries.updateMany);
-  router.delete('/', requireAuthentication.accessToken({
-    scope: "entries:delete"
+  router.delete('/', requireAuthentication({
+    scopes: ["entries:delete"]
   }), ctrlEntries.deleteAll);
 
-  router.get('/' + ':' + parameters.PARAM_ID_ENTRY, requireAuthentication.accessToken({
-    scope: "entries:read"
+  router.get('/' + ':' + parameters.PARAM_ID_ENTRY, requireAuthentication({
+    scopes: ["entries:read"]
   }), ctrlEntries.findOne);
-  router.put('/' + ':' + parameters.PARAM_ID_ENTRY, requireAuthentication.accessToken({
-    scope: "entries:write"
+  router.put('/' + ':' + parameters.PARAM_ID_ENTRY, requireAuthentication({
+    scopes: ["entries:write"]
   }), requireBodyDataObject, ctrlEntries.updateOne);
-  router.delete('/' + ':' + parameters.PARAM_ID_ENTRY, requireAuthentication.accessToken({
-    scope: "entries:delete"
+  router.delete('/' + ':' + parameters.PARAM_ID_ENTRY, requireAuthentication({
+    scopes: ["entries:delete"]
   }), ctrlEntries.deleteOne);
 };

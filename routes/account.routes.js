@@ -17,7 +17,7 @@ const ctrlAccount = require('@controllers/account.controller.js');
 const ctrlProfiles = require('@controllers/profiles.controller.js');
 
 module.exports = (router) => {
-  router.get('/', requireAuthentication.accessToken({scope:"account:read"}), ctrlAccount.findOne);
+  router.get('/', requireAuthentication({scopes:["opendid"]}), ctrlAccount.findOne);
 
-  router.get(paths.PATH_PROFILES, requireAuthentication.accessToken({scope:"profiles:read"}), parseQuerySelection, ctrlAccount.filterProfilesOfOne, ctrlProfiles.findMany);
+  router.get(paths.PATH_PROFILES, requireAuthentication({scopes:["profiles:read"]}), parseQuerySelection, ctrlAccount.filterProfilesOfOne, ctrlProfiles.findMany);
 };

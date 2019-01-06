@@ -17,15 +17,15 @@ const models = require('@constants/models');
 const parameters = require('@constants/parameters');
 
 // Errors
-const AccessRestrictedError=require('@errors/AccessRestrictedError');
-const BodyMissingDataError =require('@errors/BodyMissingDataError');
-const BodyMissingTokenError =require('@errors/BodyMissingTokenError');
-const BodyWrongDataError =require('@errors/BodyWrongDataError');
-const ClientMissingGrantTypeError=require('@errors/ClientMissingGrantTypeError');
-const ClientMissingPrivilegeError=require('@errors/ClientMissingPrivilegeError');
-const ClientWrongCredentialsError=require('@errors/ClientWrongCredentialsError');
-const CursorWrongPaginationError=require('@errors/CursorWrongPaginationError');
-const CursorWrongSortError=require('@errors/CursorWrongSortError');
+const AccessRestrictedError = require('@errors/AccessRestrictedError');
+const BodyMissingDataError = require('@errors/BodyMissingDataError');
+const BodyMissingTokenError = require('@errors/BodyMissingTokenError');
+const BodyWrongDataError = require('@errors/BodyWrongDataError');
+const ClientMissingGrantTypeError = require('@errors/ClientMissingGrantTypeError');
+const ClientMissingPrivilegeError = require('@errors/ClientMissingPrivilegeError');
+const ClientWrongCredentialsError = require('@errors/ClientWrongCredentialsError');
+const CursorWrongPaginationError = require('@errors/CursorWrongPaginationError');
+const CursorWrongSortError = require('@errors/CursorWrongSortError');
 const DatabaseCountError = require('@errors/DatabaseCountError');
 const DatabaseCreateError = require('@errors/DatabaseCreateError');
 const DatabaseFindError = require('@errors/DatabaseFindError');
@@ -33,12 +33,12 @@ const DatabaseRemoveError = require('@errors/DatabaseRemoveError');
 const DatabaseUpdateError = require('@errors/DatabaseUpdateError');
 const NotFoundError = require('@errors/NotFoundError');
 const NotImplementedError = require('@errors/NotImplementedError');
-const ProtocolWrongError= require('@errors/ProtocolWrongError');
+const ProtocolWrongError = require('@errors/ProtocolWrongError');
 const TokenAuthenticationError = require('@errors/TokenAuthenticationError');
 const TokenExpiredError = require('@errors/TokenExpiredError');
-const UserDisabledError =require('@errors/UserDisabledError');
-const UserMissingEmailError=require('@errors/UserMissingEmailError');
-const UserMissingPasswordError=require('@errors/UserMissingPasswordError');
+const UserDisabledError = require('@errors/UserDisabledError');
+const UserMissingEmailError = require('@errors/UserMissingEmailError');
+const UserMissingPasswordError = require('@errors/UserMissingPasswordError');
 const UserMissingPrivilegeError = require('@errors/UserMissingPrivilegeError');
 const UserMissingUsernameError = require('@errors/UserMissingUsernameError');
 const UserNotFoundError = require('@errors/UserNotFoundError');
@@ -105,7 +105,7 @@ oauth2server.exchange(oauth2orize.exchange.code(async (client, code, redirectURI
       return done(null, false);
     }
 
-    var savedAccessToken = await createAccessToken(user.id, client._id,await user.getScopes());
+    var savedAccessToken = await createAccessToken(user.id, client._id, await user.getScopes());
     if (!savedAccessToken) throw new DatabaseCreateError();
     return done(null, savedAccessToken);
   } catch (err) {
@@ -125,9 +125,9 @@ oauth2server.grant(oauth2orize.grant.token(async (client, user, ares, done) => {
   try {
     console.log("grant token", client, user, ares);
 
-    var savedAccessToken = await createAccessToken(user.id, client._id,await user.getScopes());
+    var savedAccessToken = await createAccessToken(user.id, client._id, await user.getScopes());
     if (!savedAccessToken) throw new DatabaseCreateError();
-    
+
     return done(null, token, expiresIn);
   } catch (err) {
     done(err);
@@ -140,15 +140,24 @@ oauth2server.grant(oauth2orize.grant.token(async (client, user, ares, done) => {
  * The callback accepts the `client`, which is exchanging the client's id and
  * password/secret from the token request for verification. If these values are validated, the
  * application issues an access token on behalf of the client who authorized the code.
+ * 
+ * grant_type="client_credentials"
  */
-oauth2server.exchange(oauth2orize.exchange.clientCredentials(async (client, scope, done) => {
+oauth2server.exchange(oauth2orize.exchange.clientCredentials(async (client, requestedScopes, done) => {
   try {
     console.log("exchange clientCredentials", client, scope);
-    
-//     if(client.grantTypes.contains("password")) throw new MissingPrivilegeError();
-    
-    var savedAccessToken = await createAccessToken(null, client._id, scope.split(" "));
-    if (!savedAccessToken) throw new DatabaseCreateError();
+
+    // Check grant_type="client_credentials"
+    if (!client) throw Error();
+    if (!client.grantTypes.includes("client_credentials")) throw ClientMissingGrantTypeError();
+
+    // check scopes
+    var scopes = scopes || [];
+    if (await client.verifyScopes(requestedScopes)) throw ClientMissingPrivilegeError();
+    Array.prototype.push.apply(scopes, requestedScopes);
+
+    var savedAccessToken = await createAccessToken(null, client._id, scopes);
+    if (!savedAccessToken) throw DatabaseCreateError();
 
     return done(null, savedAccessToken.token, null, expiresIn);
   } catch (err) {
@@ -162,6 +171,8 @@ oauth2server.exchange(oauth2orize.exchange.clientCredentials(async (client, scop
  * The callback accepts the `client`, which is exchanging the client's id from the token
  * request for verification.  If this value is validated, the application issues an access
  * token on behalf of the client who authorized the code
+ * 
+ * grant_type="refresh_token"
  */
 oauth2server.exchange(oauth2orize.exchange.refreshToken(async (client, refreshToken, requestedScopes, done) => {
   try {
@@ -169,16 +180,16 @@ oauth2server.exchange(oauth2orize.exchange.refreshToken(async (client, refreshTo
     console.log("exchange refreshToken", client, refreshToken, requestedScopes);
 
     var foundRefreshToken = await db.oauthRefreshTokens.findOne({
-      token: refreshToken
-    })
-    .populate('user');
+        token: refreshToken
+      })
+      .populate('user');
     if (!foundRefreshToken) throw new NotFoundError("Refresh token");
-    
+
     var scopes = foundRefreshToken.scopes;
     var user = foundRefreshToken.user;
-    
-    if(await user.verifyScopes(requestedScopes)) Array.prototype.push.apply(scopes,requestedScopes); // Added olders scopes to new scopes
-    
+
+    if (await user.verifyScopes(requestedScopes)) Array.prototype.push.apply(scopes, requestedScopes); // Added olders scopes to new scopes
+
     var deletedRefreshToken = await foundRefreshToken.remove();
     if (!deletedRefreshToken) throw new DatabaseDeleteError();
 
@@ -195,16 +206,24 @@ oauth2server.exchange(oauth2orize.exchange.refreshToken(async (client, refreshTo
 }));
 
 /**
- * Find the user in the database with the requested username or email
+ * Exchange the user credentials for an access token.
+ *
+ * The callback accepts the `client`, which is exchanging the client's id from the token
+ * request for verification.  If this value is validated, the application issues an access
+ * token on behalf of the client
+ *
+ * grant_type="password"
  */
 oauth2server.exchange(oauth2orize.exchange.password(async (client, username, password, requestedScopes, done) => {
   try {
-    var requestedScopes=requestedScopes||[];
-    console.log("exchange password",client, username, password, requestedScopes);
+    var requestedScopes = requestedScopes || [];
+    console.log("exchange password", client, username, password, requestedScopes);
 
     if (!client) throw Error(); // Need client authentication
+
+    // Check grant_type="password"
     if (!client.grantTypes.includes("password")) throw ClientMissingGrantTypeError();
-    
+
     const options = {
       $or: [{
           email: username
@@ -220,20 +239,20 @@ oauth2server.exchange(oauth2orize.exchange.password(async (client, username, pas
     if (user.disabled) throw new UserDisabledError();
     // If there is a match and the passwords are equal 
     if (!await user.verifyPassword(password)) throw new UserWrongPasswordError();
-  
-    
+
+
     // Check scopes
     var scopes = [];
-    
-    if(!requestedScopes.length>0) Array.prototype.push.apply(scopes,await user.getScopes());
-      
+
+    if (!requestedScopes.length > 0) Array.prototype.push.apply(scopes, await user.getScopes());
+
     if (await user.verifyScopes(requestedScopes)) {
-      Array.prototype.push.apply(scopes,requestedScopes);
-    }else{
+      Array.prototype.push.apply(scopes, requestedScopes);
+    } else {
       throw new UserMissingPrivilegeError();
     }
 
-    
+
     // Save Access Token
     var savedAccessToken = await createAccessToken(user._id, client._id, scopes);
     if (!savedAccessToken) throw new DatabaseCreateError();
@@ -250,6 +269,7 @@ oauth2server.exchange(oauth2orize.exchange.password(async (client, username, pas
     done(err);
   }
 }));
+
 
 async function createAccessToken(userId, clientId, scopes) {
   const accessToken = utils.createToken();

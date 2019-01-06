@@ -17,30 +17,30 @@ const ctrlGroups = require('@controllers/groups.controller.js');
 const ctrlEntries = require('@controllers/entries.controller.js');
 
 module.exports = (router) => {
-  router.get('/', requireAuthentication.accessToken({
-    scope: "groups:read"
+  router.get('/', requireAuthentication({
+    scopes: ["groups:read"]
   }), parseQuerySelection, ctrlGroups.findMany);
-  router.post('/', requireAuthentication.accessToken({
-    scope: "groups:write"
+  router.post('/', requireAuthentication({
+    scopes: ["groups:write"]
   }), requireBodyDataObject, ctrlGroups.createOne);
-  router.put('/', requireAuthentication.accessToken({
-    scope: "groups:write"
+  router.put('/', requireAuthentication({
+    scopes:[ "groups:write"]
   }), requireBodyDataArray, ctrlGroups.updateMany);
-  router.delete('/', requireAuthentication.accessToken({
-    scope: "groups:delete"
+  router.delete('/', requireAuthentication({
+    scope: ["groups:delete"]
   }), ctrlGroups.deleteAll);
 
-  router.get('/' + ':' + parameters.PARAM_ID_GROUP, requireAuthentication.accessToken({
-    scope: "groups:write"
+  router.get('/' + ':' + parameters.PARAM_ID_GROUP, requireAuthentication({
+    scopes: ["groups:write"]
   }), ctrlGroups.findOne);
-  router.put('/' + ':' + parameters.PARAM_ID_GROUP, requireAuthentication.accessToken({
-    scope: "groups:write"
+  router.put('/' + ':' + parameters.PARAM_ID_GROUP, requireAuthentication({
+    scopes: ["groups:write"]
   }), requireBodyDataObject, ctrlGroups.updateOne);
-  router.delete('/' + ':' + parameters.PARAM_ID_GROUP, requireAuthentication.accessToken({
-    scope: "groups:delete"
+  router.delete('/' + ':' + parameters.PARAM_ID_GROUP, requireAuthentication({
+    scopes:[ "groups:delete"]
   }), ctrlGroups.deleteOne);
 
-  router.get('/' + ':' + parameters.PARAM_ID_GROUP + paths.PATH_ENTRIES, requireAuthentication.accessToken({
-    scope: "entries:read"
+  router.get('/' + ':' + parameters.PARAM_ID_GROUP + paths.PATH_ENTRIES, requireAuthentication({
+    scopes: ["groups:read","entries:read"]
   }), parseQuerySelection, ctrlGroups.filterEntriesOfOne, ctrlEntries.findMany);
 };

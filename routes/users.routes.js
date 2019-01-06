@@ -16,26 +16,26 @@ const parseQuerySelection = require('@middlewares/selection');
 const ctrlUsers = require('@controllers/users.controller.js');
 
 module.exports = (router) => {
-  router.get('/', authenticate.accessToken({
-    scope: "users:read"
+  router.get('/', authenticate({
+    scopes: ["users:read"]
   }), parseQuerySelection, ctrlUsers.findMany);
-  router.post('/', authenticate.accessToken({
-    scope: "users:write"
+  router.post('/', authenticate({
+    scopes: ["users:write"]
   }), requireBodyDataObject, ctrlUsers.createOne);
-  router.put('/', authenticate.accessToken({
-    scope: "users:write"
+  router.put('/', authenticate({
+    scopes: ["users:write"]
   }), requireBodyDataArray, ctrlUsers.updateMany);
-  router.delete('/', authenticate.accessToken({
-    scope: "users:delete"
+  router.delete('/', authenticate({
+    scopes: ["users:delete"]
   }), ctrlUsers.deleteAll);
 
-  router.get('/' + ':' + parameters.PARAM_ID_USER, authenticate.accessToken({
-    scope: "users:read"
+  router.get('/' + ':' + parameters.PARAM_ID_USER, authenticate({
+    scopes: ["users:read"]
   }), ctrlUsers.findOne);
-  router.put('/' + ':' + parameters.PARAM_ID_USER, authenticate.accessToken({
-    scope: "users:write"
+  router.put('/' + ':' + parameters.PARAM_ID_USER, authenticate({
+    scopes: ["users:write"]
   }), requireBodyDataObject, ctrlUsers.updateOne);
-  router.delete('/' + ':' + parameters.PARAM_ID_USER, authenticate.accessToken({
-    scope: "users:delete"
+  router.delete('/' + ':' + parameters.PARAM_ID_USER, authenticate({
+    scopes: ["users:delete"]
   }), ctrlUsers.deleteOne);
 };
