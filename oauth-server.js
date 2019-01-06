@@ -18,6 +18,7 @@ const parameters = require('@constants/parameters');
 
 // Errors
 const AccessRestrictedError = require('@errors/AccessRestrictedError');
+const AuthorizationCodeExpiredError = require('@errors/AuthorizationCodeExpiredError');
 const BodyMissingDataError = require('@errors/BodyMissingDataError');
 const BodyMissingTokenError = require('@errors/BodyMissingTokenError');
 const BodyWrongDataError = require('@errors/BodyWrongDataError');
@@ -89,25 +90,38 @@ oauth2server.grant(oauth2orize.grant.code(async (client, redirectURI, user, ares
  * `redirectURI` from the authorization request for verification.  If these values
  * are validated, the application issues an access token on behalf of the user who
  * authorized the code.
+ *
+ * grant_type="client_credentials"
+ *
  */
 oauth2server.exchange(oauth2orize.exchange.code(async (client, code, redirectURI, done) => {
   try {
     console.log("exchange code", client, code, redirectURI);
 
-    var authorizationCode = db.oauthAuthorizationCodes.findOne({
+    var authorizationCode = await db.oauthAuthorizationCodes.findOne({
       code: code
     });
     if (!authorizationCode) throw new NotFoundError("AuthorizationCode");
-    if (client.id !== code.clientId) {
-      return done(null, false);
-    }
-    if (redirectURI !== code.redirectUri) {
-      return done(null, false);
-    }
+    
+    // Check grant_type="authorization_code"
+    if (!client) throw Error();
+    if (!client.grantTypes.includes("authorization_code")) throw new ClientMissingGrantTypeError();
+    console.log("test",typeof(client._id),typeof(authorizationCode.client)); 
+    if (!client._id.equals(authorizationCode.client)) return done(null, false);// type
 
-    var savedAccessToken = await createAccessToken(user.id, client._id, await user.getScopes());
+    // Check Uri
+    if (redirectURI && authorizationCode.redirectUris.contains(redirectURI)) return done(null, false);
+
+    // Check expiration date
+    if(await authorizationCode.isExpired()) throw new AuthorizationCodeExpiredError();
+    
+    var savedAccessToken = await createAccessToken(authorizationCode.user, client._id,  code.scopes);
     if (!savedAccessToken) throw new DatabaseCreateError();
-    return done(null, savedAccessToken);
+    
+    var savedRefreshToken = await createRefreshToken(authorizationCode.user, client._id, code.scopes);
+    if (!savedRefreshToken) throw new DatabaseCreateError();
+
+    return done(null, savedAccessToken.token,savedRefreshToken.token,expiresIn);
   } catch (err) {
     done(err);
   }
@@ -142,6 +156,7 @@ oauth2server.grant(oauth2orize.grant.token(async (client, user, ares, done) => {
  * application issues an access token on behalf of the client who authorized the code.
  * 
  * grant_type="client_credentials"
+ *
  */
 oauth2server.exchange(oauth2orize.exchange.clientCredentials(async (client, requestedScopes, done) => {
   try {
@@ -188,10 +203,13 @@ oauth2server.exchange(oauth2orize.exchange.refreshToken(async (client, refreshTo
       })
       .populate('user');
     if (!foundRefreshToken) throw new NotFoundError("Refresh token");
-
+    
+    // Check expiration date
+    if(await foundRefreshToken.isExpired()) throw new TokenExpiredError();
+    
     var scopes = foundRefreshToken.scopes;
     var user = foundRefreshToken.user;
-
+  
     if (await user.verifyScopes(requestedScopes)) Array.prototype.push.apply(scopes, requestedScopes); // Added olders scopes to new scopes
 
     var deletedRefreshToken = await foundRefreshToken.remove();
@@ -264,6 +282,7 @@ oauth2server.exchange(oauth2orize.exchange.password(async (client, username, pas
     // Save Refresh Token
     var savedRefreshToken = await createRefreshToken(savedAccessToken.user, client._id, scopes);
     if (!savedRefreshToken) throw new DatabaseCreateError();
+    
     return done(null, /* No error*/
       savedAccessToken.token, /* The generated token */
       savedRefreshToken.token, /* The generated refresh token */

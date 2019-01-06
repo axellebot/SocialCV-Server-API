@@ -38,4 +38,8 @@ var OAuthRefreshTokenSchema = new Schema({
   }
 });
 
+OAuthRefreshTokenSchema.methods.isExpired = async function(){
+  return Date.now() > this.expires
+}
+
 module.exports = mongoose.model(models.MODEL_NAME_OAUTH_REFRESH_TOKEN, OAuthRefreshTokenSchema, "oauthRefreshTokens");

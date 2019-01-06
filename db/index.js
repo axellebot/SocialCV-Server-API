@@ -1,7 +1,7 @@
 'use strict';
 
 exports.oauthAccessTokens       = require('./oauth/oauth_access_token.model');
-exports.oautAuthorizationCodes  = require('./oauth/oauth_authorization_code.model');
+exports.oauthAuthorizationCodes  = require('./oauth/oauth_authorization_code.model');
 exports.oauthClients            = require('./oauth/oauth_client.model');
 exports.oauthRefreshTokens      = require('./oauth/oauth_refresh_token.model');
 exports.oauthScopes             = require('./oauth/oauth_scope.model');

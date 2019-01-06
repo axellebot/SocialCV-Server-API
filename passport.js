@@ -59,7 +59,7 @@ passport.use(new BearerStrategy(async (token, done) => {
 
     if (!accessToken) throw new TokenAuthenticationError();
     console.log("accessToken", accessToken);
-    if (accessToken.expires && Date.now() > accessToken.expires) throw new TokenExpiredError();
+    if (accessToken.expires && await accessToken.isExpired()) throw new TokenExpiredError();
 
     var scopes = [];
     if (accessToken.user) {

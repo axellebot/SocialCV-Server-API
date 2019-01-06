@@ -38,4 +38,8 @@ var OAuthAccessTokenSchema = new Schema({
   }
 });
 
+OAuthAccessTokenSchema.methods.isExpired = async function(){
+  return Date.now() > this.expires
+}
+
 module.exports = mongoose.model(models.MODEL_NAME_OAUTH_ACCESS_TOKEN, OAuthAccessTokenSchema, "oauthAccessTokens");

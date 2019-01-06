@@ -39,4 +39,8 @@ var OAuthAuthorizationCodeSchema = new Schema({
   }
 });
 
+OAuthAuthorizationCodeSchema.methods.isExpired = async function(){
+  return Date.now() > this.expires
+}
+
 module.exports = mongoose.model(models.MODEL_NAME_OAUTH_AUTHORIZATION_CODE, OAuthAuthorizationCodeSchema, "oauthAuthorizationCodes");

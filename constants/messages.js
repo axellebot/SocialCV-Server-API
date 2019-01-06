@@ -8,7 +8,10 @@ module.exports = {
   MESSAGE_ERROR_NOT_FOUND: "Not found.",
   MESSAGE_ERROR_NOT_IMPLEMENTED: "Feature not implemented yet.",
   // Access Token
-  MESSAGE_ERROR_ACCESS_TOKEN_MISSING_PRIVILEGE : "Access Token missing privilege",
+  MESSAGE_ERROR_ACCESS_TOKEN_MISSING_PRIVILEGE: "Access Token missing privilege",
+  MESSAGE_ERROR_TOKEN_EXPIRED: "Token expired",
+  // Authorization Code
+  MESSAGE_ERROR_AUTHORIZATION_CODE_EXPIRED: "Authorization code expired",
   // Body
   MESSAGE_ERROR_BODY_WRONG_DATA: "Wrong data.",
   MESSAGE_ERROR_BODY_MISSING_DATA: "Missing data.",
@@ -44,7 +47,6 @@ module.exports = {
 
   MESSAGE_ERROR_ACCESS_RESTRICTED: "Access Restricted.",
   MESSAGE_ERROR_MISSING_PRIVILEGE: "Not enough privileges.",
-  MESSAGE_ERROR_MISSING_DATA: "Missing data.",
   MESSAGE_ERROR_PROVIDING_TOKEN: "Can't provide token.",
   MESSAGE_ERROR_FAILED_AUTHENTICATION_TOKEN: "Failed to authenticate token.",
   MESSAGE_ERROR_EXPIRED_AUTHENTICATION_TOKEN: "Expired token.",
