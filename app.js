@@ -1,13 +1,13 @@
 "use strict";
 
-// Requires Packages
+// Packages
 const express = require('express');
 const path = require('path');
 const favicon = require('serve-favicon');
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
-require('module-alias/register')
+require('module-alias/register');
 
 // Constants
 const messages = require('@constants/messages');
@@ -71,7 +71,6 @@ app.use((err, req, res, next) => {
     .json({
       error: true,
       message: err.message || messages.MESSAGE_ERROR_APP
-
     });
   next();
 });

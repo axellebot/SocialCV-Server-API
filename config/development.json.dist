@@ -1,4 +1,7 @@
 {
+  "server": {
+    "port": 3000
+  },
   "secret":"thisisasecret",
   "saltWorkFactor":10,
   "database": {

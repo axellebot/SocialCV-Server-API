@@ -11,6 +11,10 @@ Communication : JSON.
 ### Config
 Use config templates `./config/*.json.dist` to add configuration file `./config/*.json`
 
+### Docker
+Run docker build : `docker build ./ -f [Dockerfile.dev|Dockerfile.prod] -t <TAG>`
+Run doker image `docker run -p <port_in>:8080 -d <TAG>`
+
 ## Sources
 - Implementation of OAuth2 inspired from <https://github.com/FrankHassanabad/Oauth2orizeRecipes>
 

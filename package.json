@@ -2,10 +2,14 @@
   "name": "curriculum-server-api",
   "version": "0.1.0",
   "private": true,
+  "author": "Axel LE BOT <axellebot@gmail.com>",
+  "keywords": ["api", "cv", "curiculum"],
+  "license": "Apache-2.0",
   "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "npm run start:dev",
-    "start:dev": "NODE_ENV=development node bin/www",
-    "start:prod": "NODE_ENV=production node bin/www"
+    "start:dev": "NODE_ENV=dev node bin/www",
+    "start:prod": "NODE_ENV=prod node bin/www"
   },
   "_moduleAliases": {
     "@root": ".",
