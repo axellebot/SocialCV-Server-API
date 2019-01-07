@@ -1,24 +1,38 @@
 "use strict";
 
-// Schemas
-const User = require('../models/user.model');
+const db = require('@db');
 
 // Constants
 const messages = require('@constants/messages');
 const statuses = require('@constants/statuses');
 const models = require('@constants/models');
 const parameters = require('@constants/parameters');
-const fields = require('@constants/fields');
 
 // Errors
-const DatabaseFindError = require('@errors/DatabaseFindError');
+const AccessRestrictedError=require('@errors/AccessRestrictedError');
+const BodyMissingDataError =require('@errors/BodyMissingDataError');
+const BodyMissingTokenError =require('@errors/BodyMissingTokenError');
+const BodyWrongDataError =require('@errors/BodyWrongDataError');
+const ClientMissingPrivilegeError=require('@errors/ClientMissingPrivilegeError');
+const CursorWrongPaginationError=require('@errors/CursorWrongPaginationError');
+const CursorWrongSortError=require('@errors/CursorWrongSortError');
 const DatabaseCountError = require('@errors/DatabaseCountError');
 const DatabaseCreateError = require('@errors/DatabaseCreateError');
-const DatabaseUpdateError = require('@errors/DatabaseUpdateError');
+const DatabaseFindError = require('@errors/DatabaseFindError');
 const DatabaseRemoveError = require('@errors/DatabaseRemoveError');
-const MissingPrivilegeError = require('@errors/MissingPrivilegeError');
+const DatabaseUpdateError = require('@errors/DatabaseUpdateError');
 const NotFoundError = require('@errors/NotFoundError');
 const NotImplementedError = require('@errors/NotImplementedError');
+const ProtocolWrongError= require('@errors/ProtocolWrongError');
+const TokenAuthenticationError = require('@errors/TokenAuthenticationError');
+const TokenExpiredError = require('@errors/TokenExpiredError');
+const UserDisabledError =require('@errors/UserDisabledError');
+const UserMissingEmailError=require('@errors/UserMissingEmailError');
+const UserMissingPasswordError=require('@errors/UserMissingPasswordError');
+const UserMissingPrivilegeError = require('@errors/UserMissingPrivilegeError');
+const UserMissingUsernameError = require('@errors/UserMissingUsernameError');
+const UserNotFoundError = require('@errors/UserNotFoundError');
+const UserWrongPasswordError = require('@errors/UserWrongPasswordError');
 
 // Responses
 const SelectDocumentsResponse = require('@responses/SelectDocumentsResponse');
@@ -29,51 +43,12 @@ const UpdateDocumentResponse = require('@responses/UpdateDocumentResponse');
 const DeleteDocumentsResponse = require('@responses/DeleteDocumentsResponse');
 const DeleteDocumentResponse = require('@responses/DeleteDocumentResponse');
 
-
-exports.findUser = (req, res, next) => {
-  const id = req.user._id;
-
-  User
-    .findById(id)
-    .select(fields.FIELDS_USER_PUBLIC)
-    .then((user) => {
-      if (!user) throw new NotFoundError(models.MODEL_NAME_USER);
-      res.json(new SelectDocumentResponse(user));
-    })
-    .catch((err) => {
-      next(err);
-    });
-}
-
-exports.findFull = (req, res, next) => {
-  const id = req.user._id;
-
-  User
-    .findById(id)
-    .select(fields.FIELDS_USER_PUBLIC)
-    .populate({
-      path: 'profiles',
-      populate: {
-        path: 'parts',
-        populate: {
-          path: 'groups',
-          populate: {
-            path: 'entries'
-          }
-        }
-      }
-    })
-    .then((userPopulate) => {
-      if (!userPopulate) throw new NotFoundError(models.MODEL_NAME_USER);
-      res.json(new SelectDocumentResponse(userPopulate));
-    })
-    .catch((err) => {
-      next(err);
-    });
+exports.findOne = async (req, res, next) => {
+  res.json(new SelectDocumentResponse(req.user.publicData()));
 }
 
 // Others
-exports.filterProfilesOfOne = (req, res, next) => {
+exports.filterProfilesOfOne = async (req, res, next) => {
   const id = req.user._id;
   req.query.filters.owner = id;
   next();

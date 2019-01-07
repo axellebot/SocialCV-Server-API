@@ -5,7 +5,7 @@
  * @param res
  * @param next
  */
-module.exports = (req, res, next) => {
+module.exports = async (req, res, next) => {
   req.query.fields = req.query.fields || ""; // fields selected or all fields
   var fieldsString = req.query.fields;
 

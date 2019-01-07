@@ -1,7 +1,7 @@
 "use strict";
 
-// Schemas
-const Entry = require('@models/entry.model');
+// Others
+const db = require('@db');
 
 // Constants
 const messages = require('@constants/messages');
@@ -10,13 +10,30 @@ const models = require('@constants/models');
 const parameters = require('@constants/parameters');
 
 // Errors
-const DatabaseFindError = require('@errors/DatabaseFindError');
+const AccessRestrictedError=require('@errors/AccessRestrictedError');
+const BodyMissingDataError =require('@errors/BodyMissingDataError');
+const BodyMissingTokenError =require('@errors/BodyMissingTokenError');
+const BodyWrongDataError =require('@errors/BodyWrongDataError');
+const ClientMissingPrivilegeError=require('@errors/ClientMissingPrivilegeError');
+const CursorWrongPaginationError=require('@errors/CursorWrongPaginationError');
+const CursorWrongSortError=require('@errors/CursorWrongSortError');
 const DatabaseCountError = require('@errors/DatabaseCountError');
 const DatabaseCreateError = require('@errors/DatabaseCreateError');
-const DatabaseUpdateError = require('@errors/DatabaseUpdateError');
+const DatabaseFindError = require('@errors/DatabaseFindError');
 const DatabaseRemoveError = require('@errors/DatabaseRemoveError');
+const DatabaseUpdateError = require('@errors/DatabaseUpdateError');
 const NotFoundError = require('@errors/NotFoundError');
 const NotImplementedError = require('@errors/NotImplementedError');
+const ProtocolWrongError= require('@errors/ProtocolWrongError');
+const TokenAuthenticationError = require('@errors/TokenAuthenticationError');
+const TokenExpiredError = require('@errors/TokenExpiredError');
+const UserDisabledError =require('@errors/UserDisabledError');
+const UserMissingEmailError=require('@errors/UserMissingEmailError');
+const UserMissingPasswordError=require('@errors/UserMissingPasswordError');
+const UserMissingPrivilegeError = require('@errors/UserMissingPrivilegeError');
+const UserMissingUsernameError = require('@errors/UserMissingUsernameError');
+const UserNotFoundError = require('@errors/UserNotFoundError');
+const UserWrongPasswordError = require('@errors/UserWrongPasswordError');
 
 // Responses
 const SelectDocumentsResponse = require('@responses/SelectDocumentsResponse');
@@ -27,91 +44,79 @@ const UpdateDocumentResponse = require('@responses/UpdateDocumentResponse');
 const DeleteDocumentsResponse = require('@responses/DeleteDocumentsResponse');
 const DeleteDocumentResponse = require('@responses/DeleteDocumentResponse');
 
-exports.findOne = (req, res, next) => {
-  const id = req.params[parameters.PARAM_ID_ENTRY];
+exports.findOne = async (req, res, next) => {
+  try {
+    const id = req.params[parameters.PARAM_ID_ENTRY];
 
-  Entry
-    .findById(id)
-    .then((entry) => {
-      if (!entry) throw new NotFoundError(models.MODEL_NAME_ENTRY);
-      res.json(new SelectDocumentResponse(entry));
-    })
-    .catch((err) => {
-      next(err);
-    });
+    var entry = await db.entries.findById(id);
+    if (!entry) throw new NotFoundError(models.MODEL_NAME_ENTRY);
+    res.json(new SelectDocumentResponse(entry));
+  } catch (err) {
+    next(err);
+  }
 };
 
-exports.createOne = (req, res, next) => {
-  const entry = new Entry(req.body.data);
-
-  entry.save()
-    .then((entrySaved) => {
-      res.json(new CreateDocumentResponse(entrySaved));
-    })
-    .catch((err) => {
-      next(err);
-    });
+exports.createOne = async (req, res, next) => {
+  try {
+    var entrySaved = await db.entries.create(req.body.data);
+    res.json(new CreateDocumentResponse(entrySaved));
+  } catch (err) {
+    next(err);
+  }
 };
 
-exports.updateOne = (req, res, next) => {
-  const id = req.params[parameters.PARAM_ID_ENTRY];
+exports.updateOne = async (req, res, next) => {
+  try {
+    const id = req.params[parameters.PARAM_ID_ENTRY];
 
-  Entry
-    .findOneAndUpdate({
+    var entryUpdated = await db.entries.findOneAndUpdate({
       _id: id
     }, req.body.data, {
       new: true
-    })
-    .then((entryUpdated) => {
-      if (!entryUpdated) throw new NotFoundError(models.MODEL_NAME_ENTRY);
-      res.json(new UpdateDocumentResponse(entryUpdated));
-    })
-    .catch((err) => {
-      next(err);
     });
+
+    if (!entryUpdated) throw new NotFoundError(models.MODEL_NAME_ENTRY);
+    res.json(new UpdateDocumentResponse(entryUpdated));
+  } catch (err) {
+    next(err);
+  }
 };
 
-exports.deleteOne = (req, res, next) => {
-  const id = req.params[parameters.PARAM_ID_ENTRY];
+exports.deleteOne = async (req, res, next) => {
+  try {
+    const id = req.params[parameters.PARAM_ID_ENTRY];
 
-  Entry
-    .findOneAndRemove({
+    var entryDeleted = await db.entries.findOneAndRemove({
       _id: id
-    })
-    .then((entryDeleted) => {
-      if (!entryDeleted) throw new NotFoundError(models.MODEL_NAME_ENTRY);
-      res.json(new DeleteDocumentResponse(entryDeleted));
-    })
-    .catch((err) => {
-      next(err);
     });
+    if (!entryDeleted) throw new NotFoundError(models.MODEL_NAME_ENTRY);
+    res.json(new DeleteDocumentResponse(entryDeleted));
+  } catch (err) {
+    next(err);
+  }
 };
 
-exports.findMany = (req, res, next) => {
-  var returnedEntries;
-  Entry
-    .find(req.query.filters)
-    .select(req.query.fields)
-    .skip(req.query.offset)
-    .limit(req.query.limit)
-    .sort(req.query.sort)
-    .then((entries) => {
-      if (!entries || entries.length <= 0) throw new NotFoundError(models.MODEL_NAME_ENTRY);
-      returnedEntries = entries;
-      return Entry.countDocuments(req.query.filters);
-    })
-    .then((total) => {
-      res.json(new SelectDocumentsResponse(returnedEntries, total));
-    })
-    .catch((err) => {
-      next(err);
-    });
+exports.findMany = async (req, res, next) => {
+  try {
+    var entries = await db.entries
+      .find(req.query.filters)
+      .select(req.query.fields)
+      .skip(req.query.offset)
+      .limit(req.query.limit)
+      .sort(req.query.sort);
+
+    if (!entries || entries.length <= 0) throw new NotFoundError(models.MODEL_NAME_ENTRY);
+    var count = await db.entries.countDocuments(req.query.filters);
+    res.json(new SelectDocumentsResponse(entries, count));
+  } catch (err) {
+    next(err);
+  }
 };
 
-exports.updateMany = (req, res, next) => {
+exports.updateMany = async (req, res, next) => {
   next(new NotImplementedError())
 };
 
-exports.deleteAll = (req, res, next) => {
+exports.deleteAll = async (req, res, next) => {
   next(new NotImplementedError())
 }

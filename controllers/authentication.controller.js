@@ -1,148 +1,79 @@
 "use strict";
 
+const db = require('@db');
+
 // Config
-const config = require('@config');
-
-// Requires Packages
-const jwt = require('jsonwebtoken');
-
-// Schema
-const User = require('@models/user.model');
-
-// Constants
-const fields = require('@constants/fields')
+var config = require('@config');
 
 // Errors
-const MissingEmailError = require('@errors/MissingEmailError');
-const MissingUsernameError = require('@errors/MissingUsernameError');
-const MissingPasswordError = require('@errors/MissingPasswordError');
+const AccessRestrictedError = require('@errors/AccessRestrictedError');
+const BodyMissingDataError = require('@errors/BodyMissingDataError');
+const BodyMissingTokenError = require('@errors/BodyMissingTokenError');
+const BodyWrongDataError = require('@errors/BodyWrongDataError');
+const ClientMissingPrivilegeError = require('@errors/ClientMissingPrivilegeError');
+const CursorWrongPaginationError = require('@errors/CursorWrongPaginationError');
+const CursorWrongSortError = require('@errors/CursorWrongSortError');
+const DatabaseCountError = require('@errors/DatabaseCountError');
+const DatabaseCreateError = require('@errors/DatabaseCreateError');
 const DatabaseFindError = require('@errors/DatabaseFindError');
-const EmailAlreadyExistError = require('@errors/EmailAlreadyExistError');
-const FailedAuthenticationTokenError = require('@errors/FailedAuthenticationTokenError');
-const UserNotFoundError = require('@errors/UserNotFoundError');
-const WrongPasswordError = require('@errors/WrongPasswordError');
-const ProvidingTokenError = require('@errors/ProvidingTokenError');
+const DatabaseRemoveError = require('@errors/DatabaseRemoveError');
+const DatabaseUpdateError = require('@errors/DatabaseUpdateError');
+const NotFoundError = require('@errors/NotFoundError');
+const NotImplementedError = require('@errors/NotImplementedError');
+const ProtocolWrongError = require('@errors/ProtocolWrongError');
+const TokenAuthenticationError = require('@errors/TokenAuthenticationError');
+const TokenExpiredError = require('@errors/TokenExpiredError');
 const UserDisabledError = require('@errors/UserDisabledError');
+const UserMissingEmailError = require('@errors/UserMissingEmailError');
+const UserMissingPasswordError = require('@errors/UserMissingPasswordError');
+const UserMissingPrivilegeError = require('@errors/UserMissingPrivilegeError');
+const UserMissingUsernameError = require('@errors/UserMissingUsernameError');
+const UserNotFoundError = require('@errors/UserNotFoundError');
+const UserWrongPasswordError = require('@errors/UserWrongPasswordError');
 
 // Responses
 const LoginResponse = require('@responses/LoginResponse');
-
-// Generate JWT
-function generateToken(plaintText) {
-  return jwt.sign(plaintText, config.secret, {
-    expiresIn: 172800 // 2 days
-  });
-}
+//= =======================================
+// Login Controller
+//= =======================================
+// exports.login = async (req, res, next) => {
+//   return next(new NotImplementedError());
+// };
 
 //= =======================================
 // Registration Controller
 //= =======================================
-exports.register = (req, res, next) => {
-  // Check for registration errors
-  var userBody = req.body;
+// exports.register = (req, res, next) => {
+//   try {
+//     console.log("Register");
+//     // Check for registration errors
+//     var userBody = req.body;
 
-  // Return error if no email provided
-  if (!userBody.email || userBody.email === "") return next(new MissingEmailError());
+//     // Return error if no email provided
+//     if (!userBody.email || userBody.email === "") return next(new UserMissingEmailError());
 
-  // Return error if full name not provided
-  if (!userBody.username || userBody.username === "") return next(new MissingUsernameError());
+//     // Return error if full name not provided
+//     if (!userBody.username || userBody.username === "") return next(new UserMissingUsernameError());
 
-  // Return error if no password provided
-  if (!userBody.password || userBody.password === "") return next(new MissingPasswordError());
+//     // Return error if no password provided
+//     if (!userBody.password || userBody.password === "") return next(new UserMissingPasswordError());
 
-  User
-    .findOne({
-      $or: [{
-          email: userBody.email
-        },
-        {
-          username: userBody.username
-        }
-      ]
-    })
-    .exec()
-    .then((existingUser) => {
-      // If user is not unique, return error
-      if (existingUser) throw new EmailAlreadyExistError();
-      var user = new User(userBody);
-      return user.save();
-    })
-    .then((newUser) => {
-      // Respond with JWT if user was created
-      return User
-        .findById(newUser._id)
-        .select(fields.FIELDS_USER_PUBLIC)
-        .exec();
-    })
-    .then((userPublicDatas) => {
-      res.json(new LoginResponse(generateToken(userPublicDatas.toJSON(), userPublicDatas)));
-    })
-    .catch((err) => {
-      next(err)
-    });
-};
+//     var existingUser = await db.user.findOne({
+//       $or: [{
+//           email: userBody.email
+//         },
+//         {
+//           username: userBody.username
+//         }
+//       ]
+//     });
 
-//= =======================================
-// Login Controller
-//= =======================================
-exports.login = (req, res, next) => {
-  var login = req.body.login;
-  var plainPassword = req.body.password;
-  var userId;
-  User
-    .findOne({
-      $or: [{
-          email: login
-        },
-        {
-          username: login
-        }
-      ]
-    })
-    .exec()
-    .then((user) => {
-      if (!user) throw new UserNotFoundError();
-      userId = user._id;
-      return user.verifyPassword(plainPassword)
-    })
-    .then((isMatch) => {
-      if (!isMatch) throw new WrongPasswordError();
-      return User
-        .findById(userId)
-        .select(fields.FIELDS_USER_PUBLIC)
-        .exec()
-    })
-    .then((userPublicDatas) => {
-      console.log(userPublicDatas);
-      res.json(new LoginResponse(generateToken(userPublicDatas.toJSON()), userPublicDatas));
-    })
-    .catch((err) => {
-      return next(err);
-    })
-};
+//     // If user is not unique, return error
+//     if (existingUser) throw new EmailAlreadyExistError();
 
-//= =======================================
-// Refresh Token Controller
-//= =======================================
-exports.refreshToken = (req, res, next) => {
-  var token = req.body.token || req.query.token || req.headers['x-access-token'];
-
-  // verifies secret and checks exp
-  jwt.verify(token, config.secret, (err, decoded) => {
-    //failed verification.
-    if (err) return next(new FailedAuthenticationTokenError());
-
-    User
-      .findById(decoded._id)
-      .select(fields.FIELDS_USER_PUBLIC)
-      .exec()
-      .then((userPublicDatas) => {
-        if (!userPublicDatas) throw new UserNotFoundError();
-        if (userPublicDatas.disabled === true) throw new UserDisabledError();
-        return res.json(new LoginResponse(generateToken(userPublicDatas.toJSON()), userPublicDatas));
-      })
-      .catch((err) => {
-        next(err);
-      });
-  });
-}
+//     var savedUser = new db.users.create(userBody);
+//     res.json(new LoginResponse(generateToken(user.publicData(), user.publicData())));
+//   } catch (err) {
+//     next(err);
+//   }
+// };

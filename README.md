@@ -1,24 +1,23 @@
-# curriculum-server-api
+# Social-CV API
+[![MIT Licensed][license-image]][license-url]
 
 ## Used Technologies
-
 Server : Express 4.16.3, with nodejs,
-Storage: MongoDB, with mongoose 5.0.17,
-Communication: JSON.
+Storage : MongoDB, with mongoose 5.0.17,
+Communication : JSON.
 
-## Config
-Fill in the `config\production.json`
+## Installation
 
-## Database
+### Config
+Use config templates `./config/*.json.dist` to add configuration file `./config/*.json`
 
-- Import JSON
-Don't forget to use the Date type for date string with `ISODate(<String>)` function
-Use timestamp fields (create, update, ...)
+## Sources
+- Implementation of OAuth2 inspired from <https://github.com/FrankHassanabad/Oauth2orizeRecipes>
 
 ## License
 
 ```
-    Copyright 2018 Axel LE BOT
+    Copyright 2018-2019 Axel LE BOT
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -32,3 +31,6 @@ Use timestamp fields (create, update, ...)
     See the License for the specific language governing permissions and
     limitations under the License.
 ```
+
+[license-image]: https://img.shields.io/badge/license-Apache%202-blue.svg
+[license-url]: ./LICENSE

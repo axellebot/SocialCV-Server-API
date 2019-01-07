@@ -1,14 +1,15 @@
 "use strict";
 
+// Middlewares
 const bodyData = require("@middlewares/body/data");
 
 // Errors
-const WrongDataError = require('@errors/WrongDataError');
+const BodyWrongDataError = require('@errors/BodyWrongDataError');
 
 module.exports = [
   bodyData,
-  (req, res, next) => {
-    if (!Array.isArray(req.body.data)) return next(new WrongDataError());
+  async (req, res, next) => {
+    if (!Array.prototype.isArray(req.body.data)) return next(new BodyWrongDataError());
     next()
   }
 ];

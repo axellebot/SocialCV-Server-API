@@ -1,7 +1,6 @@
 "use strict";
 
-// Schemas
-const Part = require('@models/part.model');
+const db = require('@db');
 
 // Constants
 const messages = require('@constants/messages');
@@ -10,13 +9,30 @@ const models = require('@constants/models');
 const parameters = require('@constants/parameters');
 
 // Errors
-const DatabaseFindError = require('@errors/DatabaseFindError');
+const AccessRestrictedError=require('@errors/AccessRestrictedError');
+const BodyMissingDataError =require('@errors/BodyMissingDataError');
+const BodyMissingTokenError =require('@errors/BodyMissingTokenError');
+const BodyWrongDataError =require('@errors/BodyWrongDataError');
+const ClientMissingPrivilegeError=require('@errors/ClientMissingPrivilegeError');
+const CursorWrongPaginationError=require('@errors/CursorWrongPaginationError');
+const CursorWrongSortError=require('@errors/CursorWrongSortError');
 const DatabaseCountError = require('@errors/DatabaseCountError');
 const DatabaseCreateError = require('@errors/DatabaseCreateError');
-const DatabaseUpdateError = require('@errors/DatabaseUpdateError');
+const DatabaseFindError = require('@errors/DatabaseFindError');
 const DatabaseRemoveError = require('@errors/DatabaseRemoveError');
+const DatabaseUpdateError = require('@errors/DatabaseUpdateError');
 const NotFoundError = require('@errors/NotFoundError');
 const NotImplementedError = require('@errors/NotImplementedError');
+const ProtocolWrongError= require('@errors/ProtocolWrongError');
+const TokenAuthenticationError = require('@errors/TokenAuthenticationError');
+const TokenExpiredError = require('@errors/TokenExpiredError');
+const UserDisabledError =require('@errors/UserDisabledError');
+const UserMissingEmailError=require('@errors/UserMissingEmailError');
+const UserMissingPasswordError=require('@errors/UserMissingPasswordError');
+const UserMissingPrivilegeError = require('@errors/UserMissingPrivilegeError');
+const UserMissingUsernameError = require('@errors/UserMissingUsernameError');
+const UserNotFoundError = require('@errors/UserNotFoundError');
+const UserWrongPasswordError = require('@errors/UserWrongPasswordError');
 
 // Responses
 const SelectDocumentsResponse = require('@responses/SelectDocumentsResponse');
@@ -27,99 +43,86 @@ const UpdateDocumentResponse = require('@responses/UpdateDocumentResponse');
 const DeleteDocumentsResponse = require('@responses/DeleteDocumentsResponse');
 const DeleteDocumentResponse = require('@responses/DeleteDocumentResponse');
 
-exports.findOne = (req, res, next) => {
-  const id = req.params[parameters.PARAM_ID_PART];
+exports.findOne = async (req, res, next) => {
+  try {
+    const id = req.params[parameters.PARAM_ID_PART];
 
-  Part
-    .findById(id)
-    .then((part) => {
-      if (!part) throw new NotFoundError(models.MODEL_NAME_PART);
-      res.json(new SelectDocumentResponse(part));
-    })
-    .catch((err) => {
-      next(err);
-    });
+    var part = db.parts.findById(id);
+    if (!part) throw new NotFoundError(models.MODEL_NAME_PART);
+    res.json(new SelectDocumentResponse(part));
+  } catch (err) {
+    next(err);
+  }
 };
 
-exports.createOne = (req, res, next) => {
-  const part = new Part(req.body.data);
+exports.createOne = async (req, res, next) => {
+  try {
+    const partSaved = await cd.parts.create(req.body.data);
 
-  part.save()
-    .then((partSaved) => {
-      res.json(new CreateDocumentResponse(partSaved));
-    })
-    .catch((err) => {
-      next(err);
-    });
+    res.json(new CreateDocumentResponse(partSaved));
+  } catch (err) {
+    next(err);
+  }
 };
 
-exports.updateOne = (req, res, next) => {
-  const id = req.params[parameters.PARAM_ID_PART];
+exports.updateOne = async (req, res, next) => {
+  try {
+    const id = req.params[parameters.PARAM_ID_PART];
 
-  Part
-    .findOneAndUpdate({
+    var partUpdated = await db.parts
+      .findOneAndUpdate({
+        _id: id
+      }, req.body.data, {
+        new: true
+      });
+    if (!partUpdated) throw new NotFoundError(models.MODEL_NAME_PART);
+    res.json(new UpdateDocumentResponse(partUpdated));
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.deleteOne = async (req, res, next) => {
+  try {
+    const id = req.params[parameters.PARAM_ID_PART];
+
+    var partDeleted = await db.parts.findOneAndRemove({
       _id: id
-    }, req.body.data, {
-      new: true
-    })
-    .then((partUpdated) => {
-      if (!partUpdated) throw new NotFoundError(models.MODEL_NAME_PART);
-      res.json(new UpdateDocumentResponse(partUpdated));
-    })
-    .catch((err) => {
-      next(err);
     });
+    if (!partDeleted) throw new NotFoundError(models.MODEL_NAME_PART);
+    res.json(new DeleteDocumentResponse(partDeleted));
+  } catch (err) {
+    next(err);
+  }
 };
 
-exports.deleteOne = (req, res, next) => {
-  const id = req.params[parameters.PARAM_ID_PART];
+exports.findMany = async (req, res, next) => {
+  try {
+    var parts = await db.parts
+      .find(req.query.filters)
+      .select(req.query.fields)
+      .skip(req.query.offset)
+      .limit(req.query.limit)
+      .sort(req.query.sort);
 
-  Part
-    .findOneAndRemove({
-      _id: id
-    })
-    .then((partDeleted) => {
-      if (!partDeleted) throw new NotFoundError(models.MODEL_NAME_PART);
-      res.json(new DeleteDocumentResponse(partDeleted));
-    })
-    .catch((err) => {
-      next(err);
-    });
+    if (!parts || parts.length <= 0) throw new NotFoundError(models.MODEL_NAME_PART);
+    var count = await db.parts.countDocuments(req.query.filters);
+    res.json(new SelectDocumentsResponse(parts, count));
+  } catch (err) {
+    next(err);
+  }
 };
 
-exports.findMany = (req, res, next) => {
-  var returnedParts;
-
-  Part
-    .find(req.query.filters)
-    .select(req.query.fields)
-    .skip(req.query.offset)
-    .limit(req.query.limit)
-    .sort(req.query.sort)
-    .then((parts) => {
-      if (!parts || parts.length <= 0) throw new NotFoundError(models.MODEL_NAME_PART);
-      returnedParts = parts;
-      return Part.countDocuments(req.query.filters);
-    })
-    .then((total) => {
-      res.json(new SelectDocumentsResponse(returnedParts, total));
-    })
-    .catch((err) => {
-      next(err);
-    })
-};
-
-exports.updateMany = (req, res, next) => {
+exports.updateMany = async (req, res, next) => {
   next(new NotImplementedError())
 };
 
-exports.deleteAll = (req, res, next) => {
+exports.deleteAll = async (req, res, next) => {
   next(new NotImplementedError())
 };
-
 
 // Others
-exports.filterGroupsOfOne = (req, res, next) => {
+exports.filterGroupsOfOne = async (req, res, next) => {
   const id = req.params[parameters.PARAM_ID_PART];
   req.query.filters.part = id;
   next();

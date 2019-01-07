@@ -101,7 +101,7 @@ function getFilter(params, options) {
         result[key] = {};
       }
 
-      if (Array.isArray(value)) {
+      if (Array.prototype.isArray(value)) {
         result[key][op === '$ne' ? '$nin' : '$in'] = value;
       } else if (op === '$exists') {
         result[key][op] = prefix !== '!';
@@ -122,7 +122,7 @@ function getFilter(params, options) {
  * @param res
  * @param next
  */
-module.exports = (req, res, next) => {
+module.exports = async (req, res, next) => {
   req.query.filters = getFilter(req.query, {
     blacklist: ['token', 'fields', 'sort', 'offset', 'limit']
   });

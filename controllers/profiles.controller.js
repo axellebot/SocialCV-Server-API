@@ -1,7 +1,7 @@
 "use strict";
 
-// Schemas
-const Profile = require('@models/profile.model');
+// Others
+const db = require('@db');
 
 // Constants
 const messages = require('@constants/messages');
@@ -10,13 +10,30 @@ const models = require('@constants/models');
 const parameters = require('@constants/parameters');
 
 // Errors
-const DatabaseFindError = require('@errors/DatabaseFindError');
+const AccessRestrictedError=require('@errors/AccessRestrictedError');
+const BodyMissingDataError =require('@errors/BodyMissingDataError');
+const BodyMissingTokenError =require('@errors/BodyMissingTokenError');
+const BodyWrongDataError =require('@errors/BodyWrongDataError');
+const ClientMissingPrivilegeError=require('@errors/ClientMissingPrivilegeError');
+const CursorWrongPaginationError=require('@errors/CursorWrongPaginationError');
+const CursorWrongSortError=require('@errors/CursorWrongSortError');
 const DatabaseCountError = require('@errors/DatabaseCountError');
 const DatabaseCreateError = require('@errors/DatabaseCreateError');
-const DatabaseUpdateError = require('@errors/DatabaseUpdateError');
+const DatabaseFindError = require('@errors/DatabaseFindError');
 const DatabaseRemoveError = require('@errors/DatabaseRemoveError');
+const DatabaseUpdateError = require('@errors/DatabaseUpdateError');
 const NotFoundError = require('@errors/NotFoundError');
 const NotImplementedError = require('@errors/NotImplementedError');
+const ProtocolWrongError= require('@errors/ProtocolWrongError');
+const TokenAuthenticationError = require('@errors/TokenAuthenticationError');
+const TokenExpiredError = require('@errors/TokenExpiredError');
+const UserDisabledError =require('@errors/UserDisabledError');
+const UserMissingEmailError=require('@errors/UserMissingEmailError');
+const UserMissingPasswordError=require('@errors/UserMissingPasswordError');
+const UserMissingPrivilegeError = require('@errors/UserMissingPrivilegeError');
+const UserMissingUsernameError = require('@errors/UserMissingUsernameError');
+const UserNotFoundError = require('@errors/UserNotFoundError');
+const UserWrongPasswordError = require('@errors/UserWrongPasswordError');
 
 // Responses
 const SelectDocumentsResponse = require('@responses/SelectDocumentsResponse');
@@ -28,100 +45,85 @@ const DeleteDocumentsResponse = require('@responses/DeleteDocumentsResponse');
 const DeleteDocumentResponse = require('@responses/DeleteDocumentResponse');
 
 // One
-exports.createOne = (req, res, next) => {
-  const profile = new Profile(req.body.data);
-
-  profile
-    .save()
-    .then((profileSaved) => {
-      res.json(new CreateDocumentResponse(profileSaved));
-    })
-    .catch((err) => {
-      next(err);
-    });
+exports.createOne = async (req, res, next) => {
+  try {
+    var profileSaved = await db.profiles.create(req.body.data);
+    res.json(new CreateDocumentResponse(profileSaved));
+  } catch (err) {
+    next(err);
+  }
 };
 
-exports.findOne = (req, res, next) => {
+exports.findOne = async (req, res, next) => {
+  try{
   const id = req.params[parameters.PARAM_ID_PROFILE];
 
-  Profile
-    .findById(id)
-    .then((profile) => {
-      if (!profile) throw new NotFoundError(models.MODEL_NAME_PROFILE);
-      res.json(new SelectDocumentResponse(profile));
-    })
-    .catch((err) => {
-      next(err);
-    });
+  var profile = await db.profiles.findById(id);
+  if (!profile) throw new NotFoundError(models.MODEL_NAME_PROFILE);
+  res.json(new SelectDocumentResponse(profile));
+  }catch(err){
+    next(err);
+  }
 };
 
-exports.updateOne = (req, res, next) => {
+exports.updateOne = async (req, res, next) => {
+  try{
   const id = req.params[parameters.PARAM_ID_PROFILE];
 
-  Profile
-    .findOneAndUpdate({
-      _id: id
-    }, req.body.data, {
-      new: true
-    })
-    .then((profileUpdated) => {
-      if (!profileUpdated) throw new NotFoundError(parameters.MODEL_NAME_PROFILE);
-      res.json(new UpdateDocumentResponse(profileUpdated));
-    })
-    .catch((err) => {
-      next(err);
-    });
+  var profileUpdated = db.profiles.findOneAndUpdate({
+    _id: id
+  }, req.body.data, {
+    new: true
+  });
+  if (!profileUpdated) throw new NotFoundError(parameters.MODEL_NAME_PROFILE);
+  res.json(new UpdateDocumentResponse(profileUpdated));
+  }catch(err){
+    next(err);
+  }
 };
 
-exports.deleteOne = (req, res, next) => {
+exports.deleteOne = async (req, res, next) => {
+  try{
   const id = req.params[parameters.PARAM_ID_PROFILE];
 
-  Profile
-    .findOneAndRemove({
-      _id: id
-    })
-    .then((profileDeleted) => {
-      if (!profileDeleted) throw new NotFoundError(models.MODEL_NAME_PROFILE);
-      res.json(new DeleteDocumentResponse(profileDeleted));
-    })
-    .catch((err) => {
-      next(err);
-    });
+  var profileDeleted = await db.profiles.findOneAndRemove({
+    _id: id
+  });
+  if (!profileDeleted) throw new NotFoundError(models.MODEL_NAME_PROFILE);
+  res.json(new DeleteDocumentResponse(profileDeleted));
+  }catch(err){
+    next(err);
+  }
 };
 
 // Many
-exports.findMany = (req, res, next) => {
-  var returnedProfiles;
-
-  Profile
+exports.findMany = async (req, res, next) => {
+try{
+  var profiles = await db.profiles
     .find(req.query.filters)
     .select(req.query.fields)
     .skip(req.query.offset)
     .limit(req.query.limit)
-    .sort(req.query.sort)
-    .then((profiles) => {
-      if (!profiles || profiles.length <= 0) throw new NotFoundError(models.MODEL_NAME_PROFILE);
-      returnedProfiles = profiles;
-      return Profile.countDocuments(req.query.filters);
-    })
-    .then((total) => {
-      res.json(new SelectDocumentsResponse(returnedProfiles, total));
-    })
-    .catch((err) => {
-      next(err);
-    });
+    .sort(req.query.sort);
+
+  if (!profiles || profiles.length <= 0) throw new NotFoundError(models.MODEL_NAME_PROFILE);
+  var count = await db.profiles.countDocuments(req.query.filters);
+  res.json(new SelectDocumentsResponse(profiles, count));
+}catch(err){
+  next(err);
+}
 };
 
-exports.updateMany = (req, res, next) => {
+exports.updateMany = async (req, res, next) => {
   return next(new NotImplementedError("Update many Profiles"));
 };
 
-exports.deleteAll = (req, res, next) => {
+exports.deleteAll = async (req, res, next) => {
   return next(new NotImplementedError("Delete all Profiles"));
 };
 
 // Others
-exports.filterPartsOfOne = (req, res, next) => {
+exports.filterPartsOfOne = async (req, res, next) => {
   const id = req.params[parameters.PARAM_ID_PROFILE];
   req.query.filters.profile = id;
   next();
