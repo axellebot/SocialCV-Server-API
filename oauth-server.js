@@ -245,7 +245,7 @@ oauth2server.exchange(oauth2orize.exchange.refreshToken(async (client, refreshTo
 oauth2server.exchange(oauth2orize.exchange.password(async (client, username, password, requestedScopes, done) => {
   try {
     var requestedScopes = requestedScopes || [];
-    console.log("exchange password", client, username, password, requestedScopes);
+    console.log("exchange password", client, username, requestedScopes);
 
     // Check grant_type="password"
     if (!client) throw new ClientMissingError(); // Need client authentication

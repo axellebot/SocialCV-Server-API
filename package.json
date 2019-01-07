@@ -2,10 +2,14 @@
   "name": "curriculum-server-api",
   "version": "0.1.0",
   "private": true,
+  "author": "Axel LE BOT <axellebot@gmail.com>",
+  "keywords": ["api", "cv", "curiculum"],
+  "license": "Apache-2.0",
   "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "npm run start:dev",
-    "start:dev": "NODE_ENV=development node bin/www",
-    "start:prod": "NODE_ENV=production node bin/www"
+    "start:dev": "NODE_ENV=dev node bin/www",
+    "start:prod": "NODE_ENV=prod node bin/www"
   },
   "_moduleAliases": {
     "@root": ".",
@@ -37,8 +41,10 @@
     "oauth2orize": "^1.11.0",
     "passport": "^0.4.0",
     "passport-http-bearer": "^1.0.1",
+    "passport-oauth2-client-password": "^0.1.2",
     "pug": "^2.0.3",
     "serve-favicon": "^2.5.0",
+    "uid": "0.0.2",
     "uuid": "^3.3.2"
   }
 }
