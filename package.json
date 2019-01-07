@@ -20,7 +20,8 @@
     "@mongoose": "./mongoose.js",
     "@oauth": "./oauth-server.js",
     "@utils": "./utils.js",
-    "@passport": "./passport.js"
+    "@passport": "./passport.js",
+    "@views": "./views"
   },
   "dependencies": {
     "bcrypt": "^3.0.2",
@@ -36,6 +37,7 @@
     "oauth2orize": "^1.11.0",
     "passport": "^0.4.0",
     "passport-http-bearer": "^1.0.1",
+    "pug": "^2.0.3",
     "serve-favicon": "^2.5.0",
     "uuid": "^3.3.2"
   }

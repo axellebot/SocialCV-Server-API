@@ -34,15 +34,17 @@ module.exports = {
   // User Error
   MESSAGE_ERROR_USER_DISABLED: "User account disabled.",
   MESSAGE_ERROR_USER_EMAIL_ADDRESS_ALREADY_EXIST: "E-mail already in use.",
+  MESSAGE_ERROR_USER_MISSING: "User missing.",
   MESSAGE_ERROR_USER_MISSING_PRIVILEGE: "User missing privilege",
-  MESSAGE_ERROR_USER_MISSING_EMAIL_ADDRESS: "Missing email address.",
-  MESSAGE_ERROR_USER_MISSING_FULL_NAME: "Missing full name.",
-  MESSAGE_ERROR_USER_MISSING_PASSWORD: "Missing password.",
-  MESSAGE_ERROR_USER_NOT_FOUND: "User not found.",
-  MESSAGE_ERROR_USER_WRONG_PASSWORD: "User wrong password.",
+  MESSAGE_ERROR_USER_MISSING_EMAIL_ADDRESS: "Missing email address",
+  MESSAGE_ERROR_USER_MISSING_FULL_NAME: "Missing full name",
+  MESSAGE_ERROR_USER_MISSING_PASSWORD: "Missing password",
+  MESSAGE_ERROR_USER_NOT_FOUND: "User not found",
+  MESSAGE_ERROR_USER_WRONG_PASSWORD: "User wrong password",
   // Client Error
+  MESSAGE_ERROR_CLIENT_MISSING: "Client missing",
   MESSAGE_ERROR_CLIENT_MISSING_GRANT_TYPE: "Client missing grant type",
-  MESSAGE_ERROR_CLIENT_MISSING_PRIVILEGE: "Error client missing privilege",
+  MESSAGE_ERROR_CLIENT_MISSING_PRIVILEGE: "Client missing privilege",
   MESSAGE_ERROR_CLIENT_WRONG_CREDENTIALS: "Client wrong credentials",
 
   MESSAGE_ERROR_ACCESS_RESTRICTED: "Access Restricted.",
@@ -51,8 +53,8 @@ module.exports = {
   MESSAGE_ERROR_FAILED_AUTHENTICATION_TOKEN: "Failed to authenticate token.",
   MESSAGE_ERROR_EXPIRED_AUTHENTICATION_TOKEN: "Expired token.",
   // Cursor
-  MESSAGE_ERROR_CURSOR_WRONG_SORT: "Wrong sort option.",
-  MESSAGE_ERROR_CURSOR_WRONG_PAGINATION: "Wrong pagination option.",
+  MESSAGE_ERROR_CURSOR_WRONG_SORT: "Cursor : wrong sort option.",
+  MESSAGE_ERROR_CURSOR_WRONG_PAGINATION: "Cursor : wrong pagination option.",
   // Protocols
   MESSAGE_ERROR_PROTOCOL_WRONG: "Wrong protocol",
 };

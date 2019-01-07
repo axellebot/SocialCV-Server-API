@@ -30,7 +30,7 @@ module.exports = (app) => {
   // Auth Routes
   //= ========================
   const routeAuth = express.Router();
-  app.use('', routeAuth);
+  app.use(paths.PATH_AUTHENTICATION, routeAuth);
   require('@routes/authentication.routes.js')(routeAuth);
 
   //= ========================

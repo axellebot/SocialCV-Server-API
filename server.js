@@ -23,7 +23,11 @@ const ProtocolWrongError = require('@errors/ProtocolWrongError')
 // Routers
 const app = express();
 
+// serve static files from /public
+app.use(express.static(path.join(__dirname, 'public')));
+
 // view engine setup
+app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 
 // Add favicon in public
@@ -37,7 +41,6 @@ app.use(bodyParser.urlencoded({
   extended: false
 })); // for parsing application/x-www-form-urlencoded
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
 
 //Authorize CORS
 app.use((req, res, next) => {

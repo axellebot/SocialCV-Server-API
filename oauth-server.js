@@ -22,6 +22,7 @@ const AuthorizationCodeExpiredError = require('@errors/AuthorizationCodeExpiredE
 const BodyMissingDataError = require('@errors/BodyMissingDataError');
 const BodyMissingTokenError = require('@errors/BodyMissingTokenError');
 const BodyWrongDataError = require('@errors/BodyWrongDataError');
+const ClientMissingError = require('@errors/ClientMissingError');
 const ClientMissingGrantTypeError = require('@errors/ClientMissingGrantTypeError');
 const ClientMissingPrivilegeError = require('@errors/ClientMissingPrivilegeError');
 const ClientWrongCredentialsError = require('@errors/ClientWrongCredentialsError');
@@ -54,7 +55,12 @@ const expiresIn = {
 };
 
 /**
- * Grant authorization codes
+ * Register supported Oauth 2.0 grant types.
+ *
+ * OAuth 2.0 specifies a framework that allows users to grant client
+ * applications limited access to their protected resources.  It does this
+ * through a process of the user granting access, and the client exchanging
+ * the grant for an access token.
  *
  * The callback takes the `client` requesting authorization, the `redirectURI`
  * (which is used as a verifier in the subsequent exchange), the authenticated
@@ -62,25 +68,25 @@ const expiresIn = {
  * duration, etc. as parsed by the application.  The application issues a code,
  * which is bound to these values, and will be exchanged for an access token.
  */
-oauth2server.grant(oauth2orize.grant.code(async (client, redirectURI, user, ares, done) => {
-  try {
-    console.log("grant code", client, redirectURI, user, ares);
+// oauth2server.grant(oauth2orize.grant.code(async (client, redirectURI, user, ares, done) => {
+//   try {
+//     console.log("grant code", client, redirectURI, user, ares);
 
-    var code = utils.createCode();
+//     var code = utils.createCode();
 
-    var savedAuthorizationCode = await db.oauthAuthorizationCodes.create({
-      code: code,
-      client: client.id,
-      redirectUri: redirectURI,
-      user: user.id,
-      scope: ares.scope
-    });
-    if (!savedAuthorizationCode) throw new DatabaseCreateError();
-    return done(null, code);
-  } catch (err) {
-    done(err);
-  }
-}));
+//     var savedAuthorizationCode = await db.oauthAuthorizationCodes.create({
+//       code: code,
+//       client: client.id,
+//       redirectUri: redirectURI,
+//       user: user.id,
+//       scope: ares.scope
+//     });
+//     if (!savedAuthorizationCode) throw new DatabaseCreateError();
+//     return done(null, code);
+//   } catch (err) {
+//     done(err);
+//   }
+// }));
 
 
 /**
@@ -97,23 +103,23 @@ oauth2server.grant(oauth2orize.grant.code(async (client, redirectURI, user, ares
 oauth2server.exchange(oauth2orize.exchange.code(async (client, code, redirectURI, done) => {
   try {
     console.log("exchange code", client, code, redirectURI);
-
+    
+    // Check grant_type="authorization_code"
+    if (!client) throw Error();
+    if (!client.grantTypes.includes("authorization_code")) throw new ClientMissingGrantTypeError();
+    
     var authorizationCode = await db.oauthAuthorizationCodes.findOne({
       code: code
     });
     if (!authorizationCode) throw new NotFoundError("AuthorizationCode");
     
-    // Check grant_type="authorization_code"
-    if (!client) throw Error();
-    if (!client.grantTypes.includes("authorization_code")) throw new ClientMissingGrantTypeError();
-    console.log("test",typeof(client._id),typeof(authorizationCode.client)); 
     if (!client._id.equals(authorizationCode.client)) return done(null, false);// type
-
-    // Check Uri
-    if (redirectURI && authorizationCode.redirectUris.contains(redirectURI)) return done(null, false);
-
+    
     // Check expiration date
     if(await authorizationCode.isExpired()) throw new AuthorizationCodeExpiredError();
+    
+    // Check Uri
+    if (redirectURI && authorizationCode.redirectUris.contains(redirectURI)) return done(null, false);
     
     var savedAccessToken = await createAccessToken(authorizationCode.user, client._id,  code.scopes);
     if (!savedAccessToken) throw new DatabaseCreateError();
@@ -164,7 +170,7 @@ oauth2server.exchange(oauth2orize.exchange.clientCredentials(async (client, requ
     console.log("exchange clientCredentials", client, requestedScopes);
     
     // Check grant_type="client_credentials"
-    if (!client) throw Error();
+    if (!client) throw new ClientMissingError(); // Need client authentication
     if (!client.grantTypes.includes("client_credentials")) throw new ClientMissingGrantTypeError();
 
     // Check scopes
@@ -228,7 +234,7 @@ oauth2server.exchange(oauth2orize.exchange.refreshToken(async (client, refreshTo
 }));
 
 /**
- * Exchange the user credentials for an access token.
+ * Exchange user id and password for access tokens.
  *
  * The callback accepts the `client`, which is exchanging the client's id from the token
  * request for verification.  If this value is validated, the application issues an access
@@ -241,9 +247,8 @@ oauth2server.exchange(oauth2orize.exchange.password(async (client, username, pas
     var requestedScopes = requestedScopes || [];
     console.log("exchange password", client, username, password, requestedScopes);
 
-    if (!client) throw Error(); // Need client authentication
-
     // Check grant_type="password"
+    if (!client) throw new ClientMissingError(); // Need client authentication
     if (!client.grantTypes.includes("password")) throw ClientMissingGrantTypeError();
 
     const options = {

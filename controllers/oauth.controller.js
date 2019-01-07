@@ -60,7 +60,7 @@ exports.authorize = [
     if (!client) {
       return done(null, false);
     }
-    if (client.redirectUri != redirectURI) {
+    if (client.redirectUris.contains(redirectURI)) {
       return done(null, false);
     }
     return done(null, client, client.redirectURI);

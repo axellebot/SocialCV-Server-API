@@ -15,5 +15,6 @@ const parseQuerySelection = require('@middlewares/selection');
 const ctrlAuthentication = require('@controllers/authentication.controller.js');
 
 module.exports = (router) => {
+//   router.post(paths.PATH_LOGIN, ctrlAuthentication.login);
 //   router.post(paths.PATH_REGISTER, ctrlAuthentication.register);
 };
