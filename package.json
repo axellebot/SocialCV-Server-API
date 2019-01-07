@@ -37,6 +37,7 @@
     "oauth2orize": "^1.11.0",
     "passport": "^0.4.0",
     "passport-http-bearer": "^1.0.1",
+    "passport-oauth2-client-password": "^0.1.2",
     "pug": "^2.0.3",
     "serve-favicon": "^2.5.0",
     "uuid": "^3.3.2"
