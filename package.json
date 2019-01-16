@@ -1,9 +1,9 @@
 {
-  "name": "curriculum-server-api",
+  "name": "Social-CV-Server-API",
   "version": "0.1.0",
   "private": true,
   "author": "Axel LE BOT <axellebot@gmail.com>",
-  "keywords": ["api", "cv", "curiculum"],
+  "keywords": ["server","api", "cv", "curiculum"],
   "license": "Apache-2.0",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

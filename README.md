@@ -1,5 +1,5 @@
-# Social-CV API
-[![MIT Licensed][license-image]][license-url]
+# Social-CV Server-API
+[![Apache 2 Licensed][license-image]][license-url]
 
 ## Used Technologies
 Server : Express 4.16.3, with nodejs,

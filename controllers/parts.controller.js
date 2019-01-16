@@ -47,7 +47,7 @@ exports.findOne = async (req, res, next) => {
   try {
     const id = req.params[parameters.PARAM_ID_PART];
 
-    var part = db.parts.findById(id);
+    var part = await db.parts.findById(id);
     if (!part) throw new NotFoundError(models.MODEL_NAME_PART);
     res.json(new SelectDocumentResponse(part));
   } catch (err) {

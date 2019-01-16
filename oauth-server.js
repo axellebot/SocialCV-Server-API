@@ -260,7 +260,6 @@ oauth2server.exchange(oauth2orize.exchange.password(async (client, username, pas
         }
       ]
     };
-
     var user = await db.users.findOne(options);
     if (!user) throw new UserNotFoundError();
     if (user.disabled) throw new UserDisabledError();

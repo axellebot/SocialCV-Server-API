@@ -101,7 +101,7 @@ function getFilter(params, options) {
         result[key] = {};
       }
 
-      if (Array.prototype.isArray(value)) {
+      if (Array.isArray(value)) {
         result[key][op === '$ne' ? '$nin' : '$in'] = value;
       } else if (op === '$exists') {
         result[key][op] = prefix !== '!';
