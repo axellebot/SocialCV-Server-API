@@ -1,0 +1,13 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.adminRouter = void 0;
+const express_1 = require("express");
+const constant_1 = require("../../libs/constant");
+const roles_router_1 = require("./roles.router");
+const scopes_router_1 = require("./scopes.router");
+const users_router_1 = require("./users.router");
+const adminRouter = (0, express_1.Router)();
+exports.adminRouter = adminRouter;
+adminRouter.use(constant_1.Paths.roles, roles_router_1.adminRolesRouter);
+adminRouter.use(constant_1.Paths.users, users_router_1.adminUsersRouter);
+adminRouter.use(constant_1.Paths.scopes, scopes_router_1.adminScopesRouter);

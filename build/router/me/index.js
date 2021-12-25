@@ -1,0 +1,13 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.meRouter = void 0;
+const express_1 = require("express");
+const constant_1 = require("../../libs/constant");
+const entries_router_1 = require("./entries.router");
+const groups_router_1 = require("./groups.router");
+const parts_router_1 = require("./parts.router");
+const meRouter = (0, express_1.Router)();
+exports.meRouter = meRouter;
+meRouter.use(constant_1.Paths.entries, entries_router_1.meEntriesRouter);
+meRouter.use(constant_1.Paths.groups, groups_router_1.meGroupsRouter);
+meRouter.use(constant_1.Paths.parts, parts_router_1.mePartsRouter);

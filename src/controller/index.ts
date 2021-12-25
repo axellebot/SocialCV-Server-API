@@ -1,0 +1,9 @@
+export * as identityCtrl from './identity.controller';
+export * as entriesCtrl from './entries.controller';
+export * as groupsCtrl from './groups.controller';
+export * as authenticationCtrl from './authentication.controller';
+export * as oauthCtrl from './oauth.controller';
+export * as partsCtrl from './parts.controller';
+export * as profilesCtrl from './profiles.controller';
+export * as usersCtrl from './users.controller';
+export * as rolesCtrl from './roles.controller';
